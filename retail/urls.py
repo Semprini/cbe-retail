@@ -22,6 +22,7 @@ from rest_framework import serializers, viewsets
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
+import retail.product.views as ProductViews
 import retail.sale.views as SaleViews
 from cbe.urls import cberouter
 
@@ -29,10 +30,14 @@ admin.site.site_title = 'CBE Retail'
 admin.site.site_header = 'Retail Business Entities'
 
 retailrouter = DefaultRouter()
-cberouter.register(r'sale/sale', SaleViews.SaleViewSet)
-cberouter.register(r'sale/sale_item', SaleViews.SaleItemViewSet)
-cberouter.register(r'sale/tender', SaleViews.TenderViewSet)
-cberouter.register(r'sale/tender_type', SaleViews.TenderTypeViewSet)
+retailrouter.register(r'product/product_offering', ProductViews.ProductOfferingViewSet)
+retailrouter.register(r'product/product_category', ProductViews.ProductCategoryViewSet)
+retailrouter.register(r'product/promotion', ProductViews.PromotionViewSet)
+
+retailrouter.register(r'sale/sale', SaleViews.SaleViewSet)
+retailrouter.register(r'sale/sale_item', SaleViews.SaleItemViewSet)
+retailrouter.register(r'sale/tender', SaleViews.TenderViewSet)
+retailrouter.register(r'sale/tender_type', SaleViews.TenderTypeViewSet)
 
 router = DefaultRouter()
 for route in retailrouter.registry:

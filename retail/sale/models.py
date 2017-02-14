@@ -5,8 +5,8 @@ from django.db import models
 from django.utils import timezone
 
 from cbe.location.models import AbsoluteLocalLocation
-from cbe.product.models import ProductOffering, Promotion
 from cbe.customer.models import Customer
+from retail.product.models import ProductOffering, Promotion
 
 
 class Sale(models.Model):
