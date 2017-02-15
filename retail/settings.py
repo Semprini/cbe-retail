@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'cbe.party',
     'cbe.trouble',
     'cbe.physical_object',
+    'cbe.supplier_partner',
     'retail.product',
     'retail.sale',
 )

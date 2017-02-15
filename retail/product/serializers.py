@@ -15,7 +15,7 @@ class ProductOfferingSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ProductOffering
         fields = ('type', 'url', 'valid_from', 'valid_to', 'name',
-                  'description', 'sku', 'categories', 'retail_price',)
+                  'description', 'sku', 'categories', 'retail_price','supplier','buyer')
 
 
 class ProductCategorySerializer(serializers.HyperlinkedModelSerializer):
@@ -23,7 +23,7 @@ class ProductCategorySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ProductCategory
-        fields = ('type', 'url', 'valid_from', 'valid_to', 'name',
+        fields = ('type', 'url', 'valid_from', 'valid_to', 'parent', 'level', 'name',
                   'description', )
 
 
