@@ -38,6 +38,7 @@ retailrouter.register(r'sale/sale', SaleViews.SaleViewSet)
 retailrouter.register(r'sale/sale_item', SaleViews.SaleItemViewSet)
 retailrouter.register(r'sale/tender', SaleViews.TenderViewSet)
 retailrouter.register(r'sale/tender_type', SaleViews.TenderTypeViewSet)
+retailrouter.register(r'sale/loyalty_transactions', SaleViews.LoyaltyTransactionViewSet)
 
 router = DefaultRouter()
 for route in retailrouter.registry:

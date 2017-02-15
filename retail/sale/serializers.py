@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField
-from retail.sale.models import Sale, SaleItem, TenderType, Tender
+from retail.sale.models import Sale, SaleItem, TenderType, Tender, LoyaltyTransaction
 
 
 class SaleSerializer(serializers.HyperlinkedModelSerializer):
@@ -43,3 +43,11 @@ class TenderSerializer(serializers.HyperlinkedModelSerializer):
         model = Tender
         fields = ('type', 'url', 'sale', 'tender_type', 'amount',
                   'reference', )
+                  
+                  
+class LoyaltyTransactionSerializer(serializers.HyperlinkedModelSerializer):
+    type = TypeField()
+
+    class Meta:
+        model = LoyaltyTransaction
+        fields = ('type', 'url', 'sale', 'items', 'amount', )                  
