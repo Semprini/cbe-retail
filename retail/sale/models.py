@@ -205,7 +205,7 @@ def fake(day_count,year,month=1,day=1):
 #        "29/12/2016","30/12/2016","31/12/2016",
     for date in (start_date + datetime.timedelta(n) for n in range(day_count)):
         for store in stores:
-            ImportFakeDSR(store, "{}/{}/{}".format(date.day,date.month,date.year), False)
+            ImportFakeDSR(store, "{}/{}/{}".format(date.day,date.month,date.year), dsr)
 
 dsr = """
 0,"X18","30/11/2016"
