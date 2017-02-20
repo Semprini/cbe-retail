@@ -47,7 +47,10 @@ INSTALLED_APPS = (
     'cbe.trouble',
     'cbe.physical_object',
     'cbe.supplier_partner',
+    'cbe.resource',
+    'cbe.human_resources',
     'retail.product',
+    'retail.pricing',
     'retail.sale',
 )
 

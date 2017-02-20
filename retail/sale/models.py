@@ -4,9 +4,13 @@ from decimal import Decimal
 from django.db import models
 from django.utils import timezone
 
+from cbe.party.models import Individual
 from cbe.location.models import AbsoluteLocalLocation
 from cbe.customer.models import Customer
+from cbe.resource.models import PhysicalResource
+from cbe.human_resources.models import Staff
 from retail.product.models import ProductOffering, Promotion
+from retail.pricing.models import PriceChannel, PriceCalculation
 
 
 class Sale(models.Model):
@@ -15,32 +19,39 @@ class Sale(models.Model):
     docket_number = models.CharField(max_length=50, null=True,blank=True )
 
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    total_amount_excl = models.DecimalField(max_digits=10, decimal_places=2)
     total_discount = models.DecimalField(max_digits=10, decimal_places=2)
     total_tax = models.DecimalField(max_digits=10, decimal_places=2)
 
-    customer = models.ForeignKey(Customer, null=True,blank=True)
+    customer = models.ForeignKey(Customer, db_index=True, null=True,blank=True)
     id_type = models.CharField(max_length=50, null=True,blank=True )
     id_number = models.CharField(max_length=100, null=True,blank=True )
 
     promotion = models.ForeignKey(Promotion, null=True,blank=True)
-    #till
-    #staff = generic_party_role
+    till = models.ForeignKey(PhysicalResource, db_index=True, null=True,blank=True)
+    staff = models.ForeignKey(Staff, db_index=True, null=True,blank=True)
+
+    price_channel = models.ForeignKey(PriceChannel, null=True,blank=True)
+    price_calculation = models.ForeignKey(PriceCalculation, null=True,blank=True)
 
     def __str__(self):
         return "%s|%s|%d"%(self.store,self.datetime,self.total_amount)
 
 
 class SaleItem(models.Model):
-    sale = models.ForeignKey(Sale,related_name='sale_items', on_delete=models.CASCADE)
-    product = models.ForeignKey(ProductOffering)
+    sale = models.ForeignKey(Sale, db_index=True, related_name='sale_items', on_delete=models.CASCADE)
+    product = models.ForeignKey(ProductOffering, db_index=True, )
 
-    #quantity
+    quantity = models.DecimalField(max_digits=10, decimal_places=4)
+    unit_of_measure = models.CharField(max_length=200)
 
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     discount = models.DecimalField(max_digits=10, decimal_places=2)
     tax = models.DecimalField(max_digits=10, decimal_places=2)
 
     promotion = models.ForeignKey(Promotion, null=True,blank=True)
+    
+    
 
     def __str__(self):
         return self.product.name
@@ -58,20 +69,20 @@ class TenderType(models.Model):
 
 
 class Tender(models.Model):
-    sale = models.ForeignKey(Sale,related_name='tenders', on_delete=models.CASCADE)
+    sale = models.ForeignKey(Sale, db_index=True, related_name='tenders', on_delete=models.CASCADE)
     tender_type = models.ForeignKey(TenderType)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     reference = models.CharField(max_length=200)
 
 
 class LoyaltyTransaction(models.Model):
-    sale = models.ForeignKey(Sale,related_name='loyalty_transactions', on_delete=models.CASCADE)
+    sale = models.ForeignKey(Sale, db_index=True, related_name='loyalty_transactions', on_delete=models.CASCADE)
     items = models.ManyToManyField(SaleItem, blank=True)
     promotion = models.ForeignKey(Promotion, null=True,blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
     
-def ImportFakeDSR(storecode,datetxt,create_products=True): #DD/MM/YYYY
+def ImportFakeDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
 
     print("{}|{}".format(storecode,datetxt))
     cash, created = TenderType.objects.get_or_create(name="Cash")
@@ -82,43 +93,79 @@ def ImportFakeDSR(storecode,datetxt,create_products=True): #DD/MM/YYYY
     tenders = []
     sales = []
 
-    if not create_products:
-        products = {}
-        for product in ProductOffering.objects.all():
-            products[product.sku] = product
+    products = {}
+    for product in ProductOffering.objects.all():
+        products[product.sku] = product
 
-    for line in dsr.split('\n'):
+    staff_list = {}
+    for staff in Staff.objects.all():
+        staff_list[staff.name] = staff
+            
+    promotions = {}
+    for promotion in Promotion.objects.all():
+        promotions[promotion.name] = promotion
+            
+    for line in dsrdata.split('\n'):
         data = line.split(',')
         if data[0] == "1":
             docket_number = data[3].strip('"')
             sku = data[6].strip('"')
             product_name = data[7].strip('"')
-            amount = Decimal(data[10].strip('"'))
+            quantity = Decimal(data[9].strip('"'))
+            amount_excl = Decimal(data[10].strip('"'))
+            amount_tax = amount_excl*Decimal(0.15)
+            amount_inc = amount_excl + amount_tax
+            retail = Decimal(data[31].strip('"'))
+            discount = (retail*quantity) - amount_inc
             tender_type = data[15].strip('"')
             barcode = data[16].strip('"')
-            retail = Decimal(data[20].strip('"'))
             time = datetime.time(int(data[25][1:3]),int(data[25][3:5]),0)
-            #date_time = timezone.make_aware(datetime.datetime.combine(date,time), timezone.get_current_timezone())
-            date_time = datetime.datetime.combine(date,time)
+            staff_code = data[26].strip('"')
+            #till
+            
+            date_time = timezone.make_aware(datetime.datetime.combine(date,time), timezone.get_current_timezone())
+            #date_time = datetime.datetime.combine(date,time)
+            
+            # Create or get promotion
+            promo_code = data[12].strip('"')
+            promotion = None
+            if promo_code != "":
+                txt = data[13].strip('"')
+                promo_start = datetime.date(day=int(txt[0:2]),month=int(txt[3:5]),year=int(txt[6:10]))
+                txt = data[14].strip('"')
+                promo_end = datetime.date(day=int(txt[0:2]),month=int(txt[3:5]),year=int(txt[6:10]))
+                if promo_code not in promotions.keys():
+                    promotions[promo_code] = Promotion.objects.create( name=promo_code, valid_from=promo_start, valid_to=promo_end)
+                promotion = promotions[promo_code]
 
-            if create_products:
-                po, created = ProductOffering.objects.get_or_create(name=product_name, sku=sku, retail_price=retail)
-            else:
-                po = products[sku]
+            # Create or get product
+            if sku not in products:
+                products[sku] = ProductOffering.objects.create(name=product_name, sku=sku, retail_price=retail)
+            po = products[sku]
 
+            # Create or get staff
+            if staff_code not in staff_list:
+                person, created = Individual.objects.get_or_create(name=staff_code)
+                staff_list[staff_code] = Staff.objects.create(name=staff_code, individual=person)
+            staff = staff_list[staff_code]
+                
+            # Is the current line a new sale or another item for an existing sale
             if len(sales) == 0 or sales[-1].docket_number != docket_number:
-                sale = Sale(store=store, datetime=date_time, docket_number=docket_number, total_amount=amount, total_discount=0)
+                sale = Sale(store=store, datetime=date_time, docket_number=docket_number, total_amount=amount_inc, total_amount_excl=amount_excl, total_tax=amount_tax, staff=staff, total_discount=discount, promotion=promotion)
                 sales.append(sale)
 
-                tender = Tender(tender_type=cash, amount=amount)
+                tender = Tender(tender_type=cash, amount=amount_inc)
                 tender.tmpsale = sale
                 tenders.append( tender )
             else:
                 sale = sales[-1]
-                sale.total_amount += amount
-                tenders[-1].amount += amount
+                sale.total_amount += amount_inc
+                sale.total_amount_excl += amount_excl
+                sale.total_tax += amount_tax
+                sale.total_discount += discount
+                tenders[-1].amount += amount_inc
 
-            item = SaleItem(amount=retail, product=po, discount=0)
+            item = SaleItem(amount=amount_excl, tax=amount_tax, product=po, quantity=quantity, discount=discount, promotion=promotion)
             item.tmpsale=sale
             items.append(item)
 

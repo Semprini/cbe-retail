@@ -22,9 +22,10 @@ from rest_framework import serializers, viewsets
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
+from cbe.urls import cberouter
+
 import retail.product.views as ProductViews
 import retail.sale.views as SaleViews
-from cbe.urls import cberouter
 
 admin.site.site_title = 'CBE Retail'
 admin.site.site_header = 'Retail Business Entities'
