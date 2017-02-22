@@ -4,6 +4,12 @@ FROM python:latest
 # Some stuff that everyone has been copy-pasting
 # since the dawn of time.
 ENV PYTHONUNBUFFERED 1
+ENV DBENGINE sqlite3
+ENV DBNAME /code/db.sqlite3
+ENV DBHOST None
+ENV DBPORT None
+ENV DBUSER None
+ENV DBPASSWORD None
 
 # Install some necessary things.
 RUN apt-get update
@@ -13,7 +19,6 @@ RUN apt-get install -y swig libssl-dev dpkg-dev netcat libmysqlclient-dev
 #RUN mkdir /code
 RUN git clone https://github.com/Semprini/cbe-retail.git /code
 WORKDIR /code
-#CD /code
 
 # Install our requirements.
 RUN pip install -U pip
