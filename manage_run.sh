@@ -14,7 +14,8 @@ DATABASES = {\n\
     }\n\
 }\n" > /code/retail/local_settings.py
 
-#python manage.py makemigrations business_interaction customer location trouble physical_object supplier_partner resource human_resources product pricing sale
-python manage.py migrate --run-syncdb
+python manage.py migrate auth contenttypes
+python manage.py makemigrations business_interaction location physical_object resource customer trouble supplier_partner human_resources product pricing sale
+python manage.py migrate
 #uwsgi --ini uwsgi.ini
 python manage.py runserver 0.0.0.0:8000
