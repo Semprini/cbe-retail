@@ -8,7 +8,7 @@ DATABASES = {\n\
         'ENGINE': 'django.db.backends.${DBENGINE}',\n\
         'NAME': '${DBNAME}',\n\
         'HOST': '${DBHOST}',\n\
-        'PORT': '${DBPORT}',\n\
+        'PORT': ${DBPORT},\n\
         'USER': '${DBUSER}',\n\
         'PASSWORD': '${DBPASSWORD}',\n\
     }\n\
