@@ -4,7 +4,7 @@ FROM python:latest
 # Set default required environment variables
 ENV PYTHONUNBUFFERED 1
 ENV DBENGINE sqlite3
-ENV DBNAME /code/db.sqlite3
+ENV DBNAME /code/dblocal.sqlite3
 ENV DBHOST None
 ENV DBPORT None
 ENV DBUSER None
