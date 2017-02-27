@@ -62,6 +62,11 @@ INSTALLED_APPS = (
 
 SITE_ID = 1
 
+#All auth settings
+ACCOUNT_EMAIL_REQUIRED=True
+ACCOUNT_AUTHENTICATION_METHOD="email"
+LOGIN_REDIRECT_URL="/api/"
+
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
