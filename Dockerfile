@@ -23,8 +23,8 @@ RUN pip install -U pip
 RUN pip install -Ur requirements.txt
 RUN pip install uwsgi mysqlclient
 
-# Collect our static media if serviing via uwsgi.
-#RUN python manage.py collectstatic --noinput
+# Collect our static media
+RUN python manage.py collectstatic --noinput
 
 # Specify the command to run when the image is run.
 RUN ["chmod", "+x", "/code/manage_run.sh"]
