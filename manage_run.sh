@@ -17,5 +17,5 @@ DATABASES = {\n\
 #python manage.py migrate auth contenttypes
 #python manage.py makemigrations business_interaction location physical_object resource customer trouble supplier_partner human_resources product pricing sale
 python manage.py migrate
-uwsgi --ini uwsgi.ini
-#python manage.py runserver 0.0.0.0:8000
+#uwsgi --ini uwsgi.ini
+python manage.py runserver 0.0.0.0:8000

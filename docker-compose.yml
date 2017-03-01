@@ -1,0 +1,32 @@
+# TODO: Copy of static filed from cbe-retail volume to static-data volume
+version: '2'
+services:
+    cbe-retail:
+        image: semprini/cbe-retail
+        environment:
+            DBENGINE: mysql
+            DBHOST: db
+            DBNAME: <dbname>
+            DBPASSWORD: <pass>
+            DBUSER: <user>
+        external_links:
+            - pxc/pxclb:db
+        volumes:
+            - /usr/local/apache2/htdocs/
+        labels:
+            io.rancher.container.pull_image: always
+    static-data:
+        image: tianon/true
+        depends_on:
+            - cbe-retail
+        network_mode: none
+        volumes:
+            - /usr/local/apache2/htdocs/
+        labels:
+            io.rancher.container.start_once: 'true'
+    web-httpd:
+        image: httpd:alpine
+        volumes_from:
+            - static-data
+        labels:
+            io.rancher.sidekicks: static-data
