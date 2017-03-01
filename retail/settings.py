@@ -130,6 +130,9 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'cbe.utils.api.BrowsableAPIRendererWithoutForms',
     ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    )
 }
 
 # Internationalization

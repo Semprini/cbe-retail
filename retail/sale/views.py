@@ -1,3 +1,5 @@
+import django_filters.rest_framework
+from rest_framework import filters
 from rest_framework import permissions, renderers, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
@@ -10,6 +12,9 @@ class SaleViewSet(viewsets.ModelViewSet):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
+    filter_fields = ('store','datetime',)
+    search_fields = ('customer', 'promotion')
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter,)
 
 class SaleItemViewSet(viewsets.ModelViewSet):
     queryset = SaleItem.objects.all()
