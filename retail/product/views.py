@@ -9,16 +9,16 @@ from retail.product.serializers import ProductOfferingSerializer, ProductCategor
 class ProductOfferingViewSet(viewsets.ModelViewSet):
     queryset = ProductOffering.objects.all()
     serializer_class = ProductOfferingSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
 
 class ProductCategoryViewSet(viewsets.ModelViewSet):
     queryset = ProductCategory.objects.all()
     serializer_class = ProductCategorySerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
 
 class PromotionViewSet(viewsets.ModelViewSet):
     queryset = Promotion.objects.all()
     serializer_class = PromotionSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
 
     
