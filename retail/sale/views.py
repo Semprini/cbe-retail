@@ -15,7 +15,9 @@ class SaleViewSet(viewsets.ModelViewSet):
     filter_fields = ('store','datetime',)
     search_fields = ('customer', 'promotion')
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter,)
+    
 
+        
 class SaleItemViewSet(viewsets.ModelViewSet):
     queryset = SaleItem.objects.all()
     serializer_class = SaleItemSerializer

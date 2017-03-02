@@ -13,7 +13,6 @@ ENV DBPASSWORD None
 # Install some necessary things.
 RUN apt-get update
 RUN apt-get install -y swig libssl-dev dpkg-dev netcat libmysqlclient-dev
-RUN apt-get install python3-pandas
 
 # Copy all our files into the image.
 RUN git clone https://github.com/Semprini/cbe-retail.git /code
