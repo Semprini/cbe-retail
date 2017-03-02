@@ -7,4 +7,5 @@ django-nose
 django-crispy-forms
 django-gm2m
 django-allauth
+rest-pandas
 git+https://github.com/Semprini/cbe.git
