@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from retail.sale.models import Sale, SaleItem, TenderType, Tender, LoyaltyTransaction
+from retail.sale.models import Sale, SaleItem, TenderType, Tender
+from retail.loyalty.models import LoyaltyTransaction
 
 class TenderInline(admin.TabularInline):
     model = Tender
@@ -20,13 +21,8 @@ class SaleAdmin(admin.ModelAdmin):
     list_filter = ('datetime', 'store')
     inlines = [ TenderInline, SaleItemInline, LoyaltyTransactionInline]
 
-class LoyaltyTransactionAdmin(admin.ModelAdmin):
-    list_display = ('sale', 'promotion','amount')
-    #list_filter = ('sale__datetime', 'sale__store')
-    
 
-
-admin.site.register(LoyaltyTransaction, LoyaltyTransactionAdmin)
+   
 admin.site.register(Sale, SaleAdmin)
 admin.site.register(SaleItem)
 admin.site.register(TenderType)

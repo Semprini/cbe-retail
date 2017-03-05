@@ -3,12 +3,14 @@ from decimal import Decimal
 
 from django.db import models
 from django.utils import timezone
+from django.contrib.contenttypes.models import ContentType
 
-from cbe.party.models import Individual
+from cbe.party.models import Individual, Organisation, Owner
 from cbe.location.models import AbsoluteLocalLocation
 from cbe.customer.models import Customer
 from cbe.resource.models import PhysicalResource
 from cbe.human_resources.models import Staff
+from cbe.physical_object.models import Device
 from retail.product.models import ProductOffering, Promotion
 from retail.pricing.models import PriceChannel, PriceCalculation
 
@@ -74,19 +76,16 @@ class Tender(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     reference = models.CharField(max_length=200)
 
-
-class LoyaltyTransaction(models.Model):
-    sale = models.ForeignKey(Sale, db_index=True, related_name='loyalty_transactions', on_delete=models.CASCADE)
-    items = models.ManyToManyField(SaleItem, blank=True)
-    promotion = models.ForeignKey(Promotion, null=True,blank=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-
     
+
 def ImportFakeDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
 
     print("{}|{}".format(storecode,datetxt))
     cash, created = TenderType.objects.get_or_create(name="Cash")
     store, created = AbsoluteLocalLocation.objects.get_or_create( name=storecode, x=0, y=0, z=0)
+    store_org, created = Organisation.objects.get_or_create( organisation_type="Store", name=storecode )
+    org_type = ContentType.objects.get_for_model(Organisation)
+    owner_role, created = Owner.objects.get_or_create( party_content_type = org_type, party_object_id=store_org.id )
     date = datetime.date(day=int(datetxt[0:2]),month=int(datetxt[3:5]),year=int(datetxt[6:10]))
 
     items = []
@@ -104,10 +103,21 @@ def ImportFakeDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
     promotions = {}
     for promotion in Promotion.objects.all():
         promotions[promotion.name] = promotion
+        
+    tills = {}
+    for till in PhysicalResource.objects.filter( name="Till", owner=owner_role ):
+        tills["%s:%s"%(till.owner,till.serial_number)] = till
+        
+    customers = {}
+    for customer in Customer.objects.all():
+        customers[customer_number] = customer
             
     for line in dsrdata.split('\n'):
         data = line.split(',')
         if data[0] == "1":
+            time = datetime.time(int(data[25][1:3]),int(data[25][3:5]),0)
+            date_time = timezone.make_aware(datetime.datetime.combine(date,time), timezone.get_current_timezone())
+            #date_time = datetime.datetime.combine(date,time)
             docket_number = data[3].strip('"')
             sku = data[6].strip('"')
             product_name = data[7].strip('"')
@@ -117,14 +127,34 @@ def ImportFakeDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
             amount_inc = amount_excl + amount_tax
             retail = Decimal(data[31].strip('"'))
             discount = (retail*quantity) - amount_inc
+            cost = Decimal(data[32].strip('"'))
             tender_type = data[15].strip('"')
             barcode = data[16].strip('"')
-            time = datetime.time(int(data[25][1:3]),int(data[25][3:5]),0)
             staff_code = data[26].strip('"')
-            #till
+            till_lineno = data[27].strip('"')
+            till_type = data[28].strip('"')
+
+            loyaltyno = data[17].strip('"')
+            supplierid = data[18].strip('"')
+            suppliersku = data[19].strip('"')
+            local_retail_price = Decimal(data[20].strip('"'))
+            stock_on_hand = Decimal(data[21].strip('"'))
+            internet_flag = data[22].strip('"')
+            trade_sale = data[23].strip('"')
+            account = data[24].strip('"')
+            calc_type = data[29].strip('"')
+            calc_ref = data[30].strip('"')
+            #customer
+            #id
+            #id type
             
-            date_time = timezone.make_aware(datetime.datetime.combine(date,time), timezone.get_current_timezone())
-            #date_time = datetime.datetime.combine(date,time)
+            # Get or create till resource and corresponding device
+            if "%s:%s"%(owner_role,till_lineno) not in tills.keys():
+                device = Device( owner=owner_role, serial_number=till_lineno, physical_object_type="Till", model=till_type )
+                device.save()
+                tills["%s:%s"%(owner_role,till_lineno)] = PhysicalResource.objects.create( owner=owner_role, serial_number=till_lineno, name="Till" )
+                tills["%s:%s"%(owner_role,till_lineno)].physcial_objects.add(device)
+            till = tills["%s:%s"%(owner_role,till_lineno)]
             
             # Create or get promotion
             promo_code = data[12].strip('"')
@@ -151,7 +181,16 @@ def ImportFakeDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
                 
             # Is the current line a new sale or another item for an existing sale
             if len(sales) == 0 or sales[-1].docket_number != docket_number:
-                sale = Sale(store=store, datetime=date_time, docket_number=docket_number, total_amount=amount_inc, total_amount_excl=amount_excl, total_tax=amount_tax, staff=staff, total_discount=discount, promotion=promotion)
+                sale = Sale(    store=store, 
+                                datetime=date_time, 
+                                docket_number=docket_number, 
+                                total_amount=amount_inc, 
+                                total_amount_excl=amount_excl, 
+                                total_tax=amount_tax, 
+                                staff=staff, 
+                                total_discount=discount, 
+                                promotion=promotion, 
+                                till=till )
                 sales.append(sale)
 
                 tender = Tender(tender_type=cash, amount=amount_inc)
@@ -165,7 +204,12 @@ def ImportFakeDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
                 sale.total_discount += discount
                 tenders[-1].amount += amount_inc
 
-            item = SaleItem(amount=amount_excl, tax=amount_tax, product=po, quantity=quantity, discount=discount, promotion=promotion)
+            item = SaleItem(    amount=amount_excl, 
+                                tax=amount_tax, 
+                                product=po, 
+                                quantity=quantity, 
+                                discount=discount, 
+                                promotion=promotion)
             item.tmpsale=sale
             items.append(item)
 
@@ -264,6 +308,8 @@ dsr = """
 1,"X18","30/11/2016","31","04","4363","237724","GATE 975X900MM FLAT TOP","","1","46.16","38","","","","0","9415008100927","","HARK","NZGFT1009B",58.98,11,"","T","MEGAWCONST","0758","KB",3,"RET","matrix","BP",58.98,38
 1,"X18","30/11/2016","31","01","2071","292640","LATCH MAGNA TOP PULLKIT S3 BLACK","","1","110.13","79.86","","","","0","736494009754","","AWAR","ML3TPLD",149,1,"","T","MEGAWCONST","0758","KB",5,"RET","matrix","BP",149,79.86
 1,"X18","30/11/2016","36","14","3114","173503","COKE ZERO 600ML","","1","3.37","2.56","","","","$","9300675031226","","CCAL","7129",3.88,89,"","N","$","0753","ME",1,"RET","retail","",3.88,2.57
+"""
+x="""
 1,"X18","30/11/2016","41","04","4311","431125","PAVE SET 30KG       DRY MIX","","1","25.87","22.95","","","","0","9421900386109","","DRYM","M8",33.06,45,"","T","BETTSBISH","0754","KB",1,"RET","matrix","BP+",33.06,22.96
 1,"X18","30/11/2016","45","01","1938","195982","SCREW GRABBER COLL  HIGH THD 6X41 1000PK","","1","28.62","16.54","","","","$","9416463139651","2642450448728","WIWB","13965",32.91,4,"","N","$","0756","KB",1,"RET","retail","",32.91,16.54
 1,"X18","30/11/2016","49","21","1325","128703","RAKE LEAF WIDE ATLAS HOME","","1","17.98","11.13","","","","0","9414700051179","","AHM","AT05117",22.98,4,"","T","TAINUI","0800","ME",2,"RET","matrix","TR",22.98,11.13

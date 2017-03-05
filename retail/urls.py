@@ -26,6 +26,7 @@ from cbe.urls import cberouter
 
 import retail.product.views as ProductViews
 import retail.sale.views as SaleViews
+import retail.loyalty.views as LoyaltyViews
 
 admin.site.site_title = 'CBE Retail'
 admin.site.site_header = 'Retail Business Entities'
@@ -39,7 +40,11 @@ retailrouter.register(r'sale/sale', SaleViews.SaleViewSet)
 retailrouter.register(r'sale/sale_item', SaleViews.SaleItemViewSet)
 retailrouter.register(r'sale/tender', SaleViews.TenderViewSet)
 retailrouter.register(r'sale/tender_type', SaleViews.TenderTypeViewSet)
-retailrouter.register(r'sale/loyalty_transactions', SaleViews.LoyaltyTransactionViewSet)
+
+retailrouter.register(r'loyalty/loyalty_transaction', LoyaltyViews.LoyaltyTransactionViewSet)
+retailrouter.register(r'loyalty/loyalty_scheme', LoyaltyViews.LoyaltySchemeViewSet)
+retailrouter.register(r'loyalty/loyalty_card_type', LoyaltyViews.LoyaltyCardTypeViewSet)
+retailrouter.register(r'loyalty/loyalty_card', LoyaltyViews.LoyaltyCardViewSet)
 
 router = DefaultRouter()
 for route in retailrouter.registry:
