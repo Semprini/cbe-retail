@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField
-from retail.sale.models import Sale, SaleItem, TenderType, Tender
+from retail.sale.models import RetailChannel, Sale, SaleItem, TenderType, Tender
 
 
 class SaleSerializer(serializers.HyperlinkedModelSerializer):
@@ -14,8 +14,10 @@ class SaleSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Sale
-        fields = ('type', 'url', 'store', 'datetime', 'docket_number',
-                  'total_amount', 'total_discount', 'customer', 'id_type','id_number','promotion','tenders','sale_items',)
+        fields = ('type', 'url', 'channel', 'store', 'datetime', 'docket_number',
+                  'total_amount', 'total_amount_excl', 'total_discount', 'total_tax',
+                  'customer', 'account', 'promotion','till', 'staff', 
+                  'price_channel', 'price_calculation', 'tenders','sale_items',)
 
 
 class SaleItemSerializer(serializers.HyperlinkedModelSerializer):
@@ -43,6 +45,14 @@ class TenderSerializer(serializers.HyperlinkedModelSerializer):
         model = Tender
         fields = ('type', 'url', 'sale', 'tender_type', 'amount',
                   'reference', )
+                  
+                  
+class RetailChannelSerializer(serializers.HyperlinkedModelSerializer):
+    type = TypeField()
+
+    class Meta:
+        model = RetailChannel
+        fields = ('type', 'url', 'name',)
                   
                   
           

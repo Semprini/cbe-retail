@@ -11,19 +11,12 @@ class LoyaltyScheme( models.Model ):
         return "{}".format(self.name,)
 
         
-class LoyaltyCardType( IdentificationType ):
-    pass
-    
-    
-class LoyaltyCard( Identification ):
-    pass
-    
-    
 class LoyaltyTransaction( models.Model ):
     sale = models.ForeignKey(Sale, db_index=True, related_name='loyalty_transactions', on_delete=models.CASCADE)
     items = models.ManyToManyField(SaleItem, blank=True)
     promotion = models.ForeignKey(Promotion, null=True,blank=True)
     scheme = models.ForeignKey(LoyaltyScheme, null=True,blank=True)
+    identification = models.ForeignKey(Identification, null=True,blank=True)
     
     loyalty_amount = models.DecimalField(max_digits=10, decimal_places=2)
 

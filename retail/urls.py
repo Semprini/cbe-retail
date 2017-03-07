@@ -36,6 +36,7 @@ retailrouter.register(r'product/product_offering', ProductViews.ProductOfferingV
 retailrouter.register(r'product/product_category', ProductViews.ProductCategoryViewSet)
 retailrouter.register(r'product/promotion', ProductViews.PromotionViewSet)
 
+retailrouter.register(r'sale/retail_channel', SaleViews.RetailChannelViewSet)
 retailrouter.register(r'sale/sale', SaleViews.SaleViewSet)
 retailrouter.register(r'sale/sale_item', SaleViews.SaleItemViewSet)
 retailrouter.register(r'sale/tender', SaleViews.TenderViewSet)
@@ -43,8 +44,6 @@ retailrouter.register(r'sale/tender_type', SaleViews.TenderTypeViewSet)
 
 retailrouter.register(r'loyalty/loyalty_transaction', LoyaltyViews.LoyaltyTransactionViewSet)
 retailrouter.register(r'loyalty/loyalty_scheme', LoyaltyViews.LoyaltySchemeViewSet)
-retailrouter.register(r'loyalty/loyalty_card_type', LoyaltyViews.LoyaltyCardTypeViewSet)
-retailrouter.register(r'loyalty/loyalty_card', LoyaltyViews.LoyaltyCardViewSet)
 
 router = DefaultRouter()
 for route in retailrouter.registry:

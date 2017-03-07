@@ -7,7 +7,7 @@ from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField
 from cbe.party.serializers import PartyRelatedField
-from retail.loyalty.models import LoyaltyTransaction, LoyaltyCard, LoyaltyScheme, LoyaltyCardType
+from retail.loyalty.models import LoyaltyTransaction, LoyaltyScheme
 
                  
                   
@@ -16,7 +16,7 @@ class LoyaltyTransactionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = LoyaltyTransaction
-        fields = ('type', 'url', 'scheme', 'promotion', 'sale', 'items', 'loyalty_amount', )                  
+        fields = ('type', 'url', 'scheme', 'promotion', 'sale', 'items', 'loyalty_amount', 'identification')                  
         
 
 class LoyaltySchemeSerializer(serializers.HyperlinkedModelSerializer):
@@ -26,19 +26,4 @@ class LoyaltySchemeSerializer(serializers.HyperlinkedModelSerializer):
         model = LoyaltyScheme
         fields = ('type', 'url', 'name' )  
 
-        
-class LoyaltyCardTypeSerializer(serializers.HyperlinkedModelSerializer):
-    type = TypeField()
-    
-    class Meta:
-        model = LoyaltyCardType
-        fields = ('type', 'url', 'name' )  
-        
-        
-class LoyaltyCardSerializer(serializers.HyperlinkedModelSerializer):
-    type = TypeField()
-    party = PartyRelatedField()
-    
-    class Meta:
-        model = LoyaltyCard
-        fields = ('type', 'url', 'identification_type', 'number', 'party' )                          
+                     

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from retail.sale.models import Sale, SaleItem, TenderType, Tender
+from retail.sale.models import Sale, SaleItem, TenderType, Tender, RetailChannel
 from retail.loyalty.models import LoyaltyTransaction
 
 class TenderInline(admin.TabularInline):
@@ -27,3 +27,4 @@ admin.site.register(Sale, SaleAdmin)
 admin.site.register(SaleItem)
 admin.site.register(TenderType)
 admin.site.register(Tender)
+admin.site.register(RetailChannel)

@@ -4,18 +4,23 @@ from rest_framework import permissions, renderers, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
-from retail.sale.models import Sale, SaleItem, Tender, TenderType
-from retail.sale.serializers import SaleSerializer, SaleItemSerializer, TenderSerializer, TenderTypeSerializer
+from retail.sale.models import Sale, SaleItem, Tender, TenderType, RetailChannel
+from retail.sale.serializers import SaleSerializer, SaleItemSerializer, TenderSerializer, TenderTypeSerializer, RetailChannelSerializer
 
 
 class SaleViewSet(viewsets.ModelViewSet):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
-    filter_fields = ('store','datetime',)
-    search_fields = ('customer', 'promotion')
+    filter_fields = ('channel','store','datetime',)
+    #search_fields = ('customer', 'promotion')
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter,)
+
     
+class RetailChannelViewSet(viewsets.ModelViewSet):
+    queryset = RetailChannel.objects.all()
+    serializer_class = RetailChannelSerializer
+    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
 
         
 class SaleItemViewSet(viewsets.ModelViewSet):
