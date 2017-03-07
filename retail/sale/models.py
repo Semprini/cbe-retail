@@ -289,13 +289,12 @@ def ImportFakeDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
     SaleItem.objects.bulk_create(items)
 
 
-def fake(stores, day_count,year,month=1,day=1):
+def fake(stores, day_count,year,month=1,day=1,path = "./dsr/"):
     start_date = datetime.date(day=day, month=month, year=year)
 
     # Find a random dsr file
-    path = "C:\\Temp\\dsr\\"
     file = random.choice(os.listdir(path))
-    with open("C:\\Temp\\dsr\\" + file) as f:
+    with open(path + file) as f:
         dsr = f.readlines()
     
     for date in (start_date + datetime.timedelta(n) for n in range(day_count)):
