@@ -176,7 +176,7 @@ def ImportFakeDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
                 if accountno not in customer_accounts.keys():
                     customers = Customer.objects.filter( customer_number=accountno )
                     if len(customers) == 0:
-                        customer = Customer( customer_number=accountno, customer_status="new", valid_from=datetime.datetime.now() )
+                        customer = Customer( customer_number=accountno, customer_status="new", valid_from=timezone.make_aware(datetime.datetime.now()) )
                         customer.organisation = unknown_org
                         customer.save()
                     else:
@@ -186,7 +186,7 @@ def ImportFakeDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
                 customer = account.customer
             elif loyaltyno != "":
                 if loyaltyno not in customer_accounts.keys():
-                    customer = Customer( customer_number=loyaltyno, customer_status="new", valid_from=datetime.datetime.now() )
+                    customer = Customer( customer_number=loyaltyno, customer_status="new", valid_from=timezone.make_aware(datetime.datetime.now()) )
                     customer.individual = unknown_ind
                     customer.save()
                     customer_accounts[loyaltyno] = CustomerAccount.objects.create( account_number=loyaltyno, account_status="new", customer=customer )
@@ -289,20 +289,7 @@ def ImportFakeDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
     SaleItem.objects.bulk_create(items)
 
 
-def fake(day_count,year,month=1,day=1):
-    stores = [
-        "X01",]
-    x = [ "X02","X03","X04","X05","X06","X07","X08","X09","X10",
-        "X11","X12","X13","X14","X15","X16","X17","X18","X19","X20",
-        "X21","X22","X23","X24","X25","X26","X27","X28","X29","X30",
-        "X31","X32","X33","X34","X35","X36","X37","X38","X39","X40",
-        "X41","X42","X43","X44","X45","X46","X47","X48","X49","X50",
-        "X51","X52","X53","X54","X55","X56","X57","X58","X59","X60",
-        "X61","X62","X63","X64","X65","X66","X67","X68","X69","X70",
-        "X71","X72","X73","X74","X75","X76","X77","X78","X79","X80",
-        "X81",
-    ]
-
+def fake(stores, day_count,year,month=1,day=1):
     start_date = datetime.date(day=day, month=month, year=year)
 
     # Find a random dsr file
@@ -313,7 +300,13 @@ def fake(day_count,year,month=1,day=1):
     
     for date in (start_date + datetime.timedelta(n) for n in range(day_count)):
         for store in stores:
-            ImportFakeDSR(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr_sample)
+            ImportFakeDSR(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr)
+
+            
+default_stores = [
+    "X01", "X02","X03","X04","X05","X06","X07","X08","X09","X10", "X11","X12","X13","X14","X15","X16","X17","X18","X19","X20", "X21","X22","X23","X24","X25","X26","X27","X28","X29","X30", "X31","X32","X33","X34","X35","X36","X37","X38","X39","X40", "X41","X42","X43","X44","X45","X46","X47","X48","X49","X50",
+    "X51","X52","X53","X54","X55","X56","X57","X58","X59","X60", "X61","X62","X63","X64","X65","X66","X67","X68","X69","X70", "X71","X72","X73","X74","X75","X76","X77","X78","X79","X80", "X81",
+]
 
 dsr_sample = """
 0,"X18","30/11/2016"
