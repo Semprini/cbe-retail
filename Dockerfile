@@ -21,7 +21,7 @@ WORKDIR /code
 # Install our requirements.
 RUN pip install -U pip
 RUN pip install -Ur requirements.txt
-RUN pip install uwsgi mysqlclient
+RUN pip install uwsgi mysqlclient psycopg2
 
 # Collect our static media
 RUN python manage.py collectstatic --noinput
