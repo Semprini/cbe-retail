@@ -9,6 +9,9 @@ ENV DBHOST None
 ENV DBPORT None
 ENV DBUSER None
 ENV DBPASSWORD None
+ENV SUNAME super 
+ENV SUEMAIL super@super.com
+ENV SUPASS super
 
 # Install some necessary things.
 RUN apt-get update
