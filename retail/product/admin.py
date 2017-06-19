@@ -1,10 +1,9 @@
 from django.contrib import admin
 
-from retail.product.models import ProductOffering, ProductOfferingPrice, ProductCategory, Promotion, ProductStockLevel
+from retail.product.models import Product, ProductOffering, ProductCategory, ProductStockLevel
 
+admin.site.register(Product)
 admin.site.register(ProductOffering)
-admin.site.register(ProductOfferingPrice)
 admin.site.register(ProductCategory)
-admin.site.register(Promotion)
 admin.site.register(ProductStockLevel)
 

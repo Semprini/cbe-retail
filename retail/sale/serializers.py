@@ -14,7 +14,7 @@ class SaleSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Sale
-        fields = ('type', 'url', 'channel', 'store', 'datetime', 'docket_number',
+        fields = ('type', 'url', 'channel', 'location', 'seller', 'datetime', 'docket_number',
                   'total_amount', 'total_amount_excl', 'total_discount', 'total_tax',
                   'customer', 'account', 'identification', 'promotion','till', 'staff', 
                   'price_channel', 'price_calculation', 'tenders','sale_items',)

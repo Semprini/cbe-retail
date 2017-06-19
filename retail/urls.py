@@ -28,17 +28,19 @@ import retail.product.views as ProductViews
 import retail.sale.views as SaleViews
 import retail.loyalty.views as LoyaltyViews
 import retail.market.views as MarketViews
+import retail.pricing.views as PriceViews
 
 admin.site.site_title = 'CBE Retail'
 admin.site.site_header = 'Retail Business Entities'
 
 retailrouter = DefaultRouter()
+retailrouter.register(r'product/product', ProductViews.ProductViewSet)
 retailrouter.register(r'product/product_offering', ProductViews.ProductOfferingViewSet)
 retailrouter.register(r'product/product_category', ProductViews.ProductCategoryViewSet)
-retailrouter.register(r'product/promotion', ProductViews.PromotionViewSet)
-retailrouter.register(r'product/product_offering_price', ProductViews.ProductOfferingPriceViewSet)
 retailrouter.register(r'product/product_stock_level', ProductViews.ProductStockLevelViewSet)
 
+retailrouter.register(r'price/promotion', PriceViews.PromotionViewSet)
+retailrouter.register(r'price/product_offering_price', PriceViews.ProductOfferingPriceViewSet)
 
 retailrouter.register(r'sale/retail_channel', SaleViews.RetailChannelViewSet)
 retailrouter.register(r'sale/sale', SaleViews.SaleViewSet)

@@ -11,8 +11,8 @@ from cbe.customer.models import Customer, CustomerAccount
 from cbe.resource.models import PhysicalResource
 from cbe.human_resources.models import Staff, Identification, IdentificationType
 from cbe.physical_object.models import Device
-from retail.product.models import ProductOffering, Promotion
-from retail.pricing.models import PriceChannel, PriceCalculation
+from retail.product.models import ProductOffering
+from retail.pricing.models import PriceChannel, PriceCalculation, Promotion
 
 
 class RetailChannel(models.Model):
@@ -24,13 +24,14 @@ class RetailChannel(models.Model):
 
 class Sale(models.Model):
     channel = models.ForeignKey(RetailChannel)
-    store = models.ForeignKey(AbsoluteLocalLocation)
-    datetime = models.DateTimeField()
+    location = models.ForeignKey(AbsoluteLocalLocation)
+    seller = models.ForeignKey(Organisation)
+    datetime = models.DateTimeField(default=datetime.datetime.now)
     docket_number = models.CharField(max_length=50, null=True,blank=True )
 
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     total_amount_excl = models.DecimalField(max_digits=10, decimal_places=2)
-    total_discount = models.DecimalField(max_digits=10, decimal_places=2)
+    total_discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_tax = models.DecimalField(max_digits=10, decimal_places=2)
 
     customer = models.ForeignKey(Customer, db_index=True, null=True,blank=True)
@@ -45,7 +46,7 @@ class Sale(models.Model):
     price_calculation = models.ForeignKey(PriceCalculation, null=True,blank=True)
 
     def __str__(self):
-        return "%s|%s|%d"%(self.store,self.datetime,self.total_amount)
+        return "%s|%s|%d"%(self.location,self.datetime,self.total_amount)
 
 
 class SaleItem(models.Model):
@@ -53,7 +54,7 @@ class SaleItem(models.Model):
     product = models.ForeignKey(ProductOffering, db_index=True, )
 
     quantity = models.DecimalField(max_digits=10, decimal_places=4)
-    unit_of_measure = models.CharField(max_length=200)
+    unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
 
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     discount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -61,10 +62,8 @@ class SaleItem(models.Model):
 
     promotion = models.ForeignKey(Promotion, null=True,blank=True)
     
-    
-
     def __str__(self):
-        return self.product.name
+        return "%s"%self.product
 
 
 class TenderType(models.Model):
@@ -82,9 +81,11 @@ class Tender(models.Model):
     sale = models.ForeignKey(Sale, db_index=True, related_name='tenders', on_delete=models.CASCADE)
     tender_type = models.ForeignKey(TenderType)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    reference = models.CharField(max_length=200)
+    reference = models.CharField(max_length=200, null=True, blank=True)
 
-    
+    def __str__(self):
+        return "%s %s"%(self.sale, self.tender_type)
+
 
 def ImportFakeDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
 
@@ -235,7 +236,8 @@ def ImportFakeDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
                 
             # Is the current line a new sale or another item for an existing sale
             if len(sales) == 0 or sales[-1].docket_number != docket_number:
-                sale = Sale(    store=store, 
+                sale = Sale(    location=store,
+                                seller=store_org,
                                 datetime=date_time, 
                                 docket_number=docket_number, 
                                 total_amount=amount_inc, 

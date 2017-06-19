@@ -6,9 +6,17 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField
-from retail.product.models import ProductOffering, ProductCategory, Promotion, ProductOfferingPrice, ProductStockLevel
+from retail.product.models import Product, ProductOffering, ProductCategory, ProductStockLevel
 
 
+class ProductSerializer(serializers.HyperlinkedModelSerializer):
+    type = TypeField()
+
+    class Meta:
+        model = Product
+        fields = ('type', 'url', 'valid_from', 'valid_to', 'name', 'description', 'unit_of_measure', 'sku', 'bundle', 'categories')
+
+        
 class ProductOfferingSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
@@ -19,8 +27,7 @@ class ProductOfferingSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = ProductOffering
-        fields = ('type', 'url', 'valid_from', 'valid_to', 'name',
-                  'description', 'sku', 'categories', 'channels', 'segments', 'strategies', 'retail_price', 'product_offering_prices', 'supplier','buyer')
+        fields = ('type', 'url', 'valid_from', 'valid_to', 'product', 'channels', 'segments', 'strategies', 'supplier_code', 'retail_price', 'product_offering_prices', 'supplier','buyer')
 
                   
 class ProductStockLevelSerializer(serializers.HyperlinkedModelSerializer):
@@ -31,15 +38,6 @@ class ProductStockLevelSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('type', 'url', 'datetime', 'store', 'product_offering','location','amount','average')
     
     
-class ProductOfferingPriceSerializer(serializers.HyperlinkedModelSerializer):
-    type = TypeField()
-
-    class Meta:
-        model = ProductOfferingPrice
-        fields = ('type', 'url', 'product_offering', 'promotion', 'valid_from', 'valid_to', 'name',
-                  'description', 'categories', 'amount')
-
-                  
 class ProductCategorySerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
@@ -49,10 +47,3 @@ class ProductCategorySerializer(serializers.HyperlinkedModelSerializer):
                   'description', )
 
 
-class PromotionSerializer(serializers.HyperlinkedModelSerializer):
-    type = TypeField()
-
-    class Meta:
-        model = Promotion
-        fields = ('type', 'url', 'valid_from', 'valid_to', 'name',
-                  'description', 'categories', 'products','customers')
