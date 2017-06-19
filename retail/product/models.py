@@ -61,7 +61,7 @@ class ProductOfferingPrice(models.Model):
     
 class ProductStockLevel(models.Model):
     datetime = models.DateTimeField(auto_now_add=True)
-    product_offering = models.ForeignKey(ProductOffering)
+    product_offering = models.ForeignKey(ProductOffering, related_name='product_offering_stock_levels')
     store = models.ForeignKey(Organisation)
     location = models.ForeignKey(AbsoluteLocalLocation, null=True, blank=True)
     amount = models.DecimalField(max_digits=8, decimal_places=4)

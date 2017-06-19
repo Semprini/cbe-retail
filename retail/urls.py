@@ -37,6 +37,8 @@ retailrouter.register(r'product/product_offering', ProductViews.ProductOfferingV
 retailrouter.register(r'product/product_category', ProductViews.ProductCategoryViewSet)
 retailrouter.register(r'product/promotion', ProductViews.PromotionViewSet)
 retailrouter.register(r'product/product_offering_price', ProductViews.ProductOfferingPriceViewSet)
+retailrouter.register(r'product/product_stock_level', ProductViews.ProductStockLevelViewSet)
+
 
 retailrouter.register(r'sale/retail_channel', SaleViews.RetailChannelViewSet)
 retailrouter.register(r'sale/sale', SaleViews.SaleViewSet)
