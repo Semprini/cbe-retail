@@ -27,6 +27,7 @@ from cbe.urls import cberouter
 import retail.product.views as ProductViews
 import retail.sale.views as SaleViews
 import retail.loyalty.views as LoyaltyViews
+import retail.market.views as MarketViews
 
 admin.site.site_title = 'CBE Retail'
 admin.site.site_header = 'Retail Business Entities'
@@ -35,6 +36,7 @@ retailrouter = DefaultRouter()
 retailrouter.register(r'product/product_offering', ProductViews.ProductOfferingViewSet)
 retailrouter.register(r'product/product_category', ProductViews.ProductCategoryViewSet)
 retailrouter.register(r'product/promotion', ProductViews.PromotionViewSet)
+retailrouter.register(r'product/product_offering_price', ProductViews.ProductOfferingPriceViewSet)
 
 retailrouter.register(r'sale/retail_channel', SaleViews.RetailChannelViewSet)
 retailrouter.register(r'sale/sale', SaleViews.SaleViewSet)
@@ -44,6 +46,10 @@ retailrouter.register(r'sale/tender_type', SaleViews.TenderTypeViewSet)
 
 retailrouter.register(r'loyalty/loyalty_transaction', LoyaltyViews.LoyaltyTransactionViewSet)
 retailrouter.register(r'loyalty/loyalty_scheme', LoyaltyViews.LoyaltySchemeViewSet)
+
+retailrouter.register(r'market/market_segment', MarketViews.MarketSegmentViewSet)
+retailrouter.register(r'market/market_strategy', MarketViews.MarketStrategyViewSet)
+
 
 router = DefaultRouter()
 for route in retailrouter.registry:
