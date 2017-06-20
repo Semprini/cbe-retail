@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('customer', '0005_auto_20170619_1304'),
         ('location', '0001_initial'),
-        ('human_resources', '0004_remove_staff_contact_mediums'),
+        ('human_resources', '0001_initial'),
         ('resource', '0001_initial'),
         ('pricing', '0002_auto_20170620_1554'),
         ('product', '0001_initial'),

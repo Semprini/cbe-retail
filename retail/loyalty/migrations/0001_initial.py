@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('human_resources', '0004_remove_staff_contact_mediums'),
+        ('human_resources', '0001_initial'),
     ]
 
     operations = [
