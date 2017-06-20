@@ -44,7 +44,7 @@ class ProductOffering(models.Model):
 
     product = models.ForeignKey(Product)
     
-    channels = models.ManyToManyField('sale.RetailChannel', blank=True)
+    channels = models.ManyToManyField('sale.SalesChannel', blank=True)
     segments = models.ManyToManyField(MarketSegment, blank=True)
     strategies = models.ManyToManyField(MarketStrategy, blank=True)
     

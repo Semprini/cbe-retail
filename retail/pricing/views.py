@@ -9,12 +9,12 @@ from retail.pricing.serializers import PromotionSerializer, ProductOfferingPrice
 class PromotionViewSet(viewsets.ModelViewSet):
     queryset = Promotion.objects.all()
     serializer_class = PromotionSerializer
-    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
+    permission_classes = (permissions.DjangoModelPermissions, )
 
 
 class ProductOfferingPriceViewSet(viewsets.ModelViewSet):
     queryset = ProductOfferingPrice.objects.all()
     serializer_class = ProductOfferingPriceSerializer
-    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
+    permission_classes = (permissions.DjangoModelPermissions, )
 
     

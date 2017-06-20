@@ -9,10 +9,10 @@ from retail.market.serializers import MarketSegmentSerializer, MarketStrategySer
 class MarketSegmentViewSet(viewsets.ModelViewSet):
     queryset = MarketSegment.objects.all()
     serializer_class = MarketSegmentSerializer
-    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
+    permission_classes = (permissions.DjangoModelPermissions, )
     
 
 class MarketStrategyViewSet(viewsets.ModelViewSet):
     queryset = MarketStrategy.objects.all()
     serializer_class = MarketStrategySerializer
-    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )    
+    permission_classes = (permissions.DjangoModelPermissions, )    

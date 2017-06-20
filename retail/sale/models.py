@@ -15,7 +15,7 @@ from retail.product.models import ProductOffering
 from retail.pricing.models import PriceChannel, PriceCalculation, Promotion
 
 
-class RetailChannel(models.Model):
+class SalesChannel(models.Model):
     name =  models.CharField(max_length=100 )
 
     def __str__(self):
@@ -23,7 +23,7 @@ class RetailChannel(models.Model):
     
 
 class Sale(models.Model):
-    channel = models.ForeignKey(RetailChannel)
+    channel = models.ForeignKey(SalesChannel)
     location = models.ForeignKey(AbsoluteLocalLocation)
     seller = models.ForeignKey(Organisation)
     datetime = models.DateTimeField(default=datetime.datetime.now)
@@ -97,8 +97,8 @@ def ImportFakeDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
     owner_role, created = Owner.objects.get_or_create( party_content_type = org_type, party_object_id=store_org.id )
     date = datetime.date(day=int(datetxt[0:2]),month=int(datetxt[3:5]),year=int(datetxt[6:10]))
 
-    store_channel, created = RetailChannel.objects.get_or_create( name="Store" )
-    internet_channel, created = RetailChannel.objects.get_or_create( name="Internet" )
+    store_channel, created = SalesChannel.objects.get_or_create( name="Store" )
+    internet_channel, created = SalesChannel.objects.get_or_create( name="Internet" )
     airpoints, created = IdentificationType.objects.get_or_create( name="Airpoints Card" )
     unknown_org, created = Organisation.objects.get_or_create( name="Unknown" )
     unknown_ind, created = Individual.objects.get_or_create( name="Unknown"  )
