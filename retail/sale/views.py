@@ -14,7 +14,7 @@ class SaleViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.DjangoModelPermissions, )
     #filter_fields = ('channel','datetime',)
     #search_fields = ('customer', 'promotion')
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter,)
+    #filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter,)
 
     
 class SalesChannelViewSet(viewsets.ModelViewSet):

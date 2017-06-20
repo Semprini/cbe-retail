@@ -11,7 +11,7 @@ from cbe.customer.models import Customer, CustomerAccount
 from cbe.resource.models import PhysicalResource
 from cbe.human_resources.models import Staff, Identification, IdentificationType
 from cbe.physical_object.models import Device
-from retail.product.models import ProductOffering
+from retail.product.models import ProductOffering, Product
 from retail.pricing.models import PriceChannel, PriceCalculation, Promotion
 
 
@@ -87,7 +87,7 @@ class Tender(models.Model):
         return "%s %s"%(self.sale, self.tender_type)
 
 
-def ImportFakeDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
+def ImportDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
 
     print("{}|{}|lines:{}".format(storecode,datetxt,len(dsrdata)))
     cash, created = TenderType.objects.get_or_create(name="Cash")
@@ -109,7 +109,7 @@ def ImportFakeDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
 
     products = {}
     for product in ProductOffering.objects.all():
-        products[product.sku] = product
+        products[product.product.sku] = product
 
     staff_list = {}
     for staff in Staff.objects.all():
@@ -225,7 +225,8 @@ def ImportFakeDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
 
             # Create or get product
             if sku not in products:
-                products[sku] = ProductOffering.objects.create(name=product_name, sku=sku, retail_price=retail)
+                product = Product.objects.create(name=product_name, sku=sku,status="active",)
+                products[sku] = ProductOffering.objects.create(product=product, retail_price=retail)
             po = products[sku]
 
             # Create or get staff
@@ -276,7 +277,7 @@ def ImportFakeDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
     print("{}|{} - Bulk sales ({})".format(storecode,datetxt,len(sales)))
     Sale.objects.bulk_create(sales)
     sales = {}
-    for sale in Sale.objects.filter(store=store, datetime__year=date.year, datetime__month=date.month, datetime__day=date.day,):
+    for sale in Sale.objects.filter(location=store, seller=store_org, datetime__year=date.year, datetime__month=date.month, datetime__day=date.day,):
         sales[sale.docket_number] = sale
 
     print("{}|{} - Bulk tenders ({})".format(storecode,datetxt,len(tenders)))
@@ -301,7 +302,7 @@ def fake(stores, day_count,year,month=1,day=1,path = "./dsr/"):
             with open(path + file) as f:
                 dsr = f.readlines()
 
-            ImportFakeDSR(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr)
+            ImportDSR(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr)
 
             
 default_stores = [
