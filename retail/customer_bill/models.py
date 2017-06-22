@@ -58,7 +58,7 @@ class CustomerBillItem(models.Model):
     bill = models.ForeignKey( CustomerBill )
     
     ITEM_TYPE_CHOICES = ( ('account', 'account'), ('subscription', 'subscription'), ('service', 'service'), ('rebate','rebate'), ('allocation', 'allocation'), ('adjustment', 'adjustment'), ('dispute', 'dispute'), )
-    type = models.CharField(max_length=100, choices=ITEM_TYPE_CHOICES)
+    item_type = models.CharField(max_length=100, choices=ITEM_TYPE_CHOICES)
 
     amount = models.DecimalField(default = 0, max_digits=10, decimal_places=2)
     discounted = models.DecimalField(default = 0, max_digits=10, decimal_places=2)

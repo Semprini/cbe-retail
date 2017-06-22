@@ -29,6 +29,7 @@ import retail.sale.views as SaleViews
 import retail.loyalty.views as LoyaltyViews
 import retail.market.views as MarketViews
 import retail.pricing.views as PriceViews
+import retail.customer_bill.views as CustomerBillViews
 
 admin.site.site_title = 'CBE Retail'
 admin.site.site_header = 'Retail Business Entities'
@@ -53,6 +54,10 @@ retailrouter.register(r'loyalty/loyalty_scheme', LoyaltyViews.LoyaltySchemeViewS
 
 retailrouter.register(r'market/market_segment', MarketViews.MarketSegmentViewSet)
 retailrouter.register(r'market/market_strategy', MarketViews.MarketStrategyViewSet)
+
+retailrouter.register(r'customer_bill/customer_billing_cycle', CustomerBillViews.CustomerBillingCycleViewSet)
+retailrouter.register(r'customer_bill/customer_bill_specification', CustomerBillViews.CustomerBillSpecificationViewSet)
+retailrouter.register(r'customer_bill/customer_bill', CustomerBillViews.CustomerBillViewSet)
 
 
 router = DefaultRouter()
