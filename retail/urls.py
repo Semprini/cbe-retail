@@ -59,6 +59,14 @@ retailrouter.register(r'customer_bill/customer_billing_cycle', CustomerBillViews
 retailrouter.register(r'customer_bill/customer_bill_specification', CustomerBillViews.CustomerBillSpecificationViewSet)
 retailrouter.register(r'customer_bill/customer_bill', CustomerBillViews.CustomerBillViewSet)
 
+retailrouter.register(r'customer_bill/account_bill_item', CustomerBillViews.AccountBillItemViewSet)
+retailrouter.register(r'customer_bill/subscription_bill_item', CustomerBillViews.SubscriptionBillItemViewSet)
+retailrouter.register(r'customer_bill/service_bill_item', CustomerBillViews.ServiceBillItemViewSet)
+retailrouter.register(r'customer_bill/rebate_bill_item', CustomerBillViews.RebateBillItemViewSet)
+retailrouter.register(r'customer_bill/allocation_bill_item', CustomerBillViews.AllocationBillItemViewSet)
+retailrouter.register(r'customer_bill/adjustment_bill_item', CustomerBillViews.AdjustmentBillItemViewSet)
+retailrouter.register(r'customer_bill/dispute_bill_item', CustomerBillViews.DisputeBillItemViewSet)
+
 
 router = DefaultRouter()
 for route in retailrouter.registry:
