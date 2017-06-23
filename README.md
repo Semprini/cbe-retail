@@ -12,6 +12,9 @@ Extensions include:
   - Sale
   - Product
   - Pricing
+  - Customer Bill
+  - Loyalty
+  - Market
  
 Entities inherited from CBE:
   - business_interaction
@@ -22,4 +25,5 @@ Entities inherited from CBE:
   - physical_object
   - supplier_partner
   - resource
+  - human_resources
 
