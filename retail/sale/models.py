@@ -96,7 +96,7 @@ class Tender(models.Model):
         return "%s %s"%(self.sale, self.tender_type)
 
 
-def ImportDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
+def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
 
     print("{}|{}|lines:{}".format(storecode,datetxt,len(dsrdata)))
     cash, created = TenderType.objects.get_or_create(name="Cash")
@@ -115,10 +115,6 @@ def ImportDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
     items = []
     tenders = []
     sales = []
-
-    products = {}
-    for product in ProductOffering.objects.all():
-        products[product.product.sku] = product
 
     staff_list = {}
     for staff in Staff.objects.all():
@@ -302,10 +298,16 @@ def ImportDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
         item.sale = sales[item.tmpsale.docket_number]
     SaleItem.objects.bulk_create(items)
 
+    return products
+    
 
 def fake(stores, day_count,year,month=1,day=1,path = "./dsr/"):
     start_date = datetime.date(day=day, month=month, year=year)
 
+    products = {}
+    for product in ProductOffering.objects.all():
+        products[product.product.sku] = product
+        
     for date in (start_date + datetime.timedelta(n) for n in range(day_count)):
         for store in stores:
             # Find a random dsr file
@@ -313,7 +315,7 @@ def fake(stores, day_count,year,month=1,day=1,path = "./dsr/"):
             with open(path + file) as f:
                 dsr = f.readlines()
 
-            ImportDSR(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr)
+            products = ImportDSR(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr, products)
 
             
 default_stores = [
