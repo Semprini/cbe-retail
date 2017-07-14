@@ -304,6 +304,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
 def fake(stores, day_count,year,month=1,day=1,path = "./dsr/"):
     start_date = datetime.date(day=day, month=month, year=year)
 
+    print( "Indexing %d products"%ProductOffering.objects.count() )
     products = {}
     for product in ProductOffering.objects.all():
         products[product.product.sku] = product
