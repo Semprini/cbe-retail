@@ -45,6 +45,9 @@ class Sale(models.Model):
     price_channel = models.ForeignKey(PriceChannel, null=True,blank=True)
     price_calculation = models.ForeignKey(PriceCalculation, null=True,blank=True)
 
+    class Meta:
+        ordering = ['id']
+        
     def __str__(self):
         return "%s|%s|%d"%(self.location,self.datetime,self.total_amount)
 
@@ -61,6 +64,9 @@ class SaleItem(models.Model):
     tax = models.DecimalField(max_digits=10, decimal_places=2)
 
     promotion = models.ForeignKey(Promotion, null=True,blank=True)
+
+    class Meta:
+        ordering = ['id']
     
     def __str__(self):
         return "%s"%self.product
@@ -83,6 +89,9 @@ class Tender(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     reference = models.CharField(max_length=200, null=True, blank=True)
 
+    class Meta:
+        ordering = ['id']
+        
     def __str__(self):
         return "%s %s"%(self.sale, self.tender_type)
 
@@ -254,16 +263,18 @@ def ImportDSR(storecode,datetxt,dsrdata): #DD/MM/YYYY
                                 till=till )
                 sales.append(sale)
 
-                tender = Tender(tender_type=cash, amount=amount_inc)
-                tender.tmpsale = sale
-                tenders.append( tender )
+                if tender_type == "$":
+                    tender = Tender(tender_type=cash, amount=amount_inc)
+                    tender.tmpsale = sale
+                    tenders.append( tender )
             else:
                 sale = sales[-1]
                 sale.total_amount += amount_inc
                 sale.total_amount_excl += amount_excl
                 sale.total_tax += amount_tax
                 sale.total_discount += discount
-                tenders[-1].amount += amount_inc
+                if tender_type == "$":
+                    tenders[-1].amount += amount_inc
 
             item = SaleItem(    amount=amount_excl, 
                                 tax=amount_tax, 

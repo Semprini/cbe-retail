@@ -33,6 +33,9 @@ class Product(models.Model):
     bundle = models.ManyToManyField('Product', blank=True)
     categories = models.ManyToManyField(ProductCategory, blank=True)
 
+    class Meta:
+        ordering = ['id']
+    
     def __str__(self):
         return self.name
     
@@ -53,6 +56,9 @@ class ProductOffering(models.Model):
     supplier_code = models.CharField(max_length=200, null=True, blank=True)
     buyer = models.ForeignKey(Buyer, null=True, blank=True)
 
+    class Meta:
+        ordering = ['id']
+    
     def __str__(self):
         return "%s offering" %(self.product.name)
 
