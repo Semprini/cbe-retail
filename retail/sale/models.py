@@ -308,15 +308,19 @@ def fake(stores, day_count,year,month=1,day=1,path = "./dsr/"):
     products = {}
     for product in ProductOffering.objects.all():
         products[product.product.sku] = product
-        
+    
+    listdir = os.listdir(path)
+    
     for date in (start_date + datetime.timedelta(n) for n in range(day_count)):
         for store in stores:
             # Find a random dsr file
-            file = random.choice(os.listdir(path))
-            with open(path + file) as f:
-                dsr = f.readlines()
-
-            products = ImportDSR(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr, products)
+            file = random.choice(listdir)
+            try:
+                with open(path + file) as f:
+                    dsr = f.readlines()
+                products = ImportDSR(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr, products)
+            except UnicodeDecodeError as err:
+                print( "ERROR: %s"%err )
 
             
 default_stores = [
