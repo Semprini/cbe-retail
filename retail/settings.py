@@ -61,8 +61,10 @@ INSTALLED_APPS = (
     'retail.product',
     'retail.pricing',
     'retail.sale',
+    'retail.order',
     'retail.loyalty',
     'retail.customer_bill',
+    'retail.credit',
 )
 
 SITE_ID = 1

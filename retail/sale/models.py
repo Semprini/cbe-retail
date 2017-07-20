@@ -57,7 +57,7 @@ class SaleItem(models.Model):
     product = models.ForeignKey(ProductOffering, db_index=True, )
 
     quantity = models.DecimalField(max_digits=10, decimal_places=4)
-    unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
+    unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('metre', 'metre')), default='each')
 
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     discount = models.DecimalField(max_digits=10, decimal_places=2)
