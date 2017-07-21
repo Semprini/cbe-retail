@@ -67,6 +67,8 @@ INSTALLED_APPS = (
     'retail.credit',
 )
 
+# python manage.py makemigrations market product pricing sale order loyalty customer_bill credit
+
 SITE_ID = 1
 
 #All auth settings

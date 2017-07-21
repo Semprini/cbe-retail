@@ -182,12 +182,12 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
                 if accountno not in customer_accounts.keys():
                     customers = Customer.objects.filter( customer_number=accountno )
                     if len(customers) == 0:
-                        customer = Customer( customer_number=accountno, customer_status="new", valid_from=timezone.make_aware(datetime.datetime.now()) )
+                        customer = Customer( customer_number=accountno, managed_by=store_org, customer_status="new", valid_from=timezone.make_aware(datetime.datetime.now()) )
                         customer.organisation = unknown_org
                         customer.save()
                     else:
                         customer = customers[0]
-                    customer_accounts[accountno] = CustomerAccount.objects.create( account_number=accountno, account_status="new", customer=customer )
+                    customer_accounts[accountno] = CustomerAccount.objects.create( account_number=accountno, account_status="new", customer=customer, liability_ownership=store_org, managed_by=store_org )
                 account = customer_accounts[accountno]
                 customer = account.customer
             elif loyaltyno != "":
@@ -300,8 +300,18 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
 
     return products
     
+default_stores = [
+    "X01", "X02","X03","X04","X05","X06","X07","X08","X09","X10", "X11","X12","X13","X14","X15","X16","X17","X18","X19","X20", "X21","X22","X23","X24","X25","X26","X27","X28","X29","X30", "X31","X32","X33","X34","X35","X36","X37","X38","X39","X40", "X41","X42","X43","X44","X45","X46","X47","X48","X49","X50",
+    "X51","X52","X53","X54","X55","X56","X57","X58","X59","X60", "X61","X62","X63","X64","X65","X66","X67","X68","X69","X70", "X71","X72","X73","X74","X75","X76","X77","X78","X79","X80", "X81",
+]
+test5_stores = [
+    "Fake Store 1","Fake Store 2","Fake Store 3","Fake Store 4","Fake Store 5",
+]
+test10_stores = test5_stores + [
+    "Fake Store 6","Fake Store 7","Fake Store 8","Fake Store 9","Fake Store 10",
+]
 
-def fake(stores, day_count,year,month=1,day=1,path = "./dsr/"):
+def fake(stores=test5_stores, day_count=2,year=2000,month=1,day=1,path = None):
     start_date = datetime.date(day=day, month=month, year=year)
 
     print( "Indexing %d products"%ProductOffering.objects.count() )
@@ -309,28 +319,25 @@ def fake(stores, day_count,year,month=1,day=1,path = "./dsr/"):
     for product in ProductOffering.objects.all():
         products[product.product.sku] = product
     
-    listdir = os.listdir(path)
+    if path != None:
+        listdir = os.listdir(path)
     
-    for date in (start_date + datetime.timedelta(n) for n in range(day_count)):
-        for store in stores:
-            # Find a random dsr file
-            file = random.choice(listdir)
-            try:
-                with open(path + file) as f:
-                    dsr = f.readlines()
-                products = ImportDSR(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr, products)
-            except UnicodeDecodeError as err:
-                print( "ERROR: %s"%err )
-
+        for date in (start_date + datetime.timedelta(n) for n in range(day_count)):
+            for store in stores:
+                # Find a random dsr file
+                file = random.choice(listdir)
+                try:
+                    with open(path + file) as f:
+                        dsr = f.readlines()
+                    products = ImportDSR(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr, products)
+                except UnicodeDecodeError as err:
+                    print( "ERROR: %s"%err )
+    else:
+        for date in (start_date + datetime.timedelta(n) for n in range(day_count)):
+            for store in stores:
+                products = ImportDSR(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr_sample, products)
+    
             
-default_stores = [
-    "X01", "X02","X03","X04","X05","X06","X07","X08","X09","X10", "X11","X12","X13","X14","X15","X16","X17","X18","X19","X20", "X21","X22","X23","X24","X25","X26","X27","X28","X29","X30", "X31","X32","X33","X34","X35","X36","X37","X38","X39","X40", "X41","X42","X43","X44","X45","X46","X47","X48","X49","X50",
-    "X51","X52","X53","X54","X55","X56","X57","X58","X59","X60", "X61","X62","X63","X64","X65","X66","X67","X68","X69","X70", "X71","X72","X73","X74","X75","X76","X77","X78","X79","X80", "X81",
-]
-test10_stores = [
-    "Fake Store 1","Fake Store 2","Fake Store 3","Fake Store 4","Fake Store 5","Fake Store 6","Fake Store 7","Fake Store 8","Fake Store 9","Fake Store 10",
-]
-
 dsr_sample = """
 0,"X18","30/11/2016"
 1,"X18","30/11/2016","1","12","0824","243728","GAS CARTRIDGE BUTANE 220G 4 PACK NO. 8","","1","8.68","6.54","","","","$","9420047505794","1234567","MIMP","MFS-1A (RVR)",9.98,33,"","N","$","0725","ME",1,"RET","retail","",9.98,6.54
