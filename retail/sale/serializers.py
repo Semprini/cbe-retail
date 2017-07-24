@@ -17,7 +17,7 @@ class SaleSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('type', 'url', 'channel', 'location', 'seller', 'datetime', 'docket_number',
                   'total_amount', 'total_amount_excl', 'total_discount', 'total_tax',
                   'customer', 'account', 'identification', 'promotion','till', 'staff', 
-                  'price_channel', 'price_calculation', 'tenders','sale_items',)
+                  'price_channel', 'price_calculation', 'tenders','credit_balance_events','sale_items',)
 
 
 class SaleItemSerializer(serializers.HyperlinkedModelSerializer):

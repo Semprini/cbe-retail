@@ -31,6 +31,7 @@ import retail.market.views as MarketViews
 import retail.pricing.views as PriceViews
 import retail.customer_bill.views as CustomerBillViews
 import retail.order.views as OrderViews
+import retail.credit.views as CreditViews
 
 admin.site.site_title = 'CBE Retail'
 admin.site.site_header = 'Retail Business Entities'
@@ -70,6 +71,9 @@ retailrouter.register(r'customer_bill/dispute_bill_item', CustomerBillViews.Disp
 
 retailrouter.register(r'order/order', OrderViews.OrderViewSet)
 retailrouter.register(r'order/order_item', OrderViews.OrderItemViewSet)
+
+retailrouter.register(r'credit/credit_balance_event', CreditViews.CreditBalanceEventViewSet)
+retailrouter.register(r'credit/credit_profile', CreditViews.CreditProfileViewSet)
 
 
 router = DefaultRouter()

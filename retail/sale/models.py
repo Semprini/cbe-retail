@@ -97,7 +97,8 @@ class Tender(models.Model):
 
 
 def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
-
+    from retail.credit.models import CreditBalanceEvent
+    
     print("{}|{}|lines:{}".format(storecode,datetxt,len(dsrdata)))
     cash, created = TenderType.objects.get_or_create(name="Cash")
     store, created = AbsoluteLocalLocation.objects.get_or_create( name=storecode, x=0, y=0, z=0)
@@ -115,6 +116,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
     items = []
     tenders = []
     sales = []
+    credit_events = []
 
     staff_list = {}
     for staff in Staff.objects.all():
@@ -263,6 +265,10 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
                     tender = Tender(tender_type=cash, amount=amount_inc)
                     tender.tmpsale = sale
                     tenders.append( tender )
+                else:
+                    credit_event = CreditBalanceEvent(amount=amount_inc, location=store, customer=customer, account=account)
+                    credit_event.tmpsale = sale
+                    credit_events.append( credit_event )
             else:
                 sale = sales[-1]
                 sale.total_amount += amount_inc
@@ -271,6 +277,8 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
                 sale.total_discount += discount
                 if tender_type == "$":
                     tenders[-1].amount += amount_inc
+                else:
+                    credit_events[-1].amount += amount_inc
 
             item = SaleItem(    amount=amount_excl, 
                                 tax=amount_tax, 
@@ -292,6 +300,12 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
         #tender.sale = Sale.objects.get(store=tender.tmpsale.store, datetime=tender.tmpsale.datetime, docket_number=tender.tmpsale.docket_number)
         tender.sale = sales[tender.tmpsale.docket_number]
     Tender.objects.bulk_create(tenders)
+
+    print("{}|{} - Bulk credit events ({})".format(storecode,datetxt,len(credit_events)))
+    for credit_event in credit_events:
+        #tender.sale = Sale.objects.get(store=tender.tmpsale.store, datetime=tender.tmpsale.datetime, docket_number=tender.tmpsale.docket_number)
+        credit_event.sale = sales[credit_event.tmpsale.docket_number]
+    CreditBalanceEvent.objects.bulk_create(credit_events)
     
     print("{}|{} - Bulk items ({})".format(storecode,datetxt,len(items)))
     for item in items:

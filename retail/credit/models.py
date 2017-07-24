@@ -8,13 +8,15 @@ from retail.sale.models import Sale
 
 class CreditProfile(models.Model):
     customer = models.ForeignKey(Customer)
+    credit_agency = models.ForeignKey(Organisation,null=True, blank=True)
+
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
-    date = models.DateField(null=True, blank=True)
+    created = models.DateField(auto_now_add=True)
+    
     credit_risk_rating = models.IntegerField(null=True, blank=True)
     credit_score = models.IntegerField(null=True, blank=True)
     
-    credit_agency = models.ForeignKey(Organisation,null=True, blank=True)
     
     
 class CreditAlert(models.Model):
@@ -32,7 +34,7 @@ class CreditBalanceEvent(models.Model):
     customer = models.ForeignKey(Customer)
     account = models.ForeignKey(CustomerAccount)
     location = models.ForeignKey(AbsoluteLocalLocation)
-    sale = models.ForeignKey(Sale, null=True, blank=True) #TODO: return or other types
+    sale = models.ForeignKey(Sale, null=True, blank=True, related_name='credit_balance_events') #TODO: return or other types
     datetime = models.DateTimeField(auto_now_add=True)
     
     amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
