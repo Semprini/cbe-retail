@@ -265,10 +265,12 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
                     tender = Tender(tender_type=cash, amount=amount_inc)
                     tender.tmpsale = sale
                     tenders.append( tender )
-                else:
+                elif account != None:
                     credit_event = CreditBalanceEvent(amount=amount_inc, location=store, customer=customer, account=account)
                     credit_event.tmpsale = sale
                     credit_events.append( credit_event )
+                else:
+                    print( "Unhandled tender type: %s. No tender or credit created"%tender_type)
             else:
                 sale = sales[-1]
                 sale.total_amount += amount_inc
@@ -277,7 +279,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
                 sale.total_discount += discount
                 if tender_type == "$":
                     tenders[-1].amount += amount_inc
-                else:
+                elif account != None:
                     credit_events[-1].amount += amount_inc
 
             item = SaleItem(    amount=amount_excl, 
