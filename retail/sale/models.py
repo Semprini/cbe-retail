@@ -218,6 +218,12 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
                 tills["%s:%s"%(owner_role,till_lineno)].physcial_objects.add(device)
             till = tills["%s:%s"%(owner_role,till_lineno)]
             
+            # Create or get product
+            if sku not in products:
+                product = Product.objects.create(name=product_name, sku=sku,status="active",)
+                products[sku] = ProductOffering.objects.create(product=product, retail_price=retail)
+            po = products[sku]
+
             # Create or get promotion
             promo_code = data[12].strip('"')
             promotion = None
@@ -229,12 +235,9 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
                 if promo_code not in promotions.keys():
                     promotions[promo_code] = Promotion.objects.create( name=promo_code, valid_from=promo_start, valid_to=promo_end)
                 promotion = promotions[promo_code]
-
-            # Create or get product
-            if sku not in products:
-                product = Product.objects.create(name=product_name, sku=sku,status="active",)
-                products[sku] = ProductOffering.objects.create(product=product, retail_price=retail)
-            po = products[sku]
+                promotion.stores.add(store_org)
+                promotion.customers.add(customer)
+                promotion.products.add(po)
 
             # Create or get staff
             if staff_code not in staff_list:
