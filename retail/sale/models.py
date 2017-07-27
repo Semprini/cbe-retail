@@ -180,7 +180,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
             # Get or create customer & account for trade or retail
             customer = None
             account = None
-            if trade_sale == "T":
+            if accountno not in ["","N"]:
                 if accountno not in customer_accounts.keys():
                     customers = Customer.objects.filter( customer_number=accountno )
                     if len(customers) == 0:
