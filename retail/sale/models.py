@@ -236,7 +236,8 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
                     promotions[promo_code] = Promotion.objects.create( name=promo_code, valid_from=promo_start, valid_to=promo_end)
                 promotion = promotions[promo_code]
                 promotion.stores.add(store_org)
-                promotion.customers.add(customer)
+                if customer != None:
+                    promotion.customers.add(customer)
                 promotion.products.add(po)
 
             # Create or get staff
