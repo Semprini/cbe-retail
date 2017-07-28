@@ -350,12 +350,10 @@ def fake(stores=test5_stores, day_count=2,year=2000,month=1,day=1,path = None):
     
         for date in (start_date + datetime.timedelta(n) for n in range(day_count)):
             for store in stores:
-                # Find a random dsr file
-                file = random.choice(listdir)
                 try:
                     dsr = []
                     while len(dsr) < 5:
-                        with open(path + file) as f:
+                        with open(path + random.choice(listdir)) as f:
                             dsr = f.readlines()
                     products = ImportDSR(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr, products)
                 except UnicodeDecodeError as err:
