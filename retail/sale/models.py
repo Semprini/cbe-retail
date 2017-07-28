@@ -12,7 +12,7 @@ from cbe.resource.models import PhysicalResource
 from cbe.human_resources.models import Staff, Identification, IdentificationType
 from cbe.physical_object.models import Device
 from retail.product.models import ProductOffering, Product
-from retail.pricing.models import PriceChannel, PriceCalculation, Promotion
+from retail.pricing.models import PriceChannel, PriceCalculation, Promotion, ProductOfferingPrice
 
 
 class SalesChannel(models.Model):
@@ -54,7 +54,8 @@ class Sale(models.Model):
 
 class SaleItem(models.Model):
     sale = models.ForeignKey(Sale, db_index=True, related_name='sale_items', on_delete=models.CASCADE)
-    product = models.ForeignKey(ProductOffering, db_index=True, )
+    #product = models.ForeignKey(Product, db_index=True, )
+    product_offering = models.ForeignKey(ProductOffering, db_index=True, )
 
     quantity = models.DecimalField(max_digits=10, decimal_places=4)
     unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('metre', 'metre')), default='each')
@@ -223,6 +224,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
                 product = Product.objects.create(name=product_name, sku=sku,status="active",)
                 products[sku] = ProductOffering.objects.create(product=product, retail_price=retail)
             po = products[sku]
+            po.channels.add(channel)
 
             # Create or get promotion
             promo_code = data[12].strip('"')
@@ -238,8 +240,12 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
                 promotion.stores.add(store_org)
                 if customer != None:
                     promotion.customers.add(customer)
-                promotion.products.add(po)
+                promotion.product_offerings.add(po)
 
+            # Add this price to the list of prices for the offering
+            if( len(po.product_offering_prices.filter(amount=retail) ) == 0 ):
+                pop = ProductOfferingPrice.objects.create( product_offering=po, amount=retail, promotion=promotion, name="Uncategorised price" )
+                
             # Create or get staff
             if staff_code not in staff_list:
                 person, created = Individual.objects.get_or_create(name=staff_code)
@@ -288,7 +294,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
 
             item = SaleItem(    amount=amount_excl, 
                                 tax=amount_tax, 
-                                product=po, 
+                                product_offering=po, 
                                 quantity=quantity, 
                                 discount=discount, 
                                 promotion=promotion)

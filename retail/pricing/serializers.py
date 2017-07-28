@@ -24,4 +24,4 @@ class PromotionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Promotion
         fields = ('type', 'url', 'valid_from', 'valid_to', 'name',
-                  'description', 'categories', 'products','customers')
+                  'description', 'categories', 'product_offerings','product_offering_prices','customers')

@@ -25,7 +25,7 @@ class OrderItemSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = OrderItem
-        fields = ('type', 'url', 'order', 'product', 'amount',
+        fields = ('type', 'url', 'order', 'product_offering', 'amount',
                   'discount','promotion' )
 
 

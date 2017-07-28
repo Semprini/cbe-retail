@@ -42,7 +42,8 @@ class Order(models.Model):
         
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, db_index=True, related_name='order_items', on_delete=models.CASCADE)
-    product = models.ForeignKey(ProductOffering, db_index=True, )
+    #product = models.ForeignKey(product, db_index=True, )
+    product_offering = models.ForeignKey(ProductOffering, db_index=True, )
     
     quantity = models.DecimalField(max_digits=10, decimal_places=4)
     unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('metre', 'metre')), default='each')

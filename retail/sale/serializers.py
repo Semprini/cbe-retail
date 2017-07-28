@@ -25,7 +25,7 @@ class SaleItemSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = SaleItem
-        fields = ('type', 'url', 'sale', 'product', 'amount',
+        fields = ('type', 'url', 'sale', 'product_offering', 'amount',
                   'discount','promotion' )
 
 
