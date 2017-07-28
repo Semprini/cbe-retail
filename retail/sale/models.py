@@ -100,7 +100,6 @@ class Tender(models.Model):
 def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
     from retail.credit.models import CreditBalanceEvent
     
-    print("{}|{}|lines:{}".format(storecode,datetxt,len(dsrdata)))
     cash, created = TenderType.objects.get_or_create(name="Cash")
     store, created = AbsoluteLocalLocation.objects.get_or_create( name=storecode, x=0, y=0, z=0)
     store_org, created = Organisation.objects.get_or_create( organisation_type="Store", name=storecode )
@@ -301,29 +300,28 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
             item.tmpsale=sale
             items.append(item)
 
-    print("{}|{} - Bulk sales ({})".format(storecode,datetxt,len(sales)))
     Sale.objects.bulk_create(sales)
     sales = {}
     for sale in Sale.objects.filter(location=store, seller=store_org, datetime__year=date.year, datetime__month=date.month, datetime__day=date.day,):
         sales[sale.docket_number] = sale
 
-    print("{}|{} - Bulk tenders ({})".format(storecode,datetxt,len(tenders)))
     for tender in tenders:
         #tender.sale = Sale.objects.get(store=tender.tmpsale.store, datetime=tender.tmpsale.datetime, docket_number=tender.tmpsale.docket_number)
         tender.sale = sales[tender.tmpsale.docket_number]
     Tender.objects.bulk_create(tenders)
 
-    print("{}|{} - Bulk credit events ({})".format(storecode,datetxt,len(credit_events)))
     for credit_event in credit_events:
         #tender.sale = Sale.objects.get(store=tender.tmpsale.store, datetime=tender.tmpsale.datetime, docket_number=tender.tmpsale.docket_number)
         credit_event.sale = sales[credit_event.tmpsale.docket_number]
     CreditBalanceEvent.objects.bulk_create(credit_events)
     
-    print("{}|{} - Bulk items ({})".format(storecode,datetxt,len(items)))
     for item in items:
         item.sale = sales[item.tmpsale.docket_number]
     SaleItem.objects.bulk_create(items)
 
+    print("{}|{}|lines:{} | Sales:{} | Tenders:{} | Credit Sales:{} | Items:{}".format(storecode,datetxt,len(dsrdata),len(sales),len(tenders),len(credit_events),len(items)))
+    
+    
     return products
     
 default_stores = [
