@@ -338,6 +338,10 @@ test10_stores = test5_stores + [
 ]
 
 def fake(stores=test5_stores, day_count=2,year=2000,month=1,day=1,path = None):
+    from django.db import connections
+    from django.db.utils import DatabaseError
+    from time import sleep
+    
     start_date = datetime.date(day=day, month=month, year=year)
 
     print( "Indexing %d products"%ProductOffering.objects.count() )
@@ -355,7 +359,19 @@ def fake(stores=test5_stores, day_count=2,year=2000,month=1,day=1,path = None):
                     while len(dsr) < 5:
                         with open(path + random.choice(listdir)) as f:
                             dsr = f.readlines()
-                    products = ImportDSR(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr, products)
+                    
+                    done = False
+                    while not done:
+                        try:
+                            products = ImportDSR(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr, products)
+                            done = True
+                        except DatabaseError as err:
+                            print( "DATABASE ERROR! Closing unusable connections and retrying shortly. %s"%err )
+                            sleep(10)
+                            for conn in connections.all():
+                                conn.close_if_unusable_or_obsolete()
+                            sleep(10)
+                        
                 except UnicodeDecodeError as err:
                     print( "ERROR: %s"%err )
     else:
