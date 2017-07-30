@@ -17,8 +17,8 @@ class LoyaltyTransactionInline(admin.TabularInline):
     
 
 class SaleAdmin(admin.ModelAdmin):
-    list_display = ('location', 'seller', 'datetime','staff','docket_number','total_amount','total_discount')
-    list_filter = ('datetime', 'seller')
+    list_display = ('store', 'seller', 'datetime','staff','docket_number','total_amount','total_discount')
+    list_filter = ('datetime', 'store',)
     inlines = [ TenderInline, SaleItemInline, LoyaltyTransactionInline]
 
 

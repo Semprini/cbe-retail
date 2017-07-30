@@ -2,8 +2,10 @@ import datetime
 from django.db import models
 
 from cbe.party.models import Organisation
-from cbe.location.models import AbsoluteLocalLocation
+from cbe.location.models import Location
 from cbe.customer.models import Customer, CustomerAccount
+
+from retail.store.models import Store
 from retail.sale.models import SalesChannel
 from retail.product.models import ProductOffering, Product
 from retail.pricing.models import PriceChannel, PriceCalculation, Promotion
@@ -11,7 +13,7 @@ from retail.pricing.models import PriceChannel, PriceCalculation, Promotion
 
 class Order(models.Model):
     channel = models.ForeignKey(SalesChannel)
-    location = models.ForeignKey(AbsoluteLocalLocation)
+    store = models.ForeignKey(Store)
     seller = models.ForeignKey(Organisation)
     datetime = models.DateTimeField(default=datetime.datetime.now)
     order_type = models.CharField(max_length=200, choices=(('order', 'order'), ('quote', 'quote'), ('estimate', 'estimate')), default='order')

@@ -24,6 +24,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from cbe.urls import cberouter
 
+import retail.store.views as StoreViews
 import retail.product.views as ProductViews
 import retail.sale.views as SaleViews
 import retail.loyalty.views as LoyaltyViews
@@ -37,6 +38,8 @@ admin.site.site_title = 'CBE Retail'
 admin.site.site_header = 'Retail Business Entities'
 
 retailrouter = DefaultRouter()
+retailrouter.register(r'store/store', StoreViews.StoreViewSet)
+
 retailrouter.register(r'product/product', ProductViews.ProductViewSet)
 retailrouter.register(r'product/product_offering', ProductViews.ProductOfferingViewSet)
 retailrouter.register(r'product/product_category', ProductViews.ProductCategoryViewSet)

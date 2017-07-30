@@ -57,6 +57,7 @@ INSTALLED_APPS = (
     'cbe.human_resources',
     'cbe.information_technology',
     'cbe.project',
+    'retail.store',
     'retail.market',
     'retail.product',
     'retail.pricing',
@@ -67,7 +68,7 @@ INSTALLED_APPS = (
     'retail.credit',
 )
 
-# python manage.py makemigrations market product pricing sale order loyalty customer_bill credit
+# python manage.py makemigrations store market product pricing sale order loyalty customer_bill credit
 
 SITE_ID = 1
 
@@ -137,6 +138,7 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
+        #'rest_framework_csv.renderers.CSVRenderer',
         'cbe.utils.api.BrowsableAPIRendererWithoutForms',
         'cbe.utils.api.PaginatedCSVRenderer',
     ),

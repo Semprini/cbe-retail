@@ -9,7 +9,7 @@ class LoyaltySchemeAdmin(admin.ModelAdmin):
     
 class LoyaltyTransactionAdmin(admin.ModelAdmin):
     list_display = ('scheme', 'sale', 'promotion', 'loyalty_amount')
-    list_filter = ('scheme', 'sale__datetime', 'sale__location', 'sale__seller')
+    list_filter = ('scheme', 'sale__datetime', 'sale__store')
     
 admin.site.register(LoyaltyScheme, LoyaltySchemeAdmin)    
 admin.site.register(LoyaltyTransaction, LoyaltyTransactionAdmin)    

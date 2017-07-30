@@ -35,7 +35,7 @@ class ProductStockLevelSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ProductStockLevel
-        fields = ('type', 'url', 'datetime', 'store', 'product_offering','location','amount','average')
+        fields = ('type', 'url', 'datetime', 'store', 'product','location','amount','average')
     
     
 class ProductCategorySerializer(serializers.HyperlinkedModelSerializer):

@@ -1,9 +1,10 @@
 from django.db import models
 
 from cbe.party.models import Organisation
-from cbe.location.models import AbsoluteLocalLocation
+from cbe.location.models import Location
 from cbe.supplier_partner.models import Supplier, Buyer
 
+from retail.store.models import Store
 from retail.market.models import MarketSegment, MarketStrategy
 
 
@@ -60,14 +61,14 @@ class ProductOffering(models.Model):
         ordering = ['id']
     
     def __str__(self):
-        return "%s offering" %(self.product.name)
+        return "%s" %(self.product.name)
 
         
 class ProductStockLevel(models.Model):
     datetime = models.DateTimeField(auto_now_add=True)
     product = models.ForeignKey(Product, related_name='product_stock_levels')
-    store = models.ForeignKey(Organisation)
-    location = models.ForeignKey(AbsoluteLocalLocation, null=True, blank=True)
+    store = models.ForeignKey(Store)
+    location = models.ForeignKey(Location, null=True, blank=True)
     amount = models.DecimalField(max_digits=8, decimal_places=4)
     average = models.DecimalField(max_digits=8, decimal_places=4, null=True, blank=True)
     

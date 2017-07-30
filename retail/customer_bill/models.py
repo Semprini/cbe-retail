@@ -1,6 +1,6 @@
 from django.db import models
 
-from cbe.location.models import AbsoluteLocalLocation
+from cbe.location.models import Location
 from cbe.party.models import Organisation
 from cbe.customer.models import Customer, CustomerAccount
 
@@ -23,7 +23,7 @@ class CustomerBillSpecification(models.Model):
     account = models.ForeignKey( CustomerAccount )
     
     billing_cycle = models.ForeignKey( CustomerBillingCycle )
-    location = models.ForeignKey( AbsoluteLocalLocation, null=True, blank=True )
+    location = models.ForeignKey( Location, null=True, blank=True )
     organisation = models.ForeignKey( Organisation, null=True, blank=True )
 
     def __str__(self):

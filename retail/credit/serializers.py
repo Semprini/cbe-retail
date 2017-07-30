@@ -14,7 +14,7 @@ class CreditBalanceEventSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = CreditBalanceEvent
-        fields = ('type', 'url', 'customer', 'account', 'location', 'sale', 'datetime',
+        fields = ('type', 'url', 'customer', 'account', 'store', 'sale', 'datetime',
                   'amount', 'balance', )
 
 
@@ -23,7 +23,7 @@ class CreditProfileSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = CreditProfile
-        fields = ('type', 'url', 'customer', 'credit_agency', 'valid_from', 'valid_to','date',
+        fields = ('type', 'url', 'customer', 'credit_agency', 'valid_from', 'valid_to','created',
                   'credit_risk_rating','credit_score',)
 
 
