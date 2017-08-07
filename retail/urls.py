@@ -53,6 +53,7 @@ retailrouter.register(r'sale/sale', SaleViews.SaleViewSet)
 retailrouter.register(r'sale/sale_item', SaleViews.SaleItemViewSet)
 retailrouter.register(r'sale/tender', SaleViews.TenderViewSet)
 retailrouter.register(r'sale/tender_type', SaleViews.TenderTypeViewSet)
+retailrouter.register(r'sale/purchaser', SaleViews.PurchaserViewSet)
 
 retailrouter.register(r'loyalty/loyalty_transaction', LoyaltyViews.LoyaltyTransactionViewSet)
 retailrouter.register(r'loyalty/loyalty_scheme', LoyaltyViews.LoyaltySchemeViewSet)
@@ -83,8 +84,11 @@ router = DefaultRouter()
 for route in retailrouter.registry:
     router.register(route[0], route[1])
 for route in cberouter.registry:
-    router.register(route[0], route[1])
-    
+    if len(route) == 2:
+        router.register(route[0], route[1])
+    else:
+        router.register(route[0], route[1], base_name=route[2])
+        
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('allauth.urls')),

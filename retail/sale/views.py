@@ -4,8 +4,8 @@ from rest_framework import permissions, renderers, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
-from retail.sale.models import Sale, SaleItem, Tender, TenderType, SalesChannel
-from retail.sale.serializers import SaleSerializer, SaleItemSerializer, TenderSerializer, TenderTypeSerializer, SalesChannelSerializer
+from retail.sale.models import Sale, SaleItem, Tender, TenderType, SalesChannel, Purchaser
+from retail.sale.serializers import SaleSerializer, SaleItemSerializer, TenderSerializer, TenderTypeSerializer, SalesChannelSerializer, PurchaserSerializer
 
 
 class SaleViewSet(viewsets.ModelViewSet):
@@ -38,5 +38,9 @@ class TenderTypeViewSet(viewsets.ModelViewSet):
     serializer_class = TenderTypeSerializer
     permission_classes = (permissions.DjangoModelPermissions, )
 
-
+    
+class PurchaserViewSet(viewsets.ModelViewSet):
+    queryset = Purchaser.objects.all()
+    serializer_class = PurchaserSerializer
+    permission_classes = (permissions.DjangoModelPermissions, )
     

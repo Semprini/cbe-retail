@@ -5,7 +5,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
 
-from cbe.party.models import Individual, Organisation, Owner
+from cbe.party.models import Individual, Organisation, Owner, PartyRole
 from cbe.location.models import Location
 from cbe.customer.models import Customer, CustomerAccount
 from cbe.resource.models import PhysicalResource
@@ -17,12 +17,26 @@ from retail.product.models import ProductOffering, Product
 from retail.pricing.models import PriceChannel, PriceCalculation, Promotion, ProductOfferingPrice
 
 
+class Purchaser(PartyRole):
+    transation_limit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "%s"%(self.party)
+
+        
+
 class SalesChannel(models.Model):
     name =  models.CharField(max_length=100 )
 
+    class Meta:
+        ordering = ['id']
+        
     def __str__(self):
         return "%s"%(self.name)
-    
+
 
 class Sale(models.Model):
     channel = models.ForeignKey(SalesChannel)
@@ -36,6 +50,7 @@ class Sale(models.Model):
     total_discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_tax = models.DecimalField(max_digits=10, decimal_places=2)
 
+    purchaser = models.ForeignKey(Purchaser, db_index=True, null=True,blank=True)
     customer = models.ForeignKey(Customer, db_index=True, null=True,blank=True)
     account = models.ForeignKey(CustomerAccount, db_index=True, null=True,blank=True)
     identification = models.ForeignKey(Identification, null=True,blank=True )
@@ -82,6 +97,9 @@ class TenderType(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
 
+    class Meta:
+        ordering = ['id']
+
     def __str__(self):
         return self.name
 
@@ -106,7 +124,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
     store_org, created = Organisation.objects.get_or_create( organisation_type="Store", name=storecode )
     store, created = Store.objects.get_or_create( name=storecode, code=storecode, owner=store_org )
     org_type = ContentType.objects.get_for_model(Organisation)
-    owner_role, created = Owner.objects.get_or_create( party_content_type = org_type, party_object_id=store_org.id )
+    owner_role, created = Owner.objects.get_or_create( organisation=store_org )
     date = datetime.date(day=int(datetxt[0:2]),month=int(datetxt[3:5]),year=int(datetxt[6:10]))
 
     store_channel, created = SalesChannel.objects.get_or_create( name="Store" )
@@ -182,7 +200,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
             # Get or create customer & account for trade or retail
             customer = None
             account = None
-            if accountno not in ["","N"]:
+            if accountno not in ["","N","$"]:
                 if accountno not in customer_accounts.keys():
                     customers = Customer.objects.filter( customer_number=accountno )
                     if len(customers) == 0:
@@ -250,7 +268,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
             # Create or get staff
             if staff_code not in staff_list:
                 person, created = Individual.objects.get_or_create(name=staff_code)
-                staff_list[staff_code] = Staff.objects.create(name=staff_code, individual=person)
+                staff_list[staff_code] = Staff.objects.create(name=staff_code, individual=person, company=store_org)
             staff = staff_list[staff_code]
                 
             # Is the current line a new sale or another item for an existing sale
@@ -277,7 +295,11 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
                     tender.tmpsale = sale
                     tenders.append( tender )
                 elif account != None:
-                    credit_event = CreditBalanceEvent(amount=amount_inc, store=store, customer=customer, account=account)
+                    account.credit_balance += amount_inc
+                    account.tmp_changed = True
+                    #customer_accounts[loyaltyno] = account
+                    print("Account changed: %s"%account )
+                    credit_event = CreditBalanceEvent(amount=amount_inc, balance = account.credit_balance, store=store, customer=customer, account=account)
                     credit_event.tmpsale = sale
                     credit_events.append( credit_event )
                 else:
@@ -292,6 +314,8 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
                     tenders[-1].amount += amount_inc
                 elif account != None:
                     credit_events[-1].amount += amount_inc
+                    account.credit_balance += amount_inc
+                    credit_events[-1].balance = account.credit_balance
 
             item = SaleItem(    amount=amount_excl, 
                                 tax=amount_tax, 
@@ -321,6 +345,13 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
         item.sale = sales[item.tmpsale.docket_number]
     SaleItem.objects.bulk_create(items)
 
+    for key, account in customer_accounts.items():
+        if getattr(account, 'tmp_changed', False) == True:
+            print("Account saved: %s"%account )
+            account.save()
+        #else:
+        #    print("Account not saved: %s"%(account.__dict__) )
+    
     print("{}|{}|lines:{} | Sales:{} | Tenders:{} | Credit Sales:{} | Items:{}".format(storecode,datetxt,len(dsrdata),len(sales),len(tenders),len(credit_events),len(items)))
     
     
