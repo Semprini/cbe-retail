@@ -298,7 +298,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
                     account.credit_balance += amount_inc
                     account.tmp_changed = True
                     #customer_accounts[loyaltyno] = account
-                    print("Account changed: %s"%account )
+                    #print("Account changed: %s"%account )
                     credit_event = CreditBalanceEvent(amount=amount_inc, balance = account.credit_balance, store=store, customer=customer, account=account)
                     credit_event.tmpsale = sale
                     credit_events.append( credit_event )
@@ -347,10 +347,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
 
     for key, account in customer_accounts.items():
         if getattr(account, 'tmp_changed', False) == True:
-            print("Account saved: %s"%account )
             account.save()
-        #else:
-        #    print("Account not saved: %s"%(account.__dict__) )
     
     print("{}|{}|lines:{} | Sales:{} | Tenders:{} | Credit Sales:{} | Items:{}".format(storecode,datetxt,len(dsrdata),len(sales),len(tenders),len(credit_events),len(items)))
     
