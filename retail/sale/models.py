@@ -11,6 +11,7 @@ from cbe.customer.models import Customer, CustomerAccount
 from cbe.resource.models import PhysicalResource
 from cbe.human_resources.models import Staff, Identification, IdentificationType
 from cbe.physical_object.models import Device
+from cbe.credit.models import Credit, CreditBalanceEvent
 
 from retail.store.models import Store
 from retail.product.models import ProductOffering, Product
@@ -18,7 +19,9 @@ from retail.pricing.models import PriceChannel, PriceCalculation, Promotion, Pro
 
 
 class Purchaser(PartyRole):
-    transation_limit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    customer = models.ForeignKey(Customer, db_index=True, null=True,blank=True)
+    account = models.ForeignKey(CustomerAccount, db_index=True, null=True,blank=True)
+    credit = models.ForeignKey(Credit, null=True,blank=True)
 
     class Meta:
         ordering = ['id']
@@ -61,6 +64,8 @@ class Sale(models.Model):
 
     price_channel = models.ForeignKey(PriceChannel, null=True,blank=True)
     price_calculation = models.ForeignKey(PriceCalculation, null=True,blank=True)
+
+    credit_balance_events = models.ManyToManyField(CreditBalanceEvent, blank=True)
 
     class Meta:
         ordering = ['id']
@@ -118,7 +123,7 @@ class Tender(models.Model):
 
 
 def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
-    from retail.credit.models import CreditBalanceEvent
+    from cbe.credit.models import CreditBalanceEvent
     
     cash, created = TenderType.objects.get_or_create(name="Cash")
     store_org, created = Organisation.objects.get_or_create( organisation_type="Store", name=storecode )
@@ -209,7 +214,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
                         customer.save()
                     else:
                         customer = customers[0]
-                    customer_accounts[accountno] = CustomerAccount.objects.create( account_number=accountno, account_status="new", customer=customer, liability_ownership=store_org, managed_by=store_org )
+                    customer_accounts[accountno] = CustomerAccount.objects.create( account_number=accountno, account_status="new", customer=customer, managed_by=store_org )
                 account = customer_accounts[accountno]
                 customer = account.customer
             elif loyaltyno != "":
@@ -295,12 +300,15 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
                     tender.tmpsale = sale
                     tenders.append( tender )
                 elif account != None:
-                    account.credit_balance += amount_inc
-                    account.tmp_changed = True
-                    #customer_accounts[loyaltyno] = account
-                    #print("Account changed: %s"%account )
-                    credit_event = CreditBalanceEvent(amount=amount_inc, balance = account.credit_balance, store=store, customer=customer, account=account)
+                    if account.credit_liabilities.count() > 0:
+                        credit = account.credit_liabilities.first()
+                    else:
+                        credit = Credit( account=account, liability_ownership=store_org, customer=customer )
+                    credit.credit_balance += amount_inc
+                    credit.save()
+                    credit_event = CreditBalanceEvent.objects.create(credit=credit,amount=amount_inc, balance = credit.credit_balance, customer=customer, account=account)
                     credit_event.tmpsale = sale
+                    #sale.credit_balance_events.add( credit_event )
                     credit_events.append( credit_event )
                 else:
                     print( "Unhandled tender type: %s. No tender or credit created"%tender_type)
@@ -332,14 +340,12 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
         sales[sale.docket_number] = sale
 
     for tender in tenders:
-        #tender.sale = Sale.objects.get(store=tender.tmpsale.store, datetime=tender.tmpsale.datetime, docket_number=tender.tmpsale.docket_number)
         tender.sale = sales[tender.tmpsale.docket_number]
     Tender.objects.bulk_create(tenders)
 
+    #CreditBalanceEvent.objects.bulk_create(credit_events)
     for credit_event in credit_events:
-        #tender.sale = Sale.objects.get(store=tender.tmpsale.store, datetime=tender.tmpsale.datetime, docket_number=tender.tmpsale.docket_number)
-        credit_event.sale = sales[credit_event.tmpsale.docket_number]
-    CreditBalanceEvent.objects.bulk_create(credit_events)
+        sales[credit_event.tmpsale.docket_number].credit_balance_events.add( credit_event )
     
     for item in items:
         item.sale = sales[item.tmpsale.docket_number]
@@ -351,8 +357,8 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
     
     print("{}|{}|lines:{} | Sales:{} | Tenders:{} | Credit Sales:{} | Items:{}".format(storecode,datetxt,len(dsrdata),len(sales),len(tenders),len(credit_events),len(items)))
     
-    
     return products
+
     
 default_stores = [
     "X01", "X02","X03","X04","X05","X06","X07","X08","X09","X10", "X11","X12","X13","X14","X15","X16","X17","X18","X19","X20", "X21","X22","X23","X24","X25","X26","X27","X28","X29","X30", "X31","X32","X33","X34","X35","X36","X37","X38","X39","X40", "X41","X42","X43","X44","X45","X46","X47","X48","X49","X50",

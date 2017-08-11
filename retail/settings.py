@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'cbe.party',
     'cbe.trouble',
     'cbe.customer',
+    'cbe.credit',
     'cbe.physical_object',
     'cbe.supplier_partner',
     'cbe.resource',
@@ -65,10 +66,9 @@ INSTALLED_APPS = (
     'retail.order',
     'retail.loyalty',
     'retail.customer_bill',
-    'retail.credit',
 )
 
-# python manage.py makemigrations store market product pricing sale order loyalty customer_bill credit
+# python manage.py makemigrations store market product pricing sale order loyalty customer_bill
 
 SITE_ID = 1
 

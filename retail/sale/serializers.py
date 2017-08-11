@@ -8,8 +8,9 @@ from rest_framework import serializers
 from cbe.utils.serializer_fields import TypeField, GenericRelatedField
 from cbe.party.serializers import PartyRelatedField, PartyRoleAssociationFromBasicSerializer, PartyRoleAssociationToBasicSerializer
 from cbe.party.models import PartyRoleAssociation
+from cbe.credit.serializers import CreditBalanceEventSerializer
+
 from retail.sale.models import SalesChannel, Sale, SaleItem, TenderType, Tender, Purchaser
-from retail.credit.serializers import CreditBalanceEventSerializer
 
 
 class TenderTypeSerializer(serializers.HyperlinkedModelSerializer):
@@ -55,11 +56,11 @@ class SaleSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('type', 'url', 'channel', 'store', 'seller', 'datetime', 'docket_number',
                   'total_amount', 'total_amount_excl', 'total_discount', 'total_tax',
                   'customer', 'account', 'purchaser', 'identification', 'promotion','till', 'staff', 
-                  'price_channel', 'price_calculation', 'tenders','credit_balance_events','sale_items',)
+                  'price_channel', 'price_calculation', 'tenders', 'credit_balance_events', 'sale_items',)
         
     def create(self, validated_data):
         tenders_data = validated_data.pop('tenders')
-        credit_balance_events_data = validated_data.pop('credit_balance_events')
+        #credit_balance_events_data = validated_data.pop('credit_balance_events')
         sale_items_data = validated_data.pop('sale_items')
         sale = Sale.objects.create(**validated_data)
         
@@ -77,7 +78,7 @@ class SaleSerializer(serializers.HyperlinkedModelSerializer):
 
     def update(self, instance, validated_data):
         tenders_data = validated_data.pop('tenders')
-        credit_balance_events_data = validated_data.pop('credit_balance_events')
+        #credit_balance_events_data = validated_data.pop('credit_balance_events')
         sale_items_data = validated_data.pop('sale_items')
         
         for key, value in validated_data.items():
