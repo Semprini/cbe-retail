@@ -1,5 +1,6 @@
 from django.db import models
 
+from cbe.party.models import PartyRole
 from cbe.customer.models import CustomerAccount
 from cbe.credit.models import Credit
 

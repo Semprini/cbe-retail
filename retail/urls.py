@@ -32,6 +32,7 @@ import retail.market.views as MarketViews
 import retail.pricing.views as PriceViews
 import retail.customer_bill.views as CustomerBillViews
 import retail.order.views as OrderViews
+import retail.supply_chain.views as SupplyChainViews
 
 admin.site.site_title = 'CBE Retail'
 admin.site.site_header = 'Retail Business Entities'
@@ -75,6 +76,7 @@ retailrouter.register(r'customer_bill/dispute_bill_item', CustomerBillViews.Disp
 retailrouter.register(r'order/order', OrderViews.OrderViewSet)
 retailrouter.register(r'order/order_item', OrderViews.OrderItemViewSet)
 
+retailrouter.register(r'supply_chain/asns', SupplyChainViews.AsnsViewSet)
 
 router = DefaultRouter()
 for route in retailrouter.registry:
