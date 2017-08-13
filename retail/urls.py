@@ -33,6 +33,7 @@ import retail.pricing.views as PriceViews
 import retail.customer_bill.views as CustomerBillViews
 import retail.order.views as OrderViews
 import retail.supply_chain.views as SupplyChainViews
+import retail.job_management.views as JobManagmentViews
 
 admin.site.site_title = 'CBE Retail'
 admin.site.site_header = 'Retail Business Entities'
@@ -77,6 +78,29 @@ retailrouter.register(r'order/order', OrderViews.OrderViewSet)
 retailrouter.register(r'order/order_item', OrderViews.OrderItemViewSet)
 
 retailrouter.register(r'supply_chain/asns', SupplyChainViews.AsnsViewSet)
+retailrouter.register(r'supply_chain/po_expected_delivery_date', SupplyChainViews.PoExpectedDeliveryDateViewSet)
+retailrouter.register(r'supply_chain/purchase_order_acknowledgement_line_items', SupplyChainViews.PurchaseOrderAcknowledgementLineItemsViewSet)
+retailrouter.register(r'supply_chain/purchase_order_acknowledgements', SupplyChainViews.PurchaseOrderAcknowledgementsViewSet)
+retailrouter.register(r'supply_chain/purchase_order_line_items', SupplyChainViews.PurchaseOrderLineItemsViewSet)
+retailrouter.register(r'supply_chain/purchase_order', SupplyChainViews.PurchaseOrdersViewSet)
+retailrouter.register(r'supply_chain/schema_version', SupplyChainViews.SchemaVersionViewSet)
+retailrouter.register(r'supply_chain/sscc', SupplyChainViews.SsccViewSet)
+retailrouter.register(r'supply_chain/sscc_audit_correction_actions', SupplyChainViews.SsccAuditCorrectionActionsViewSet)
+retailrouter.register(r'supply_chain/sscc_audit_correction_product_items', SupplyChainViews.SsccAuditCorrectionProductItemsViewSet)
+retailrouter.register(r'supply_chain/sscc_audit_correction_reversal', SupplyChainViews.SsccAuditCorrectionReversalViewSet)
+retailrouter.register(r'supply_chain/sscc_audit_corrections', SupplyChainViews.SsccAuditCorrectionsViewSet)
+retailrouter.register(r'supply_chain/sscc_audit_product_items', SupplyChainViews.SsccAuditProductItemsViewSet)
+retailrouter.register(r'supply_chain/sscc_audits', SupplyChainViews.SsccAuditsViewSet)
+retailrouter.register(r'supply_chain/sscc_delivery', SupplyChainViews.SsccDeliveryViewSet)
+retailrouter.register(r'supply_chain/sscc_goods_receipt', SupplyChainViews.SsccGoodsReceiptViewSet)
+retailrouter.register(r'supply_chain/sscc_mandatory_audit_control', SupplyChainViews.SsccMandatoryAuditControlViewSet)
+retailrouter.register(r'supply_chain/sscc_product_items', SupplyChainViews.SsccProductItemsViewSet)
+retailrouter.register(r'supply_chain/synchronisations', SupplyChainViews.SynchronisationsViewSet)
+retailrouter.register(r'supply_chain/synchronisations_end', SupplyChainViews.SynchronisationsEndViewSet)
+retailrouter.register(r'supply_chain/unrecognised_sscc', SupplyChainViews.UnrecognisedSsccViewSet)
+
+retailrouter.register(r'job_management/job', JobManagmentViews.JobViewSet)
+retailrouter.register(r'job_management/job_party_role', JobManagmentViews.JobPartyRoleViewSet)
 
 router = DefaultRouter()
 for route in retailrouter.registry:

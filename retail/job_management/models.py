@@ -25,7 +25,7 @@ class Job(models.Model):
 
         
 class JobPartyRole(PartyRole):
-    job = models.ForeignKey(Job)
+    job = models.ForeignKey(Job, related_name="job_party_roles")
     credit = models.ForeignKey(Credit, null=True,blank=True)
     
     class Meta:
