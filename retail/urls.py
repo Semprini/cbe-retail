@@ -13,16 +13,23 @@ Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+
+from django.views.generic import View
 from django.conf.urls import include, url
 from django.contrib import admin
-
-from rest_framework.routers import DefaultRouter
-from rest_framework import serializers, viewsets
-
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
-from cbe.urls import cberouter
+from rest_framework import routers
+from rest_framework.response import Response
+from rest_framework.routers import DefaultRouter, SimpleRouter
+from rest_framework import serializers, viewsets
+from rest_framework import generics
+from django.urls import reverse
+
+from cbe.routers import AppRouter
+from cbe.urls import apps as cbeapps
+from cbe.urls import appurlpatterns as cbeappurlpatterns
 
 import retail.store.views as StoreViews
 import retail.product.views as ProductViews
@@ -38,83 +45,102 @@ import retail.job_management.views as JobManagmentViews
 admin.site.site_title = 'CBE Retail'
 admin.site.site_header = 'Retail Business Entities'
 
-retailrouter = DefaultRouter()
-retailrouter.register(r'store/store', StoreViews.StoreViewSet)
+storerouter = AppRouter(root_view_name='app-store')
+storerouter.register(r'store', StoreViews.StoreViewSet)
 
-retailrouter.register(r'product/product', ProductViews.ProductViewSet)
-retailrouter.register(r'product/product_offering', ProductViews.ProductOfferingViewSet)
-retailrouter.register(r'product/product_category', ProductViews.ProductCategoryViewSet)
-retailrouter.register(r'product/product_stock_level', ProductViews.ProductStockLevelViewSet)
+productrouter = AppRouter(root_view_name='app-product')
+productrouter.register(r'product', ProductViews.ProductViewSet)
+productrouter.register(r'product_offering', ProductViews.ProductOfferingViewSet)
+productrouter.register(r'product_category', ProductViews.ProductCategoryViewSet)
+productrouter.register(r'product_stock_level', ProductViews.ProductStockLevelViewSet)
 
-retailrouter.register(r'price/promotion', PriceViews.PromotionViewSet)
-retailrouter.register(r'price/product_offering_price', PriceViews.ProductOfferingPriceViewSet)
+pricerouter = AppRouter(root_view_name='app-promotion')
+pricerouter.register(r'promotion', PriceViews.PromotionViewSet)
+pricerouter.register(r'product_offering_price', PriceViews.ProductOfferingPriceViewSet)
 
-retailrouter.register(r'sale/sales_channel', SaleViews.SalesChannelViewSet)
-retailrouter.register(r'sale/sale', SaleViews.SaleViewSet)
-retailrouter.register(r'sale/sale_item', SaleViews.SaleItemViewSet)
-retailrouter.register(r'sale/tender', SaleViews.TenderViewSet)
-retailrouter.register(r'sale/tender_type', SaleViews.TenderTypeViewSet)
-retailrouter.register(r'sale/purchaser', SaleViews.PurchaserViewSet)
+salerouter = AppRouter(root_view_name='app-sale')
+salerouter.register(r'sales_channel', SaleViews.SalesChannelViewSet)
+salerouter.register(r'sale', SaleViews.SaleViewSet)
+salerouter.register(r'sale_item', SaleViews.SaleItemViewSet)
+salerouter.register(r'tender', SaleViews.TenderViewSet)
+salerouter.register(r'tender_type', SaleViews.TenderTypeViewSet)
+salerouter.register(r'purchaser', SaleViews.PurchaserViewSet)
 
-retailrouter.register(r'loyalty/loyalty_transaction', LoyaltyViews.LoyaltyTransactionViewSet)
-retailrouter.register(r'loyalty/loyalty_scheme', LoyaltyViews.LoyaltySchemeViewSet)
+loyaltyrouter = AppRouter(root_view_name='app-loyalty')
+loyaltyrouter.register(r'loyalty_transaction', LoyaltyViews.LoyaltyTransactionViewSet)
+loyaltyrouter.register(r'loyalty_scheme', LoyaltyViews.LoyaltySchemeViewSet)
 
-retailrouter.register(r'market/market_segment', MarketViews.MarketSegmentViewSet)
-retailrouter.register(r'market/market_strategy', MarketViews.MarketStrategyViewSet)
+marketrouter = AppRouter(root_view_name='app-market')
+marketrouter.register(r'market_segment', MarketViews.MarketSegmentViewSet)
+marketrouter.register(r'market_strategy', MarketViews.MarketStrategyViewSet)
 
-retailrouter.register(r'customer_bill/customer_billing_cycle', CustomerBillViews.CustomerBillingCycleViewSet)
-retailrouter.register(r'customer_bill/customer_bill_specification', CustomerBillViews.CustomerBillSpecificationViewSet)
-retailrouter.register(r'customer_bill/customer_bill', CustomerBillViews.CustomerBillViewSet)
+customerbillrouter = AppRouter(root_view_name='app-customer_billing')
+customerbillrouter.register(r'customer_billing_cycle', CustomerBillViews.CustomerBillingCycleViewSet)
+customerbillrouter.register(r'customer_bill_specification', CustomerBillViews.CustomerBillSpecificationViewSet)
+customerbillrouter.register(r'customer_bill', CustomerBillViews.CustomerBillViewSet)
+customerbillrouter.register(r'account_bill_item', CustomerBillViews.AccountBillItemViewSet)
+customerbillrouter.register(r'subscription_bill_item', CustomerBillViews.SubscriptionBillItemViewSet)
+customerbillrouter.register(r'service_bill_item', CustomerBillViews.ServiceBillItemViewSet)
+customerbillrouter.register(r'rebate_bill_item', CustomerBillViews.RebateBillItemViewSet)
+customerbillrouter.register(r'allocation_bill_item', CustomerBillViews.AllocationBillItemViewSet)
+customerbillrouter.register(r'adjustment_bill_item', CustomerBillViews.AdjustmentBillItemViewSet)
+customerbillrouter.register(r'dispute_bill_item', CustomerBillViews.DisputeBillItemViewSet)
 
-retailrouter.register(r'customer_bill/account_bill_item', CustomerBillViews.AccountBillItemViewSet)
-retailrouter.register(r'customer_bill/subscription_bill_item', CustomerBillViews.SubscriptionBillItemViewSet)
-retailrouter.register(r'customer_bill/service_bill_item', CustomerBillViews.ServiceBillItemViewSet)
-retailrouter.register(r'customer_bill/rebate_bill_item', CustomerBillViews.RebateBillItemViewSet)
-retailrouter.register(r'customer_bill/allocation_bill_item', CustomerBillViews.AllocationBillItemViewSet)
-retailrouter.register(r'customer_bill/adjustment_bill_item', CustomerBillViews.AdjustmentBillItemViewSet)
-retailrouter.register(r'customer_bill/dispute_bill_item', CustomerBillViews.DisputeBillItemViewSet)
+orderrouter = AppRouter(root_view_name='app-order')
+orderrouter.register(r'order', OrderViews.OrderViewSet)
+orderrouter.register(r'order_item', OrderViews.OrderItemViewSet)
 
-retailrouter.register(r'order/order', OrderViews.OrderViewSet)
-retailrouter.register(r'order/order_item', OrderViews.OrderItemViewSet)
+supplychainrouter = AppRouter(root_view_name='app-supply_chain')
+supplychainrouter.register(r'asns', SupplyChainViews.AsnsViewSet)
+supplychainrouter.register(r'po_expected_delivery_date', SupplyChainViews.PoExpectedDeliveryDateViewSet)
+supplychainrouter.register(r'purchase_order_acknowledgement_line_items', SupplyChainViews.PurchaseOrderAcknowledgementLineItemsViewSet)
+supplychainrouter.register(r'purchase_order_acknowledgements', SupplyChainViews.PurchaseOrderAcknowledgementsViewSet)
+supplychainrouter.register(r'purchase_order_line_items', SupplyChainViews.PurchaseOrderLineItemsViewSet)
+supplychainrouter.register(r'purchase_order', SupplyChainViews.PurchaseOrdersViewSet)
+supplychainrouter.register(r'schema_version', SupplyChainViews.SchemaVersionViewSet)
+supplychainrouter.register(r'sscc', SupplyChainViews.SsccViewSet)
+supplychainrouter.register(r'sscc_audit_correction_actions', SupplyChainViews.SsccAuditCorrectionActionsViewSet)
+supplychainrouter.register(r'sscc_audit_correction_product_items', SupplyChainViews.SsccAuditCorrectionProductItemsViewSet)
+supplychainrouter.register(r'sscc_audit_correction_reversal', SupplyChainViews.SsccAuditCorrectionReversalViewSet)
+supplychainrouter.register(r'sscc_audit_corrections', SupplyChainViews.SsccAuditCorrectionsViewSet)
+supplychainrouter.register(r'sscc_audit_product_items', SupplyChainViews.SsccAuditProductItemsViewSet)
+supplychainrouter.register(r'sscc_audits', SupplyChainViews.SsccAuditsViewSet)
+supplychainrouter.register(r'sscc_delivery', SupplyChainViews.SsccDeliveryViewSet)
+supplychainrouter.register(r'sscc_goods_receipt', SupplyChainViews.SsccGoodsReceiptViewSet)
+supplychainrouter.register(r'sscc_mandatory_audit_control', SupplyChainViews.SsccMandatoryAuditControlViewSet)
+supplychainrouter.register(r'sscc_product_items', SupplyChainViews.SsccProductItemsViewSet)
+supplychainrouter.register(r'synchronisations', SupplyChainViews.SynchronisationsViewSet)
+supplychainrouter.register(r'synchronisations_end', SupplyChainViews.SynchronisationsEndViewSet)
+supplychainrouter.register(r'unrecognised_sscc', SupplyChainViews.UnrecognisedSsccViewSet)
 
-retailrouter.register(r'supply_chain/asns', SupplyChainViews.AsnsViewSet)
-retailrouter.register(r'supply_chain/po_expected_delivery_date', SupplyChainViews.PoExpectedDeliveryDateViewSet)
-retailrouter.register(r'supply_chain/purchase_order_acknowledgement_line_items', SupplyChainViews.PurchaseOrderAcknowledgementLineItemsViewSet)
-retailrouter.register(r'supply_chain/purchase_order_acknowledgements', SupplyChainViews.PurchaseOrderAcknowledgementsViewSet)
-retailrouter.register(r'supply_chain/purchase_order_line_items', SupplyChainViews.PurchaseOrderLineItemsViewSet)
-retailrouter.register(r'supply_chain/purchase_order', SupplyChainViews.PurchaseOrdersViewSet)
-retailrouter.register(r'supply_chain/schema_version', SupplyChainViews.SchemaVersionViewSet)
-retailrouter.register(r'supply_chain/sscc', SupplyChainViews.SsccViewSet)
-retailrouter.register(r'supply_chain/sscc_audit_correction_actions', SupplyChainViews.SsccAuditCorrectionActionsViewSet)
-retailrouter.register(r'supply_chain/sscc_audit_correction_product_items', SupplyChainViews.SsccAuditCorrectionProductItemsViewSet)
-retailrouter.register(r'supply_chain/sscc_audit_correction_reversal', SupplyChainViews.SsccAuditCorrectionReversalViewSet)
-retailrouter.register(r'supply_chain/sscc_audit_corrections', SupplyChainViews.SsccAuditCorrectionsViewSet)
-retailrouter.register(r'supply_chain/sscc_audit_product_items', SupplyChainViews.SsccAuditProductItemsViewSet)
-retailrouter.register(r'supply_chain/sscc_audits', SupplyChainViews.SsccAuditsViewSet)
-retailrouter.register(r'supply_chain/sscc_delivery', SupplyChainViews.SsccDeliveryViewSet)
-retailrouter.register(r'supply_chain/sscc_goods_receipt', SupplyChainViews.SsccGoodsReceiptViewSet)
-retailrouter.register(r'supply_chain/sscc_mandatory_audit_control', SupplyChainViews.SsccMandatoryAuditControlViewSet)
-retailrouter.register(r'supply_chain/sscc_product_items', SupplyChainViews.SsccProductItemsViewSet)
-retailrouter.register(r'supply_chain/synchronisations', SupplyChainViews.SynchronisationsViewSet)
-retailrouter.register(r'supply_chain/synchronisations_end', SupplyChainViews.SynchronisationsEndViewSet)
-retailrouter.register(r'supply_chain/unrecognised_sscc', SupplyChainViews.UnrecognisedSsccViewSet)
+jobmanagementrouter = AppRouter(root_view_name='app-job_management')
+jobmanagementrouter.register(r'job', JobManagmentViews.JobViewSet)
+jobmanagementrouter.register(r'job_party_role', JobManagmentViews.JobPartyRoleViewSet)
 
-retailrouter.register(r'job_management/job', JobManagmentViews.JobViewSet)
-retailrouter.register(r'job_management/job_party_role', JobManagmentViews.JobPartyRoleViewSet)
-
-router = DefaultRouter()
-for route in retailrouter.registry:
-    router.register(route[0], route[1])
-for route in cberouter.registry:
-    if len(route) == 2:
-        router.register(route[0], route[1])
-    else:
-        router.register(route[0], route[1], base_name=route[2])
+apps={                      'store':'app-store',
+                            'product':'app-product',
+                            'promotion':'app-promotion',
+                            'sale':'app-sale',
+                            'loyalty':'app-loyalty',
+                            'market':'app-market',
+                            'customer_billing':'app-customer_billing',
+                            'order':'app-order',
+                            'supply_chain':'app-supply_chain',
+                            'job_management':'app-job_management', }
+router = AppRouter(  apps={**apps,**cbeapps} )
         
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^api/', include(router.urls)),
-    url(r'^api-auth/',
-        include('rest_framework.urls', namespace='rest_framework')),
-    ]
+    url(r'^api/store/', include(storerouter.urls)),
+    url(r'^api/product/', include(productrouter.urls)),
+    url(r'^api/price/', include(pricerouter.urls)),
+    url(r'^api/sale/', include(salerouter.urls)),
+    url(r'^api/loyalty/', include(loyaltyrouter.urls)),
+    url(r'^api/market/', include(marketrouter.urls)),
+    url(r'^api/customer_bill/', include(customerbillrouter.urls)),
+    url(r'^api/supply_chain/', include(supplychainrouter.urls)),
+    url(r'^api/job_management/', include(jobmanagementrouter.urls)),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    ] + cbeappurlpatterns
