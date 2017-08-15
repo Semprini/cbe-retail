@@ -240,7 +240,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
                 device = Device( owner=owner_role, serial_number=till_lineno, physical_object_type="Till", model=till_type )
                 device.save()
                 tills["%s:%s"%(owner_role,till_lineno)] = PhysicalResource.objects.create( owner=owner_role, serial_number=till_lineno, name="Till" )
-                tills["%s:%s"%(owner_role,till_lineno)].physcial_objects.add(device)
+                tills["%s:%s"%(owner_role,till_lineno)].physical_objects.add(device)
             till = tills["%s:%s"%(owner_role,till_lineno)]
             
             # Create or get product
