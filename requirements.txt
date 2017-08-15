@@ -8,4 +8,5 @@ django-crispy-forms
 django-gm2m
 django-allauth
 djangorestframework-csv
+git+https://github.com/tomchristie/django-rest-raml.git
 git+https://github.com/Semprini/cbe.git
