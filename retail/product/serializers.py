@@ -19,7 +19,8 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
         
 class ProductOfferingSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
-
+    product = ProductSerializer()
+    
     #prices = serializers.ManyHyperlinkedRelatedField(
     #    source='productofferingprice_set',
     #    view_name='productofferingprice-detail' 

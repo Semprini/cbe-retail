@@ -22,5 +22,5 @@ class JobPartyRoleSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
     class Meta:
-        model = Job
+        model = JobPartyRole
         fields = ('type', 'url', 'name', 'party', 'job', 'credit', )

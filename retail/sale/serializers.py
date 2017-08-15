@@ -11,6 +11,7 @@ from cbe.party.models import PartyRoleAssociation
 from cbe.credit.serializers import CreditBalanceEventSerializer
 
 from retail.sale.models import SalesChannel, Sale, SaleItem, TenderType, Tender, Purchaser
+from retail.product.serializers import ProductOfferingSerializer
 
 
 class TenderTypeSerializer(serializers.HyperlinkedModelSerializer):
@@ -37,6 +38,7 @@ class SaleItemSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
     #TODO: Waiting on pull request from django-rest
     #url = serializers.HyperlinkedIdentityField(view_name='saleitem-detail', read_only=False, queryset=SaleItem.objects.all())
+    product_offering = ProductOfferingSerializer()
     
     class Meta:
         model = SaleItem
@@ -129,5 +131,5 @@ class PurchaserSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Purchaser
-        fields = ('type', 'url', 'party', 'transation_limit', 'associations_from', 'associations_to',)
+        fields = ('type', 'url', 'party', 'credit', 'associations_from', 'associations_to',)
 

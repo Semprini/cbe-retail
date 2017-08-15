@@ -1,35 +1,16 @@
 """retail URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.8/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Add an import:  from blog import urls as blog_urls
-    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 
-from django.views.generic import View
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
 
-from rest_framework import routers
-from rest_framework.response import Response
-from rest_framework.routers import DefaultRouter, SimpleRouter
-from rest_framework import serializers, viewsets
-from rest_framework import generics
-from django.urls import reverse
+from rest_framework.schemas import get_schema_view
+from rest_framework_raml.renderers import RAMLRenderer, RAMLDocsRenderer
 
 from cbe.routers import AppRouter
 from cbe.urls import apps as cbeapps
 from cbe.urls import appurlpatterns as cbeappurlpatterns
+import cbe.views as CBEViews
 
 import retail.store.views as StoreViews
 import retail.product.views as ProductViews
@@ -44,6 +25,12 @@ import retail.job_management.views as JobManagmentViews
 
 admin.site.site_title = 'CBE Retail'
 admin.site.site_header = 'Retail Business Entities'
+
+schema_view = get_schema_view(
+    title='CBE-Retail API',
+    renderer_classes=[RAMLRenderer, RAMLDocsRenderer]
+)
+
 
 storerouter = AppRouter(root_view_name='app-store')
 storerouter.register(r'store', StoreViews.StoreViewSet)
@@ -128,8 +115,11 @@ apps={                      'store':'app-store',
                             'supply_chain':'app-supply_chain',
                             'job_management':'app-job_management', }
 router = AppRouter(  apps={**apps,**cbeapps} )
+router.register(r'auth/users', CBEViews.UserViewSet)
+router.register(r'content_types', CBEViews.ContentTypeViewSet)
         
 urlpatterns = [
+    url(r'^raml/$', schema_view),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^api/', include(router.urls)),

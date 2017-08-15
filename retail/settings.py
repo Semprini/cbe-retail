@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django_nose',
     'rest_framework',
+    'rest_framework_raml',
     'gm2m',
     'allauth',
     'allauth.account',
