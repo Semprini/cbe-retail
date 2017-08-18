@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 
 from cbe.party.models import Organisation
 from cbe.location.models import Location
@@ -47,7 +48,7 @@ class Product(models.Model):
 
     associated_products = models.ManyToManyField('self', through='ProductAssociation',
                                            symmetrical=False,
-                                           related_name='associated_to')
+                                           related_name='associated_to+')
 
     class Meta:
         ordering = ['id']
@@ -76,6 +77,19 @@ class Product(models.Model):
             # avoid recursion by passing `symm=False`
             product.remove_association(self, type, rank, False)
 
+    @property
+    def cross_sell_products(self):
+        return Product.objects.filter( 
+            (Q(to_products__association_type='cross-selling') | Q(from_products__association_type='cross-selling') ) &
+            (Q(to_products__from_product=self) | Q(from_products__to_product=self) )
+            ).order_by('to_products__rank','from_products__rank',)
+            
+    @property
+    def product_associations(self):
+        return ProductAssociation.objects.filter(
+            Q(from_product=self) | Q(to_product=self)            )
+
+            
     def get_associations_by_type(self, type):
         return self.associated_products.filter(
             to_products__association_type=type,

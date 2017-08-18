@@ -11,10 +11,12 @@ from retail.product.models import Product, ProductOffering, ProductCategory, Pro
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
-
+    #product_associations = serializers.HyperlinkedIdentityField(many=True, view_name='productassociation-detail')
+    cross_sell_products = serializers.HyperlinkedIdentityField(many=True, view_name='product-detail')
+    
     class Meta:
         model = Product
-        fields = ('type', 'url', 'valid_from', 'valid_to', 'name', 'description', 'unit_of_measure', 'sku', 'bundle', 'categories', 'associated_products',)
+        fields = ('type', 'url', 'valid_from', 'valid_to', 'name', 'description', 'unit_of_measure', 'sku', 'bundle', 'categories', 'cross_sell_products',)
 
 
 class ProductAssociationSerializer(serializers.HyperlinkedModelSerializer):
