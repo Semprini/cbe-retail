@@ -22,6 +22,17 @@ class ProductCategory(models.Model):
         return self.name
 
         
+class ProductAssociation(models.Model):
+    valid_from = models.DateField(null=True, blank=True)
+    valid_to = models.DateField(null=True, blank=True)
+    
+    from_product = models.ForeignKey('Product', related_name='from_products')
+    to_product = models.ForeignKey('Product', related_name='to_products')
+
+    association_type = models.CharField(max_length=200, choices=(('cross-selling', 'cross-selling'), ('other', 'other'), ), default='cross-selling')
+    rank = models.IntegerField( default=0 )
+    
+        
 class Product(models.Model):
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
@@ -34,13 +45,43 @@ class Product(models.Model):
     bundle = models.ManyToManyField('Product', blank=True)
     categories = models.ManyToManyField(ProductCategory, blank=True)
 
+    associated_products = models.ManyToManyField('self', through='ProductAssociation',
+                                           symmetrical=False,
+                                           related_name='associated_to')
+
     class Meta:
         ordering = ['id']
     
     def __str__(self):
         return self.name
-    
 
+    def add_association(self, product, type, rank, symm=True):
+        association, created = ProductAssociation.objects.get_or_create(
+            from_product=self,
+            to_product=product,
+            association_type=type,
+            rank=rank)
+        if symm:
+            # avoid recursion by passing `symm=False`
+            product.add_association(self, type, rank, False)
+        return association
+
+    def remove_association(self, product, type, rank, symm=True):
+        ProductAssociation.objects.filter(
+            from_person=self,
+            to_product=product,
+            association_type=type,
+            rank=rank).delete()
+        if symm:
+            # avoid recursion by passing `symm=False`
+            product.remove_association(self, type, rank, False)
+
+    def get_associations_by_type(self, type):
+        return self.associated_products.filter(
+            to_products__association_type=type,
+            to_products__from_product=self)            
+
+            
 class ProductOffering(models.Model):
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)

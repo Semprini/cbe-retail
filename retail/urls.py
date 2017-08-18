@@ -40,6 +40,7 @@ productrouter.register(r'product', ProductViews.ProductViewSet)
 productrouter.register(r'product_offering', ProductViews.ProductOfferingViewSet)
 productrouter.register(r'product_category', ProductViews.ProductCategoryViewSet)
 productrouter.register(r'product_stock_level', ProductViews.ProductStockLevelViewSet)
+productrouter.register(r'product_association', ProductViews.ProductAssociationViewSet)
 
 pricerouter = AppRouter(root_view_name='app-promotion')
 pricerouter.register(r'promotion', PriceViews.PromotionViewSet)
