@@ -138,6 +138,8 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
     unknown_org, created = Organisation.objects.get_or_create( name="Unknown" )
     unknown_ind, created = Individual.objects.get_or_create( name="Unknown"  )
     
+    # TODO: 'Local' Product category if nat_retail & nat_cost = 0
+    
     items = []
     tenders = []
     sales = []
@@ -176,7 +178,9 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
             amount_excl = Decimal(data[10].strip('"'))
             amount_tax = amount_excl*Decimal(0.15)
             amount_inc = amount_excl + amount_tax
-            retail = Decimal(data[31].strip('"'))
+            retail = Decimal(data[20].strip('"'))
+            nat_retail = Decimal(data[30].strip('"'))
+            nat_cost = Decimal(data[31].strip('"'))
             discount = (retail*quantity) - amount_inc
             cost = Decimal(data[32].strip('"'))
             tender_type = data[15].strip('"')
