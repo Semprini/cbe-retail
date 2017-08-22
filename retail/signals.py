@@ -37,11 +37,11 @@ def notify_save_instance(sender, instance, created, serializer, exchange_prefix,
     for header in exchange_header_list:
         headers_dict[header] = getattr(instance,header)
             
-    json = JSONRenderer().render(serializer(instance, context=serializer_context()).data)
-    
+    json = JSONRenderer().render(serializer(instance, context=serializer_context()).data).decode(encoding='utf-8')
+
     if MQ_FRAMEWORK['HOST'] == 'None':
         print("EXCHANGE=%s | HEADERS=%s="%(exchange_name, headers_dict))
-        print(json)
+        print('%s'%json)
     else:
         connection = pika.BlockingConnection(pika.ConnectionParameters(host=MQ_FRAMEWORK['HOST']))
         channel = connection.channel()
