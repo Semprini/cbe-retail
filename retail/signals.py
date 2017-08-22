@@ -35,7 +35,7 @@ def notify_save_instance(sender, instance, created, serializer, exchange_prefix,
 
     headers_dict = {}
     for header in exchange_header_list:
-        headers_dict[header] = getattr(instance,header)
+        headers_dict[header] = '%s'%getattr(instance,header)
             
     json = JSONRenderer().render(serializer(instance, context=serializer_context()).data).decode(encoding='utf-8')
 
