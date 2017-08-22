@@ -40,7 +40,7 @@ def notify_save_instance(sender, instance, created, serializer, exchange_prefix,
     json = JSONRenderer().render(serializer(instance, context=serializer_context()).data).decode(encoding='utf-8')
 
     if MQ_FRAMEWORK['HOST'] == 'None':
-        print("EXCHANGE=%s | HEADERS=%s="%(exchange_name, headers_dict))
+        print("EXCHANGE=%s | HEADERS=%s"%(exchange_name, headers_dict))
         print('%s'%json)
     else:
         connection = pika.BlockingConnection(pika.ConnectionParameters(host=MQ_FRAMEWORK['HOST']))
@@ -50,5 +50,5 @@ def notify_save_instance(sender, instance, created, serializer, exchange_prefix,
         channel.basic_publish(  exchange=exchange_name,
                                 routing_key='cbe',
                                 body=json,
-                                properties = pika.BasicProperties({'headers': headers_dict}))
+                                properties = pika.BasicProperties(headers=headers_dict))
         connection.close()    
