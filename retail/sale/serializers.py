@@ -92,12 +92,12 @@ class SaleSerializer(serializers.HyperlinkedModelSerializer):
             print( "Checking %s" %tender_data )
             # Are we updating or creating the nested object?
             if 'url' in tender_data.keys():
-                resolved_func, unused_args, resolved_kwargs = resolve(
-                    urlparse(tender_data['url']).path)
+                resolved_func, unused_args, resolved_kwargs = resolve(urlparse(tender_data['url']).path)
                 object = resolved_func.cls.queryset.get(pk=resolved_kwargs['pk'])
                 print( "Updating %s" %object )
                 for key, value in tender_data.items():
-                    setattr( object, key, value )  
+                    setattr( object, key, value )
+                object.save()
             else:
                 #TODO: Waiting on pull request from django-rest
                 #object = Tender.objects.create(sale=instance, **tender_data)
@@ -107,6 +107,8 @@ class SaleSerializer(serializers.HyperlinkedModelSerializer):
         if self.partial == True:
             print("PARTIAL")
 
+        instance.save()
+        
         return instance             
         
 

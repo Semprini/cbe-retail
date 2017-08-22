@@ -14,6 +14,9 @@ class CustomerBillingCycle(models.Model):
     delivery_date = models.DateField(null=True, blank=True)
     payment_due = models.DateField()
 
+    class Meta:
+        ordering = ['id']
+
     def __str__(self):
         return "%s:%s" %(self.account, self.name )
     
@@ -25,6 +28,9 @@ class CustomerBillSpecification(models.Model):
     billing_cycle = models.ForeignKey( CustomerBillingCycle )
     location = models.ForeignKey( Location, null=True, blank=True )
     organisation = models.ForeignKey( Organisation, null=True, blank=True )
+
+    class Meta:
+        ordering = ['id']
 
     def __str__(self):
         return "%s:%s" %(self.account, self.name )
@@ -50,6 +56,9 @@ class CustomerBill(models.Model):
     disputed = models.DecimalField(default = 0, max_digits=10, decimal_places=2)
     allocated = models.DecimalField(default = 0, max_digits=10, decimal_places=2)
 
+    class Meta:
+        ordering = ['id']
+
     def __str__(self):
         return "%s:%s" %(self.account, self.number )
     
@@ -64,34 +73,58 @@ class CustomerBillItem(models.Model):
     discounted = models.DecimalField(default = 0, max_digits=10, decimal_places=2)
 
     class Meta:
+        ordering = ['id']
+
+    class Meta:
         abstract = True    
     
     
 class AccountBillItem(CustomerBillItem):
+    class Meta:
+        ordering = ['id']
+
     def __str__(self):
         return "%s:%s" %(self.bill, self.type )
     
 class SubscriptionBillItem(CustomerBillItem):
+    class Meta:
+        ordering = ['id']
+
     def __str__(self):
         return "%s:%s" %(self.bill, self.type )
 
 class ServiceBillItem(CustomerBillItem):
+    class Meta:
+        ordering = ['id']
+
     def __str__(self):
         return "%s:%s" %(self.bill, self.type )
 
 class RebateBillItem(CustomerBillItem):
+    class Meta:
+        ordering = ['id']
+
     def __str__(self):
         return "%s:%s" %(self.bill, self.type )
 
 class AllocationBillItem(CustomerBillItem):
+    class Meta:
+        ordering = ['id']
+
     def __str__(self):
         return "%s:%s" %(self.bill, self.type )
 
 class AdjustmentBillItem(CustomerBillItem):
+    class Meta:
+        ordering = ['id']
+
     def __str__(self):
         return "%s:%s" %(self.bill, self.type )
 
 class DisputeBillItem(CustomerBillItem):
+    class Meta:
+        ordering = ['id']
+
     def __str__(self):
         return "%s:%s" %(self.bill, self.type )
 

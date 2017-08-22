@@ -3,15 +3,23 @@ FROM python:latest
 
 # Set default required environment variables
 ENV PYTHONUNBUFFERED 1
+
 ENV DBENGINE sqlite3
 ENV DBNAME /code/dblocal.sqlite3
 ENV DBHOST None
 ENV DBPORT None
 ENV DBUSER None
 ENV DBPASSWORD None
+
 ENV SUNAME super 
 ENV SUEMAIL super@super.com
 ENV SUPASS super
+
+ENV MQHOST None
+ENV MQUSER None
+ENV MQPASSWORD None
+ENV MQRESTSERVER '127.0.0.1'
+ENV MQRESTPORT 8000
 
 # Install some necessary things.
 RUN apt-get update

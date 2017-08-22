@@ -12,10 +12,18 @@ DATABASES = {\n\
         'USER': '${DBUSER}',\n\
         'PASSWORD': '${DBPASSWORD}',\n\
     }\n\
+}\n\
+MQ_FRAMEWORK = {\n\
+    'HOST': '${MQHOST}',\n\
+    'USER': '${MQUSER}',\n\
+    'PASSWORD': '${MQPASSWORD}',\n\
+    'EXCHANGE_PREFIX': 'notify.',\n\
+    'HTTP_REST_CONTEXT': {\n\
+        'SERVER_NAME': '${MQRESTSERVER}',\n\
+        'SERVER_PORT': ${MQRESTPORT},\n\
+    }\n\
 }\n" > /code/retail/local_settings.py
 
-#python manage.py migrate auth contenttypes
-#python manage.py makemigrations business_interaction location physical_object resource customer trouble supplier_partner human_resources product pricing sale
 python manage.py migrate
 python manage.py getorcreatesuperuser ${SUNAME} ${SUEMAIL} ${SUPASS}
 #uwsgi --ini uwsgi.ini
