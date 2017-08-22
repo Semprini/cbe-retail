@@ -49,6 +49,6 @@ def notify_save_instance(sender, instance, created, serializer, exchange_prefix,
 
         channel.basic_publish(  exchange=exchange_name,
                                 routing_key='cbe',
-                                body=message,
+                                body=json,
                                 properties = pika.BasicProperties({'headers': headers_dict}))
         connection.close()    
