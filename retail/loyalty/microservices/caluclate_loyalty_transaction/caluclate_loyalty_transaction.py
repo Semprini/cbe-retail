@@ -32,6 +32,7 @@ def callback(ch, method, properties, body):
         response = requests.post(LOYALTY_TRANSACTION_URL, data=data, headers=headers, auth=('super', 'super'))
         if response.status_code != 201: # (201) Created
             print( "Error creating loyalty transaction" )
+            print( response.__dict__ )
         else:
             print( "Loyalty transaction created" )
     else:
