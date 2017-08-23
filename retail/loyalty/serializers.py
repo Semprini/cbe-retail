@@ -25,5 +25,3 @@ class LoyaltySchemeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = LoyaltyScheme
         fields = ('type', 'url', 'name' )  
-
-                     
