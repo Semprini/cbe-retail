@@ -14,6 +14,6 @@ class LoyaltyConfig(AppConfig):
         exchange_header_list = ('scheme',)
         
         post_save.connect(  retail.signals.notify_extra_args(   serializer=LoyaltyTransactionSerializer, 
-                                                                exchange_prefix=exchange_prefix,
+                                                                exchange_prefix=exchange_prefix + ".LoyaltyTransaction",
                                                                 exchange_header_list=exchange_header_list)(retail.signals.notify_save_instance), 
                             sender=LoyaltyTransaction, weak=False)    

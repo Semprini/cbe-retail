@@ -50,7 +50,7 @@ def queue_setup(connection):
         sys.exit(1)
     queue_name = result.method.queue
 
-    channel.queue_bind(exchange='notify.retail.sale.updated', queue = queue_name, routing_key = '',)
+    channel.queue_bind(exchange='notify.retail.sale.Sale.updated', queue = queue_name, routing_key = '',)
                        #arguments = {'ham': 'good', 'x-match':'any'})
 
     channel.basic_consume(callback, queue = queue_name, no_ack=True)

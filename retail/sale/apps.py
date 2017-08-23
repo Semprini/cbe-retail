@@ -14,6 +14,6 @@ class SaleConfig(AppConfig):
         exchange_header_list = ('store',)
         
         post_save.connect(  retail.signals.notify_extra_args(   serializer=SaleSerializer, 
-                                                                exchange_prefix=exchange_prefix, 
+                                                                exchange_prefix=exchange_prefix + ".Sale", 
                                                                 exchange_header_list=exchange_header_list)(retail.signals.notify_save_instance), 
                             sender=Sale, weak=False)
