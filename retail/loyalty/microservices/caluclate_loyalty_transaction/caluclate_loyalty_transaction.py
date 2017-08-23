@@ -1,6 +1,5 @@
 #!/usr/bin/env python 
-import sys
-import json
+import sys, time, json
 import requests
 
 import pika
@@ -61,11 +60,23 @@ if __name__ == "__main__":
     #test handler:
     #callback(None, None, pika.BasicProperties(headers = {'foo':'a'}), test_json)
 
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host=QUEUE_HOST))
+    connection = None
+    ready = False
+    while not ready:
+        try:
+            connection = pika.BlockingConnection(pika.ConnectionParameters(host=QUEUE_HOST))
+            print( "Completed connection to MQ..." )
+            ready = True
+        except KeyboardInterrupt:
+            ready = True
+        except:
+            print( "Connection to MQ not ready, retry..." )
+            time.sleep(5)
     try:
        queue_setup(connection).start_consuming()
     except KeyboardInterrupt:
         print( 'Bye' )
     finally:
-        connection.close()
+        if connection:
+            connection.close()
         
