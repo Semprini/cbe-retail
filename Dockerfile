@@ -25,14 +25,14 @@ ENV MQRESTPORT 8000
 RUN apt-get update
 RUN apt-get install -y swig libssl-dev dpkg-dev netcat libmysqlclient-dev
 
+# Install dependencies not in requirements.txt
+RUN pip install -U pip
+RUN pip install uwsgi mysqlclient psycopg2
+
 # Copy all our files into the image.
 RUN git clone https://github.com/Semprini/cbe-retail.git /code
 WORKDIR /code
-
-# Install our requirements.
-RUN pip install -U pip
 RUN pip install -Ur requirements.txt
-RUN pip install uwsgi mysqlclient psycopg2
 
 # Collect our static media
 RUN python manage.py collectstatic --noinput

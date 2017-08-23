@@ -42,7 +42,7 @@ def callback(ch, method, properties, body):
 def queue_setup(connection):
     channel = connection.channel()
 
-    channel.exchange_declare(exchange='notify.retail.sale.updated', type='headers')
+    channel.exchange_declare(exchange='notify.retail.sale.Sale.updated', type='headers')
 
     result = channel.queue_declare(exclusive=True)
     if not result:
