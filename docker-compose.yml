@@ -1,5 +1,10 @@
 version: '2'
 services:
+    cbe_microservice_loyalty:
+        build: retail/loyalty/microservices/caluclate_loyalty_transaction/
+        depends_on:
+            - cbeapp
+            - cbemq
     cbeapp:
         image: semprini/cbe-retail
         environment:
@@ -8,10 +13,14 @@ services:
             DBNAME: cbe
             DBPASSWORD: docker
             DBUSER: docker
-        ports:
-            - "8000:8000"
+            MQHOST: cbemq
+            MQUSER: guest
+            MQPASSWORD: guest
         depends_on:
             - cbedb
+            - cbemq
+        ports:
+            - "8000:8000"
     cbedb:
         image: postgres
         volumes:

@@ -18,6 +18,7 @@ def callback(ch, method, properties, body):
     
     # If the customer swiped a card then add some airpoints
     if message_json['identification'] != None:
+        print( "Sale with Airpoints triggered loyalty calc" )
         total=float(message_json['total_amount'])
         loyalty_amount = total * LOYALTY_RATE
         
@@ -32,6 +33,8 @@ def callback(ch, method, properties, body):
         response = requests.post(LOYALTY_TRANSACTION_URL, data=data, headers=headers, auth=('super', 'super'))
         if response.status_code != 201: # (201) Created
             print( "Error creating loyalty transaction" )
+        else:
+            print( "Loyalty transaction created" )
     else:
         print("No ID in sale so no loyalty transaction created")
         
