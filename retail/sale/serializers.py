@@ -62,7 +62,7 @@ class SaleSerializer(serializers.HyperlinkedModelSerializer):
         
     def create(self, validated_data):
         tenders_data = validated_data.pop('tenders')
-        #credit_balance_events_data = validated_data.pop('credit_balance_events')
+        credit_balance_events_data = validated_data.pop('credit_balance_events')
         sale_items_data = validated_data.pop('sale_items')
         sale = Sale.objects.create(**validated_data)
         
@@ -80,7 +80,7 @@ class SaleSerializer(serializers.HyperlinkedModelSerializer):
 
     def update(self, instance, validated_data):
         tenders_data = validated_data.pop('tenders')
-        #credit_balance_events_data = validated_data.pop('credit_balance_events')
+        credit_balance_events_data = validated_data.pop('credit_balance_events')
         sale_items_data = validated_data.pop('sale_items')
         
         for key, value in validated_data.items():
