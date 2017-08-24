@@ -5,12 +5,12 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
 from retail.supply_chain.models import Asns, PoExpectedDeliveryDate, PurchaseOrderAcknowledgementLineItems, PurchaseOrderAcknowledgements
-from retail.supply_chain.models import PurchaseOrderLineItems, PurchaseOrders, SchemaVersion, Sscc, SsccAuditCorrectionActions
+from retail.supply_chain.models import PurchaseOrderLineItems, PurchaseOrder, SchemaVersion, Sscc, SsccAuditCorrectionActions
 from retail.supply_chain.models import SsccAuditCorrectionProductItems, SsccAuditCorrectionReversal, SsccAuditCorrections
 from retail.supply_chain.models import SsccAuditProductItems, SsccAudits, SsccDelivery, SsccGoodsReceipt, SsccMandatoryAuditControl
 from retail.supply_chain.models import SsccProductItems, Synchronisations, SynchronisationsEnd, UnrecognisedSscc
 from retail.supply_chain.serializers import AsnsSerializer, PoExpectedDeliveryDateSerializer, PurchaseOrderAcknowledgementLineItemsSerializer
-from retail.supply_chain.serializers import PurchaseOrderAcknowledgementsSerializer, PurchaseOrderLineItemsSerializer, PurchaseOrdersSerializer
+from retail.supply_chain.serializers import PurchaseOrderAcknowledgementsSerializer, PurchaseOrderLineItemsSerializer, PurchaseOrderSerializer
 from retail.supply_chain.serializers import SsccAuditCorrectionsSerializer, SsccAuditProductItemsSerializer
 from retail.supply_chain.serializers import SchemaVersionSerializer, SsccSerializer, SsccAuditCorrectionActionsSerializer, SsccAuditCorrectionProductItemsSerializer
 from retail.supply_chain.serializers import SsccAuditCorrectionReversalSerializer, SsccAuditsSerializer, SsccDeliverySerializer, SsccGoodsReceiptSerializer, SsccMandatoryAuditControlSerializer
@@ -37,9 +37,9 @@ class PurchaseOrderLineItemsViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrderLineItems.objects.all()
     serializer_class = PurchaseOrderLineItemsSerializer
 
-class PurchaseOrdersViewSet(viewsets.ModelViewSet):
-    queryset = PurchaseOrders.objects.all()
-    serializer_class = PurchaseOrdersSerializer
+class PurchaseOrderViewSet(viewsets.ModelViewSet):
+    queryset = PurchaseOrder.objects.all()
+    serializer_class = PurchaseOrderSerializer
     
 class SchemaVersionViewSet(viewsets.ModelViewSet):
     queryset = SchemaVersion.objects.all()

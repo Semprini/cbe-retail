@@ -6,6 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField
+from cbe.customer.serializers import CustomerAccountSerializer
 from retail.customer_bill.models import CustomerBillingCycle, CustomerBillSpecification, CustomerBill
 from retail.customer_bill.models import AccountBillItem, SubscriptionBillItem, ServiceBillItem, RebateBillItem, AllocationBillItem, AdjustmentBillItem, DisputeBillItem
                  
@@ -28,10 +29,12 @@ class CustomerBillSpecificationSerializer(serializers.HyperlinkedModelSerializer
 
 class CustomerBillSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
-
+    account = CustomerAccountSerializer()
+    
     class Meta:
         model = CustomerBill
-        fields = '__all__'
+        fields = ('type','url','number','created','period_from','period_to','status','amount','discounted','adjusted','rebated','disputed','allocated',
+                    'account','specification','accountbillitems','jobbillitems')
 
         
 class Serializer(serializers.HyperlinkedModelSerializer):

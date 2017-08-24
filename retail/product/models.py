@@ -42,7 +42,9 @@ class Product(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
-    sku = models.CharField(max_length=200)
+    sku = models.CharField(max_length=50)
+    barcode = models.CharField(max_length=50, blank=True, null=True)
+    
     bundle = models.ManyToManyField('Product', blank=True)
     categories = models.ManyToManyField(ProductCategory, blank=True)
 

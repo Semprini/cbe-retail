@@ -71,7 +71,7 @@ INSTALLED_APPS = (
     'retail.supply_chain',
 )
 
-# python manage.py makemigrations store market product pricing sale order loyalty customer_bill job_management
+# python manage.py makemigrations store market product pricing sale order loyalty customer_bill job_management supply_chain
 
 SITE_ID = 1
 

@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField
-from retail.supply_chain.models import Asns, PoExpectedDeliveryDate, PurchaseOrderAcknowledgementLineItems, PurchaseOrderAcknowledgements, PurchaseOrderLineItems, PurchaseOrders, SchemaVersion, Sscc, SsccAuditCorrectionActions, SsccAuditCorrectionProductItems, SsccAuditCorrectionReversal, SsccAuditCorrections, SsccAuditProductItems, SsccAudits, SsccDelivery, SsccGoodsReceipt, SsccMandatoryAuditControl, SsccProductItems, Synchronisations, SynchronisationsEnd, UnrecognisedSscc
+from retail.supply_chain.models import Asns, PoExpectedDeliveryDate, PurchaseOrderAcknowledgementLineItems, PurchaseOrderAcknowledgements, PurchaseOrderLineItems, PurchaseOrder, SchemaVersion, Sscc, SsccAuditCorrectionActions, SsccAuditCorrectionProductItems, SsccAuditCorrectionReversal, SsccAuditCorrections, SsccAuditProductItems, SsccAudits, SsccDelivery, SsccGoodsReceipt, SsccMandatoryAuditControl, SsccProductItems, Synchronisations, SynchronisationsEnd, UnrecognisedSscc
 
 
 class AsnsSerializer(serializers.HyperlinkedModelSerializer):
@@ -15,8 +15,8 @@ class AsnsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Asns
         fields = ('type', 'url', 'asn_reference', 'message_date_time', 'message_received_date_time', 
-                    'despatch_date_time', 'shipment_due_date_time','final_shipment_flag','purchase_order_reference',
-                    'mitre_10_supplier_code','mitre_10_buyer_store_code','mitre_10_delivery_store_code' )
+                    'despatch_date_time', 'shipment_due_date_time','final_shipment_flag','purchase_order',
+                    'supplier','buyer','delivery_store' )
 
 
 class PoExpectedDeliveryDateSerializer(serializers.HyperlinkedModelSerializer):
@@ -24,8 +24,8 @@ class PoExpectedDeliveryDateSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = PoExpectedDeliveryDate
-        fields = ('type', 'url', 'purchase_order_reference', 'expected_delivery_date', 'mitre_10_supplier_code', 
-                    'message_received_date_time', 'source_record_table', 'source_record_id', 'mitre_10_delivery_store_code' )
+        fields = ('type', 'url', 'purchase_order', 'expected_delivery_date', 'supplier', 
+                    'message_received_date_time', 'source_record_table', 'source_record_id', 'delivery_store' )
                     
 
 class PurchaseOrderAcknowledgementLineItemsSerializer(serializers.HyperlinkedModelSerializer):
@@ -33,8 +33,8 @@ class PurchaseOrderAcknowledgementLineItemsSerializer(serializers.HyperlinkedMod
 
     class Meta:
         model = PurchaseOrderAcknowledgementLineItems
-        fields = ('type', 'url', 'item_barcode', 'mitre_10_item_code', 'supplier_item_code', 
-                    'purchase_order_acknowledgement', 'item_description', 'quantity', 'unit',
+        fields = ('type', 'url', 'product', 'supplier_item_code', 
+                    'purchase_order_acknowledgement', 'quantity', 'unit',
                     'unit_price','notification_code', 'notification_description',)
 
                     
@@ -44,28 +44,30 @@ class PurchaseOrderAcknowledgementsSerializer(serializers.HyperlinkedModelSerial
     class Meta:
         model = PurchaseOrderAcknowledgements
         fields = ('type', 'url', 'poa_reference', 'message_date_time', 'message_received_date_time', 
-                    'delivery_date_time_requested', 'delivery_date_time_estimated', 'purchase_order_reference', 'mitre_10_supplier_code',
-                    'mitre_10_buyer_store_code','mitre_10_delivery_store_code', 'message_function_code', 'message_function_description', 'latest_flag')
+                    'delivery_date_time_requested', 'delivery_date_time_estimated', 'purchase_order', 'supplier',
+                    'buyer','delivery_store', 'message_function_code', 'message_function_description', 'latest_flag')
 
+                    
 class PurchaseOrderLineItemsSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
     class Meta:
         model = PurchaseOrderLineItems
-        fields = ('type', 'url', 'purchase_order', 'item_barcode', 'mitre_10_item_code', 
-                    'supplier_item_code', 'item_description', 'quantity', 'unit',
+        fields = ('type', 'url', 'purchase_order', 'product',
+                    'supplier_item_code', 'quantity', 'unit',
                     'unit_price', 'conversion_factor', )
 
                     
-class PurchaseOrdersSerializer(serializers.HyperlinkedModelSerializer):
+class PurchaseOrderSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
     class Meta:
-        model = PurchaseOrders
-        fields = ('type', 'url', 'purchase_order_reference', 'mitre_10_supplier_code', 'mitre_10_buyer_store_code', 
-                    'mitre_10_delivery_store_code', 'purchase_order_date', 'despatched_date_time', 'delivery_due_date',
+        model = PurchaseOrder
+        fields = ('type', 'url', 'purchase_order_reference', 'supplier', 'buyer', 
+                    'delivery_store', 'purchase_order_date', 'despatched_date_time', 'delivery_due_date',
                     'latest_flag', )
 
+                    
 class SchemaVersionSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
@@ -74,6 +76,7 @@ class SchemaVersionSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('type', 'url', 'installed_rank', 'version', 'description', 
                     'type', 'script', 'checksum', 'installed_by',
                     'installed_on', 'execution_time','success' )
+                    
                     
 class SsccSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()

@@ -66,7 +66,7 @@ class CustomerBill(models.Model):
     
     
 class CustomerBillItem(models.Model):
-    bill = models.ForeignKey( CustomerBill )
+    bill = models.ForeignKey( CustomerBill, related_name="%(class)ss" )
     
     ITEM_TYPE_CHOICES = ( ('account', 'account'), ('subscription', 'subscription'), ('service', 'service'), ('rebate','rebate'), ('allocation', 'allocation'), ('adjustment', 'adjustment'), ('dispute', 'dispute'), )
     item_type = models.CharField(max_length=100, choices=ITEM_TYPE_CHOICES)

@@ -84,7 +84,7 @@ supplychainrouter.register(r'po_expected_delivery_date', SupplyChainViews.PoExpe
 supplychainrouter.register(r'purchase_order_acknowledgement_line_items', SupplyChainViews.PurchaseOrderAcknowledgementLineItemsViewSet)
 supplychainrouter.register(r'purchase_order_acknowledgements', SupplyChainViews.PurchaseOrderAcknowledgementsViewSet)
 supplychainrouter.register(r'purchase_order_line_items', SupplyChainViews.PurchaseOrderLineItemsViewSet)
-supplychainrouter.register(r'purchase_order', SupplyChainViews.PurchaseOrdersViewSet)
+supplychainrouter.register(r'purchase_order', SupplyChainViews.PurchaseOrderViewSet)
 supplychainrouter.register(r'schema_version', SupplyChainViews.SchemaVersionViewSet)
 supplychainrouter.register(r'sscc', SupplyChainViews.SsccViewSet)
 supplychainrouter.register(r'sscc_audit_correction_actions', SupplyChainViews.SsccAuditCorrectionActionsViewSet)
