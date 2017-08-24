@@ -62,7 +62,7 @@ marketrouter = AppRouter(root_view_name='app-market')
 marketrouter.register(r'market_segment', MarketViews.MarketSegmentViewSet)
 marketrouter.register(r'market_strategy', MarketViews.MarketStrategyViewSet)
 
-customerbillrouter = AppRouter(root_view_name='app-customer_billing')
+customerbillrouter = AppRouter(root_view_name='app-customer_bill')
 customerbillrouter.register(r'customer_billing_cycle', CustomerBillViews.CustomerBillingCycleViewSet)
 customerbillrouter.register(r'customer_bill_specification', CustomerBillViews.CustomerBillSpecificationViewSet)
 customerbillrouter.register(r'customer_bill', CustomerBillViews.CustomerBillViewSet)
@@ -111,7 +111,7 @@ apps={                      'store':'app-store',
                             'sale':'app-sale',
                             'loyalty':'app-loyalty',
                             'market':'app-market',
-                            'customer_billing':'app-customer_billing',
+                            'customer_bill':'app-customer_bill',
                             'order':'app-order',
                             'supply_chain':'app-supply_chain',
                             'job_management':'app-job_management', }

@@ -135,8 +135,6 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
     store_channel, created = SalesChannel.objects.get_or_create( name="Store" )
     internet_channel, created = SalesChannel.objects.get_or_create( name="Internet" )
     airpoints, created = IdentificationType.objects.get_or_create( name="Airpoints Card" )
-    unknown_org, created = Organisation.objects.get_or_create( name="Unknown" )
-    unknown_ind, created = Individual.objects.get_or_create( name="Unknown"  )
     
     # TODO: 'Local' Product category if nat_retail & nat_cost = 0
     
@@ -214,7 +212,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
                     customers = Customer.objects.filter( customer_number=accountno )
                     if len(customers) == 0:
                         customer = Customer( customer_number=accountno, managed_by=store_org, customer_status="new", valid_from=timezone.make_aware(datetime.datetime.now()) )
-                        customer.organisation = unknown_org
+                        customer.organisation = Organisation.objects.create( name="Unknown" )
                         customer.save()
                     else:
                         customer = customers[0]
@@ -224,7 +222,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
             elif loyaltyno != "":
                 if loyaltyno not in customer_accounts.keys():
                     customer = Customer( customer_number=loyaltyno, customer_status="new", valid_from=timezone.make_aware(datetime.datetime.now()) )
-                    customer.individual = unknown_ind
+                    customer.individual = Individual.objects.create( name="Unknown" )
                     customer.save()
                     customer_accounts[loyaltyno] = CustomerAccount.objects.create( account_number=loyaltyno, account_status="new", customer=customer )
                 account = customer_accounts[loyaltyno]

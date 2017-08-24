@@ -4,6 +4,8 @@ from cbe.location.models import Location
 from cbe.party.models import Organisation
 from cbe.customer.models import Customer, CustomerAccount
 
+from retail.sale.models import Sale
+
 
 class CustomerBillingCycle(models.Model):
     account = models.ForeignKey( CustomerAccount )
@@ -72,6 +74,8 @@ class CustomerBillItem(models.Model):
     amount = models.DecimalField(default = 0, max_digits=10, decimal_places=2)
     discounted = models.DecimalField(default = 0, max_digits=10, decimal_places=2)
 
+    sale_events = models.ManyToManyField(Sale, blank=True)
+    
     class Meta:
         ordering = ['id']
 
@@ -84,49 +88,56 @@ class AccountBillItem(CustomerBillItem):
         ordering = ['id']
 
     def __str__(self):
-        return "%s:%s" %(self.bill, self.type )
+        return "%s:%s" %(self.bill, self.item_type )
     
+class JobBillItem(CustomerBillItem):
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self):
+        return "%s:%s" %(self.bill, self.item_type )
+
 class SubscriptionBillItem(CustomerBillItem):
     class Meta:
         ordering = ['id']
 
     def __str__(self):
-        return "%s:%s" %(self.bill, self.type )
+        return "%s:%s" %(self.bill, self.item_type )
 
 class ServiceBillItem(CustomerBillItem):
     class Meta:
         ordering = ['id']
 
     def __str__(self):
-        return "%s:%s" %(self.bill, self.type )
+        return "%s:%s" %(self.bill, self.item_type )
 
 class RebateBillItem(CustomerBillItem):
     class Meta:
         ordering = ['id']
 
     def __str__(self):
-        return "%s:%s" %(self.bill, self.type )
+        return "%s:%s" %(self.bill, self.item_type )
 
 class AllocationBillItem(CustomerBillItem):
     class Meta:
         ordering = ['id']
 
     def __str__(self):
-        return "%s:%s" %(self.bill, self.type )
+        return "%s:%s" %(self.bill, self.item_type )
 
 class AdjustmentBillItem(CustomerBillItem):
     class Meta:
         ordering = ['id']
 
     def __str__(self):
-        return "%s:%s" %(self.bill, self.type )
+        return "%s:%s" %(self.bill, self.item_type )
 
 class DisputeBillItem(CustomerBillItem):
     class Meta:
         ordering = ['id']
 
     def __str__(self):
-        return "%s:%s" %(self.bill, self.type )
+        return "%s:%s" %(self.bill, self.item_type )
 
 #account charge
 #subscription charge
