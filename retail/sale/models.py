@@ -131,7 +131,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
     
     cash, created = TenderType.objects.get_or_create(name="Cash")
     store_org, created = Organisation.objects.get_or_create( organisation_type="Store", name=storecode )
-    store, created = Store.objects.get_or_create( name=storecode, code=storecode, owner=store_org )
+    store, created = Store.objects.get_or_create( name=storecode, code=storecode, organisation=store_org )
     org_type = ContentType.objects.get_for_model(Organisation)
     owner_role, created = Owner.objects.get_or_create( organisation=store_org )
     date = datetime.date(day=int(datetxt[0:2]),month=int(datetxt[3:5]),year=int(datetxt[6:10]))
