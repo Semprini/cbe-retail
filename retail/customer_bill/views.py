@@ -2,11 +2,18 @@ import django_filters.rest_framework
 from rest_framework import filters
 from rest_framework import permissions, renderers, viewsets
 
-from retail.customer_bill.models import CustomerBillingCycle, CustomerBillSpecification, CustomerBill, AccountBillItem, SubscriptionBillItem, ServiceBillItem, RebateBillItem, AllocationBillItem, AdjustmentBillItem, DisputeBillItem
-from retail.customer_bill.serializers import CustomerBillingCycleSerializer, CustomerBillSpecificationSerializer, CustomerBillSerializer
-from retail.customer_bill.serializers import AccountBillItemSerializer, SubscriptionBillItemSerializer, ServiceBillItemSerializer, RebateBillItemSerializer, AllocationBillItemSerializer, AdjustmentBillItemSerializer, DisputeBillItemSerializer
+from retail.customer_bill.models import CustomerBillingCycle, CustomerBillSpecification, CustomerBill, ServiceCharge
+from retail.customer_bill.models import AccountBillItem, JobBillItem, SubscriptionBillItem, ServiceBillItem, RebateBillItem, AllocationBillItem, AdjustmentBillItem, DisputeBillItem
+from retail.customer_bill.serializers import CustomerBillingCycleSerializer, CustomerBillSpecificationSerializer, CustomerBillSerializer, ServiceChargeSerializer
+from retail.customer_bill.serializers import AccountBillItemSerializer, JobBillItemSerializer, SubscriptionBillItemSerializer, ServiceBillItemSerializer, RebateBillItemSerializer, AllocationBillItemSerializer, AdjustmentBillItemSerializer, DisputeBillItemSerializer
 
 
+class ServiceChargeViewSet(viewsets.ModelViewSet):
+    queryset = ServiceCharge.objects.all()
+    serializer_class = ServiceChargeSerializer
+    permission_classes = (permissions.DjangoModelPermissions, )
+
+    
 class CustomerBillingCycleViewSet(viewsets.ModelViewSet):
     queryset = CustomerBillingCycle.objects.all()
     serializer_class = CustomerBillingCycleSerializer
@@ -30,6 +37,12 @@ class AccountBillItemViewSet(viewsets.ModelViewSet):
     serializer_class = AccountBillItemSerializer
     permission_classes = (permissions.DjangoModelPermissions, )    
     
+    
+class JobBillItemViewSet(viewsets.ModelViewSet):
+    queryset = JobBillItem.objects.all()
+    serializer_class = JobBillItemSerializer
+    permission_classes = (permissions.DjangoModelPermissions, )    
+
     
 class SubscriptionBillItemViewSet(viewsets.ModelViewSet):
     queryset = SubscriptionBillItem.objects.all()

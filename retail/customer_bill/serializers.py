@@ -7,8 +7,8 @@ from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField
 from cbe.customer.serializers import CustomerAccountSerializer
-from retail.customer_bill.models import CustomerBillingCycle, CustomerBillSpecification, CustomerBill
-from retail.customer_bill.models import AccountBillItem, SubscriptionBillItem, ServiceBillItem, RebateBillItem, AllocationBillItem, AdjustmentBillItem, DisputeBillItem
+from retail.customer_bill.models import CustomerBillingCycle, CustomerBillSpecification, CustomerBill, ServiceCharge
+from retail.customer_bill.models import AccountBillItem, JobBillItem, SubscriptionBillItem, ServiceBillItem, RebateBillItem, AllocationBillItem, AdjustmentBillItem, DisputeBillItem
                  
                   
 class CustomerBillingCycleSerializer(serializers.HyperlinkedModelSerializer):
@@ -33,18 +33,10 @@ class CustomerBillSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = CustomerBill
-        fields = ('type','url','number','created','period_from','period_to','status','amount','discounted','adjusted','rebated','disputed','allocated',
-                    'account','specification','accountbillitems','jobbillitems')
+        fields = ('type','url','account','specification','customer','number','created','period_from','period_to','status',
+                    'amount','discounted','adjusted','rebated','disputed','allocated','accountbillitems','jobbillitems')
 
         
-class Serializer(serializers.HyperlinkedModelSerializer):
-    type = TypeField()
-
-    class Meta:
-        model = CustomerBill
-        fields = '__all__'
-        
-
 class AccountBillItemSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
@@ -52,6 +44,13 @@ class AccountBillItemSerializer(serializers.HyperlinkedModelSerializer):
         model = AccountBillItem
         fields = '__all__'
         
+class JobBillItemSerializer(serializers.HyperlinkedModelSerializer):
+    type = TypeField()
+
+    class Meta:
+        model = JobBillItem
+        fields = '__all__'
+
 class SubscriptionBillItemSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
@@ -96,3 +95,10 @@ class DisputeBillItemSerializer(serializers.HyperlinkedModelSerializer):
         model = DisputeBillItem
         fields = '__all__'
         
+        
+class ServiceChargeSerializer(serializers.HyperlinkedModelSerializer):
+    type = TypeField()
+
+    class Meta:
+        model = ServiceCharge
+        fields = '__all__'

@@ -29,6 +29,10 @@ class Purchaser(PartyRole):
     def __str__(self):
         return "%s"%(self.party)
 
+    def save(self, *args, **kwargs):
+        if self.name == "":
+            self.name = "Purchaser"          
+        super(Purchaser, self).save(*args, **kwargs)
         
 
 class SalesChannel(models.Model):

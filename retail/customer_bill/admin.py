@@ -1,6 +1,8 @@
 from django.contrib import admin
 
-from retail.customer_bill.models import CustomerBillingCycle, CustomerBillSpecification, CustomerBill, AccountBillItem, JobBillItem, SubscriptionBillItem, ServiceBillItem, RebateBillItem, AllocationBillItem, AdjustmentBillItem, DisputeBillItem
+from retail.customer_bill.models import CustomerBillingCycle, CustomerBillSpecification, CustomerBill
+from retail.customer_bill.models import AccountBillItem, JobBillItem, SubscriptionBillItem, ServiceBillItem, RebateBillItem, AllocationBillItem, AdjustmentBillItem, DisputeBillItem
+from retail.customer_bill.models import ServiceCharge
 
 class AccountBillItemInline(admin.TabularInline):
     model = AccountBillItem
@@ -26,4 +28,5 @@ admin.site.register( RebateBillItem )
 admin.site.register( AllocationBillItem )
 admin.site.register( AdjustmentBillItem )
 admin.site.register( DisputeBillItem )
+admin.site.register( ServiceCharge )
 

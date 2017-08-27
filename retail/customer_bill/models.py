@@ -1,11 +1,10 @@
 from django.db import models
 
 from cbe.location.models import Location
-from cbe.party.models import Organisation
 from cbe.customer.models import Customer, CustomerAccount
 
 from retail.sale.models import Sale
-
+from retail.store.models import Store
 
 class CustomerBillingCycle(models.Model):
     account = models.ForeignKey( CustomerAccount )
@@ -29,7 +28,7 @@ class CustomerBillSpecification(models.Model):
     
     billing_cycle = models.ForeignKey( CustomerBillingCycle )
     location = models.ForeignKey( Location, null=True, blank=True )
-    organisation = models.ForeignKey( Organisation, null=True, blank=True )
+    customer = models.ForeignKey( Customer, null=True, blank=True )
 
     class Meta:
         ordering = ['id']
@@ -41,6 +40,7 @@ class CustomerBillSpecification(models.Model):
 class CustomerBill(models.Model):
     account = models.ForeignKey( CustomerAccount )
     specification = models.ForeignKey( CustomerBillSpecification )
+    customer = models.ForeignKey( Customer )
 
     number = models.CharField(max_length=100)
     created = models.DateTimeField(auto_now_add=True)
@@ -68,7 +68,7 @@ class CustomerBill(models.Model):
 class CustomerBillItem(models.Model):
     bill = models.ForeignKey( CustomerBill, related_name="%(class)ss" )
     
-    ITEM_TYPE_CHOICES = ( ('account', 'account'), ('subscription', 'subscription'), ('service', 'service'), ('rebate','rebate'), ('allocation', 'allocation'), ('adjustment', 'adjustment'), ('dispute', 'dispute'), )
+    ITEM_TYPE_CHOICES = ( ('account', 'account'), ('job', 'job'), ('subscription', 'subscription'), ('service', 'service'), ('rebate','rebate'), ('allocation', 'allocation'), ('adjustment', 'adjustment'), ('dispute', 'dispute'), )
     item_type = models.CharField(max_length=100, choices=ITEM_TYPE_CHOICES)
 
     amount = models.DecimalField(default = 0, max_digits=10, decimal_places=2)
@@ -139,7 +139,16 @@ class DisputeBillItem(CustomerBillItem):
     def __str__(self):
         return "%s:%s" %(self.bill, self.item_type )
 
-#account charge
-#subscription charge
-#service charge
+        
+class ServiceCharge(models.Model):
+    bill = models.ForeignKey( CustomerBill, related_name="%(class)ss" )
+    service_bill_item = models.ForeignKey( ServiceBillItem, related_name="%(class)ss", null=True, blank=True )
+    
+    sale = models.ForeignKey( Sale )
+    home_store = models.ForeignKey( Store, null=True, blank=True, related_name="home_service_charges" )
+    satellite_store = models.ForeignKey( Store, null=True, blank=True, related_name="satellite_service_charges" )
 
+    total_margin = models.DecimalField(default = 0, max_digits=10, decimal_places=2)
+    home_margin = models.DecimalField(default = 0, max_digits=10, decimal_places=2)
+    satellite_margin = models.DecimalField(default = 0, max_digits=10, decimal_places=2)
+    
