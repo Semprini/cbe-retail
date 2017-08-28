@@ -4,7 +4,16 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
+from django.core.exceptions import ObjectDoesNotExist
 
+from cbe.customer.models import Customer
+
+@property
+def set_my_defaults():
+    try:
+        return Customer.objects.first().pk
+    except ObjectDoesNotExist:
+        return 0
 
 class Migration(migrations.Migration):
 
@@ -17,7 +26,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='customerbill',
             name='customer',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='customer.Customer'),
+            field=models.ForeignKey(default=set_my_defaults, on_delete=django.db.models.deletion.CASCADE, to='customer.Customer'),
             preserve_default=False,
         ),
     ]
