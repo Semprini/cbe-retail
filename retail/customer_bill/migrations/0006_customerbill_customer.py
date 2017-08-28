@@ -8,6 +8,12 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from cbe.customer.models import Customer
 
+def set_my_defaults():
+    try:
+        return Customer.objects.first().pk
+    except ObjectDoesNotExist:
+        return 0
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -19,15 +25,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='customerbill',
             name='customer',
-            field=models.ForeignKey(default=self.set_my_defaults, on_delete=django.db.models.deletion.CASCADE, to='customer.Customer'),
+            field=models.ForeignKey(default=set_my_defaults, on_delete=django.db.models.deletion.CASCADE, to='customer.Customer'),
             preserve_default=False,
         ),
     ]
 
-    @property
-    def set_my_defaults(self):
-        try:
-            return Customer.objects.first().pk
-        except ObjectDoesNotExist:
-            return 0
             
