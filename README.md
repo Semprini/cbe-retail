@@ -3,6 +3,8 @@
 # cbe-retail
 Extensions to the Common Business Entities framework for Retail Operations. See [Semprini/cbe](https://github.com/Semprini/cbe) for more details.
 
+CBE provides RESTful CRUD and administration for common business entities persisted on relational DBs and (coming soon) NoSQL DBs. This polyglot persistence model forms the backbone of an organisations master data governance. The rationale is discussed in the [Wiki](https://github.com/Semprini/cbe/wiki).
+
 # Why?
 The most common & costly architectural issues seen in enterprises is legacy replacement big bang and integration tight coupling. To address this CBE-Retail provides master data governance which can be deployed as a data fabric, extending an API layer across back offices and stores without needing an integration bus as the schema is consistent. Perfect for a hybrid or cloud deployment model.
 
