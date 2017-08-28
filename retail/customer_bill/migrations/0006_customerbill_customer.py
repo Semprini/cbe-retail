@@ -11,7 +11,7 @@ from cbe.customer.models import Customer
 def set_my_defaults():
     try:
         return Customer.objects.first().pk
-    except ObjectDoesNotExist:
+    except (AttributeError,ObjectDoesNotExist):
         return 0
 
 class Migration(migrations.Migration):
