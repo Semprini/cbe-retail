@@ -5,6 +5,8 @@ from cbe.customer.models import Customer, CustomerAccount
 
 from retail.sale.models import Sale
 from retail.store.models import Store
+from retail.job_management.models import Job
+
 
 class CustomerBillingCycle(models.Model):
     account = models.ForeignKey( CustomerAccount )
@@ -91,11 +93,12 @@ class AccountBillItem(CustomerBillItem):
         return "%s:%s" %(self.bill, self.item_type )
     
 class JobBillItem(CustomerBillItem):
+    job = models.ForeignKey( Job )
     class Meta:
         ordering = ['id']
 
     def __str__(self):
-        return "%s:%s" %(self.bill, self.item_type )
+        return "%s:%s" %(self.bill, self.job )
 
 class SubscriptionBillItem(CustomerBillItem):
     class Meta:

@@ -34,7 +34,7 @@ class CustomerBillSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CustomerBill
         fields = ('type','url','account','specification','customer','number','created','period_from','period_to','status',
-                    'amount','discounted','adjusted','rebated','disputed','allocated','accountbillitems','jobbillitems')
+                    'amount','discounted','adjusted','rebated','disputed','allocated','accountbillitems','jobbillitems','servicebillitems')
 
         
 class AccountBillItemSerializer(serializers.HyperlinkedModelSerializer):
