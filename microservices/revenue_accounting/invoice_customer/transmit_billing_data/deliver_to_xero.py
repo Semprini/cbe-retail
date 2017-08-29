@@ -3,6 +3,7 @@ import pickle
 
 from xero import Xero
 from xero.auth import PublicCredentials
+from local_settings import CREDENTIALS
 
 def get_credentials():
     try:
@@ -12,7 +13,7 @@ def get_credentials():
         if credentials.expired():
             raise ValueError('Credentials Expired')
     except( IOError, ValueError ):
-        credentials = PublicCredentials('7GDKVQRNGMIYYGM598CLEPC2HAFQU2', 'P6NFT2BRRDAH9TLBR8CW0RKE6ABBHZ')
+        credentials = PublicCredentials(CREDENTIALS['KEY'],CREDENTIALS['SECRET'])
         print( credentials.url )
         token = input('url:')
         credentials.verify(token)
