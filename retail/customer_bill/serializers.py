@@ -7,9 +7,10 @@ from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField
 from cbe.customer.serializers import CustomerAccountSerializer
+
 from retail.customer_bill.models import CustomerBillingCycle, CustomerBillSpecification, CustomerBill, ServiceCharge
 from retail.customer_bill.models import AccountBillItem, JobBillItem, SubscriptionBillItem, ServiceBillItem, RebateBillItem, AllocationBillItem, AdjustmentBillItem, DisputeBillItem
-                 
+from retail.job_management.serializers import JobSerializer                 
                   
 class CustomerBillingCycleSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
@@ -27,16 +28,6 @@ class CustomerBillSpecificationSerializer(serializers.HyperlinkedModelSerializer
         fields = '__all__'
 
 
-class CustomerBillSerializer(serializers.HyperlinkedModelSerializer):
-    type = TypeField()
-    account = CustomerAccountSerializer()
-    
-    class Meta:
-        model = CustomerBill
-        fields = ('type','url','account','specification','customer','number','created','period_from','period_to','status',
-                    'amount','discounted','adjusted','rebated','disputed','allocated','accountbillitems','jobbillitems','servicebillitems')
-
-        
 class AccountBillItemSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
@@ -46,11 +37,25 @@ class AccountBillItemSerializer(serializers.HyperlinkedModelSerializer):
         
 class JobBillItemSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
+    job = JobSerializer()
 
     class Meta:
         model = JobBillItem
         fields = '__all__'
 
+
+class CustomerBillSerializer(serializers.HyperlinkedModelSerializer):
+    type = TypeField()
+    account = CustomerAccountSerializer()
+    accountbillitems = AccountBillItemSerializer(many=True)
+    jobbillitems = JobBillItemSerializer(many=True)
+    
+    class Meta:
+        model = CustomerBill
+        fields = ('type','url','account','specification','customer','number','created','period_from','period_to','status',
+                    'amount','discounted','adjusted','rebated','disputed','allocated','accountbillitems','jobbillitems','servicebillitems')
+
+        
 class SubscriptionBillItemSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
