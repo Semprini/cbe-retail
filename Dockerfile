@@ -24,7 +24,7 @@ ENV MQRESTPORT 8000
 # Install some necessary things.
 RUN apk update
 RUN apk add swig 
-RUN apk add libssl-dev 
+RUN apk add openssl-dev 
 RUN apk add dpkg-dev 
 RUN apk add netcat 
 RUN apk add py-mysqldb
