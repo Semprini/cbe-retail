@@ -27,6 +27,7 @@ RUN apk add swig
 RUN apk add openssl-dev 
 RUN apk add dpkg-dev 
 RUN apk add netcat-openbsd 
+RUN apk add git
 RUN apk add py-pip
 RUN apk add postgresql-dev
 RUN apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/main py-psycopg2
