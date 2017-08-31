@@ -22,8 +22,8 @@ ENV MQRESTSERVER '127.0.0.1'
 ENV MQRESTPORT 8000
 
 # Install some necessary things.
-RUN apt-get update
-RUN apt-get install -y swig libssl-dev dpkg-dev netcat libmysqlclient-dev
+RUN apk update
+RUN apk add swig libssl-dev dpkg-dev netcat libmysqlclient-dev
 
 # Install dependencies not in requirements.txt
 RUN pip install -U pip
