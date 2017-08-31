@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Create local_settings.py from environment variables
 echo -e "import os\n\
 from retail.settings import BASE_DIR\n\n\
