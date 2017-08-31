@@ -30,7 +30,7 @@ RUN apk add netcat-openbsd
 RUN apk add git
 RUN apk add py-pip
 RUN apk add postgresql-dev
-RUN apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/main py-psycopg2
+RUN apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/main py3-psycopg2
 
 # Install dependencies not in requirements.txt
 RUN pip install -U pip
