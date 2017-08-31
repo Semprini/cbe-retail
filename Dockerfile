@@ -27,8 +27,8 @@ RUN apk add swig
 RUN apk add openssl-dev 
 RUN apk add dpkg-dev 
 RUN apk add netcat-openbsd 
-RUN apk add py-mysqldb
 RUN apk add py-pip
+RUN apk add postgresql-dev
 
 # Install dependencies not in requirements.txt
 RUN pip install -U pip
