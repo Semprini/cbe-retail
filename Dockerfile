@@ -29,10 +29,10 @@ RUN apk add dpkg-dev
 RUN apk add netcat-openbsd 
 RUN apk add py-pip
 RUN apk add postgresql-dev
+RUN apk add py3-psycopg2
 
 # Install dependencies not in requirements.txt
 RUN pip install -U pip
-RUN pip install psycopg2
 
 # Copy all our files into the image.
 RUN git clone https://github.com/Semprini/cbe-retail.git /code
