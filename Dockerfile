@@ -23,7 +23,7 @@ ENV MQRESTPORT 8000
 
 # Install some necessary things.
 RUN apk update
-RUN apk add swig libssl-dev dpkg-dev netcat libmysqlclient-dev
+RUN apk add swig libssl-dev dpkg-dev netcat mariadb-dev
 
 # Install dependencies not in requirements.txt
 RUN pip install -U pip
