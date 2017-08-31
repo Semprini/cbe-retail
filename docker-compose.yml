@@ -11,26 +11,34 @@ services:
             DBENGINE: postgresql
             DBHOST: cbedb
             DBNAME: cbe
-            DBPASSWORD: docker
-            DBUSER: docker
+            DBPASSWORD: super
+            DBUSER: super
             MQHOST: cbemq
-            MQUSER: guest
-            MQPASSWORD: guest
+            MQUSER: super
+            MQPASSWORD: super
+            MQRESTSERVER: 'https://cbe.sphinx.co.nz'
+            MQRESTPORT: 443
+            SUNAME: super
+            SUEMAIL: super@super.com
+            SUPASS: super
         depends_on:
             - cbedb
             - cbemq
         ports:
             - "8000:8000"
     cbedb:
-        image: postgres
+        image: postgres:10-alpine
         volumes:
             - db-data:/var/lib/postgresql/data
         environment:
-            POSTGRES_PASSWORD: docker
-            POSTGRES_USER: docker
+            POSTGRES_PASSWORD: super
+            POSTGRES_USER: super
             POSTGRES_DB: cbe
     cbemq:
-        image: rabbitmq:3-management
+        image: rabbitmq:3-management-alpine
+        environment:
+            RABBITMQ_DEFAULT_USER: super
+            RABBITMQ_DEFAULT_PASS: super
         ports:
             - "8080:15672"
 
