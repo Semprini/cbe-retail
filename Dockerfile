@@ -32,7 +32,7 @@ RUN apk add py-pip
 
 # Install dependencies not in requirements.txt
 RUN pip install -U pip
-RUN pip install uwsgi mysqlclient psycopg2
+RUN pip install uwsgi psycopg2
 
 # Copy all our files into the image.
 RUN git clone https://github.com/Semprini/cbe-retail.git /code
