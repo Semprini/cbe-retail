@@ -67,7 +67,7 @@ def callback(ch, method, properties, body):
 def queue_setup(connection):
     channel = connection.channel()
 
-    channel.exchange_declare(exchange=QUEUE_EXCHANGE, type='headers')
+    channel.exchange_declare(exchange=QUEUE_EXCHANGE, exchange_type='headers')
 
     result = channel.queue_declare(exclusive=True)
     if not result:
