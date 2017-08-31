@@ -26,7 +26,7 @@ RUN apk update
 RUN apk add swig 
 RUN apk add openssl-dev 
 RUN apk add dpkg-dev 
-RUN apk add netcat 
+RUN apk add netcat-openbsd 
 RUN apk add py-mysqldb
 
 # Install dependencies not in requirements.txt
