@@ -55,12 +55,13 @@ def queue_setup(connection):
 if __name__ == "__main__":
     #test handler:
     #callback(None, None, pika.BasicProperties(headers = {'foo':'a'}), test_json)
+    credentials = pika.PlainCredentials('super', 'super')
     
     connection = None
     ready = False
     while not ready:
         try:
-            connection = pika.BlockingConnection(pika.ConnectionParameters(host=QUEUE_HOST))
+            connection = pika.BlockingConnection(pika.ConnectionParameters(host=QUEUE_HOST, credentials=credentials))
             print( "Completed connection to MQ..." )
             ready = True
         except KeyboardInterrupt:
