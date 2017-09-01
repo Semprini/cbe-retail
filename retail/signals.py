@@ -45,9 +45,10 @@ def notify_save_instance(sender, instance, created, serializer, exchange_prefix,
         print("EXCHANGE=%s | HEADERS=%s"%(exchange_name, headers_dict))
         print('%s'%json)
     else:
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host=MQ_FRAMEWORK['HOST']))
+        credentials = pika.PlainCredentials(MQ_FRAMEWORK['USER'], MQ_FRAMEWORK['PASSWORD'])
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host=MQ_FRAMEWORK['HOST'],credentials=credentials))
         channel = connection.channel()
-        channel.exchange_declare(exchange=exchange_name, type='headers')
+        channel.exchange_declare(exchange=exchange_name, exchange_type='headers')
 
         channel.basic_publish(  exchange=exchange_name,
                                 routing_key='cbe',
