@@ -1,4 +1,4 @@
-import json
+import json, time
 from datetime import datetime, timedelta
 import pickle
 
@@ -12,8 +12,7 @@ QUEUE_HOST = "cbemq"
 QUEUE_EXCHANGE = "notify.retail.customer_bill.CustomerBill.updated"
 HTTP_HOST = "https://cbe.sphinx.co.nz"
 
-test_json = '{{ "type": "CustomerBill", "url": "{0}/api/customer_bill/customer_bill/1/", "account": {{ "type": "CustomerAccount", "url": "{0}/api/customer/account/ZZBUCKLL/", "created": "2017-08-24", "valid_from": null, "valid_to": null, "customer": "{0}/api/customer/customer/ZZBUCKLL/", "account_number": "ZZBUCKLL", "account_status": "new", "managed_by": "{0}/api/party/organisation/1/", "credit_liabilities": [], "account_type": "", "name": "", "pin": null, "customer_account_contact": [] }}, "specification": "{0}/api/customer_bill/customer_bill_specification/1/", "customer": "{0}/api/customer/customer/ZZBUCKLL/", "number": "1", "created": "2017-08-24T21:54:37.190322Z", "period_from": "2017-08-24", "period_to": "2017-08-24", "status": "active", "amount": "10.00", "discounted": "0.00", "adjusted": "0.00", "rebated": "0.00", "disputed": "0.00", "allocated": "0.00", "accountbillitems": [], "jobbillitems": [ {{ "url": "{0}/api/customer_bill/job_bill_item/1/", "type": "JobBillItem", "job": {{ "type": "Job", "url": "{0}/api/job_management/job/1/", "created": "2017-08-29", "valid_from": null, "valid_to": null, "job_number": "1", "account": "{0}/api/customer/account/1234567/", "job_status": "active", "credit": null, "job_party_roles": [] }}, "item_type": "job", "amount": "10.00", "discounted": "0.00", "bill": "{0}/api/customer_bill/customer_bill/1/", "sale_events": [ "{0}/api/sale/sale/2/", "{0}/api/sale/sale/7/" ] }} ], "servicebillitems": [] }}'.format(HTTP_HOST)
-
+test_json = '{"type":"Sale","url":"https://cbe.sphinx.co.nz/api/sale/sale/4/","channel":"https://cbe.sphinx.co.nz/api/sale/sales_channel/1/","store":"https://cbe.sphinx.co.nz/api/store/store/1/","seller":"https://cbe.sphinx.co.nz/api/party/organisation/1/","datetime":"2000-01-01T07:41:00Z","docket_number":"4","total_amount":"800.00","total_amount_excl":"695.65","total_discount":"0.00","total_tax":"104.35","customer":"https://cbe.sphinx.co.nz/api/customer/customer/CRMPLUMB/","account":"https://cbe.sphinx.co.nz/api/customer/account/CRMPLUMB/","purchaser":null,"identification":null,"promotion":"https://cbe.sphinx.co.nz/api/price/promotion/1/","till":"https://cbe.sphinx.co.nz/api/resource/physical_resource/1/","staff":"https://cbe.sphinx.co.nz/api/human_resources/staff/2/","price_channel":null,"price_calculation":null,"tenders":[],"credit_balance_events":[{"type":"CreditBalanceEvent","url":"https://cbe.sphinx.co.nz/api/credit/credit_balance_event/1/","credit":"https://cbe.sphinx.co.nz/api/credit/credit/1/","customer":"https://cbe.sphinx.co.nz/api/customer/customer/CRMPLUMB/","account":"https://cbe.sphinx.co.nz/api/customer/account/CRMPLUMB/","datetime":"2017-09-01T00:52:15.437897Z","amount":"800.00","balance":"800.00"}],"sale_items":[{"type":"SaleItem","url":"https://cbe.sphinx.co.nz/api/sale/sale_item/5/","sale":"https://cbe.sphinx.co.nz/api/sale/sale/4/","product_offering":{"type":"ProductOffering","url":"https://cbe.sphinx.co.nz/api/product/product_offering/5/","valid_from":null,"valid_to":null,"product":{"type":"Product","url":"https://cbe.sphinx.co.nz/api/product/product/5/","valid_from":null,"valid_to":null,"name":"NAILER IMPULSE FRAMEMASTER-LI PASLODE","description":"","unit_of_measure":"each","sku":"180837","barcode":null,"bundle":[],"categories":[],"cross_sell_products":[]},"channels":["https://cbe.sphinx.co.nz/api/sale/sales_channel/1/"],"segments":[],"strategies":[],"supplier_code":null,"retail_price":"800.00","product_offering_prices":["https://cbe.sphinx.co.nz/api/price/product_offering_price/5/"],"supplier":null,"buyer":null},"amount":"695.65","discount":"0.00","promotion":"https://cbe.sphinx.co.nz/api/price/promotion/1/"}]}'
 
 def get_xero_connection(account):
     try:
@@ -38,13 +37,13 @@ def get_xero_connection(account):
 def callback(ch, method, properties, body):
     # Create a disctionary from message body
     message_json=json.loads(body)
-    account = message_json['account']['account_number']
+    account = message_json['account'].split('/')[-2]
 
     lineitems = []
-    for item in message_json['jobbillitems']:
+    for item in message_json['sale_items']:
         lineitems.append(
             {
-                'Description': 'Job %s'%item['job']['job_number'], 
+                'Description': 'Job %s'%item['product_offering']['product']['name'], 
                 'Quantity': 1, 
                 'UnitAmount': float(item['amount']), 
                 'AccountCode': 200
@@ -75,7 +74,8 @@ def queue_setup(connection):
         sys.exit(1)
     queue_name = result.method.queue
 
-    channel.queue_bind(exchange=QUEUE_EXCHANGE, queue = queue_name, routing_key = '',arguments = {'status': 'active', }))
+    channel.queue_bind(exchange=QUEUE_EXCHANGE, queue = queue_name, routing_key = '')
+                       #,arguments = {'status': 'active', })
                        #arguments = {'ham': 'good', 'x-match':'any'})
 
     channel.basic_consume(callback, queue = queue_name, no_ack=True)
@@ -107,13 +107,14 @@ def test_xero():
     
     
 if __name__ == "__main__":
-    test_callback()
+    #test_callback()
+    credentials = pika.PlainCredentials('super', 'super')
     
     connection = None
     ready = False
     while not ready:
         try:
-            connection = pika.BlockingConnection(pika.ConnectionParameters(host=QUEUE_HOST))
+            connection = pika.BlockingConnection(pika.ConnectionParameters(host=QUEUE_HOST, credentials=credentials))
             print( "Completed connection to MQ..." )
             ready = True
         except KeyboardInterrupt:
