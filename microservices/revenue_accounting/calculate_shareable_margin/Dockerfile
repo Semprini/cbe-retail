@@ -5,7 +5,8 @@ ENV PYTHONUNBUFFERED 1
 RUN apk update
 RUN apk add py-pip
 
+RUN pip install -U pip
 RUN pip install requests pika
-ADD calculate_shareable_margin.py /
+ADD *.py /
 
 CMD [ "python", "-u", "./calculate_shareable_margin.py" ]

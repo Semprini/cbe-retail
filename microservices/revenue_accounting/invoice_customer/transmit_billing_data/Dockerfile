@@ -5,6 +5,7 @@ ENV PYTHONUNBUFFERED 1
 RUN apk update
 RUN apk add py-pip
 
+RUN pip install -U pip
 RUN pip install requests pika
 ADD *.py /
 
