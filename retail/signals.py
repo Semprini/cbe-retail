@@ -21,6 +21,8 @@ def serializer_context():
     request = HttpRequest()
     request.META['SERVER_NAME'] = MQ_FRAMEWORK['HTTP_REST_CONTEXT']['SERVER_NAME']
     request.META['SERVER_PORT'] = MQ_FRAMEWORK['HTTP_REST_CONTEXT']['SERVER_PORT']
+    if MQ_FRAMEWORK['HTTP_REST_CONTEXT']['SERVER_PORT'] == 443:
+        request.META['HTTP_X_FORWARDED_PROTO'] = 'https'
     return { 'request': Request(request), }
     
     

@@ -16,7 +16,7 @@ services:
             MQHOST: cbemq
             MQUSER: super
             MQPASSWORD: super
-            MQRESTSERVER: 'https://cbe.sphinx.co.nz'
+            MQRESTSERVER: 'cbe.sphinx.co.nz'
             MQRESTPORT: 443
             SUNAME: super
             SUEMAIL: super@super.com
