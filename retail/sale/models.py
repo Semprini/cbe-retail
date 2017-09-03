@@ -80,8 +80,8 @@ class Sale(models.Model):
 
 class SaleItem(models.Model):
     sale = models.ForeignKey(Sale, db_index=True, related_name='sale_items', on_delete=models.CASCADE)
-    #product = models.ForeignKey(Product, db_index=True, )
-    product_offering = models.ForeignKey(ProductOffering, db_index=True, )
+    product = models.ForeignKey(Product, db_index=True, )
+    product_offering = models.ForeignKey(ProductOffering, db_index=True, null=True,blank=True, )
 
     quantity = models.DecimalField(max_digits=10, decimal_places=4)
     unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('metre', 'metre')), default='each')
@@ -333,7 +333,8 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
 
             item = SaleItem(    amount=amount_excl, 
                                 tax=amount_tax, 
-                                product_offering=po, 
+                                product=po.product,
+                                product_offering=po,
                                 quantity=quantity, 
                                 discount=discount, 
                                 promotion=promotion)
