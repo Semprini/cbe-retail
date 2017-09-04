@@ -5,6 +5,9 @@ import requests
 import pika
 
 QUEUE_HOST = "cbemq"
+QUEUE_USER = "super"
+QUEUE_PASS = "super"
+
 LOYALTY_TRANSACTION_URL = "https://cbe.sphinx.co.nz/api/loyalty/loyalty_transaction/"
 LOYALTY_RATE = 0.01
 
@@ -56,12 +59,9 @@ def queue_setup(connection):
     channel.basic_consume(callback, queue = queue_name, no_ack=True)
     return channel
     
-    
-if __name__ == "__main__":
-    #test handler:
-    #callback(None, None, pika.BasicProperties(headers = {'foo':'a'}), test_json)
-    
-    credentials = pika.PlainCredentials('super', 'super')
+
+def main():
+    credentials = pika.PlainCredentials(QUEUE_USER, QUEUE_PASS)
     connection = None
     ready = False
     while not ready:
@@ -81,4 +81,10 @@ if __name__ == "__main__":
     finally:
         if connection:
             connection.close()
-        
+
+            
+if __name__ == "__main__":
+    #test handler:
+    #callback(None, None, pika.BasicProperties(headers = {'foo':'a'}), test_json)
+    
+    main()

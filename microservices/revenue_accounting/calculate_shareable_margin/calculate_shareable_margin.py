@@ -5,6 +5,9 @@ import requests
 import pika
 
 QUEUE_HOST = "cbemq"
+QUEUE_USER = "super"
+QUEUE_PASS = "super"
+
 HTTP_HOST = "https://cbe.sphinx.co.nz"
 SERVICE_CHARGE_URL = HTTP_HOST + "/api/customer_bill/service_charge/"
 RATE = 0.5
@@ -52,11 +55,8 @@ def queue_setup(connection):
     return channel
     
     
-if __name__ == "__main__":
-    #test handler:
-    #callback(None, None, pika.BasicProperties(headers = {'foo':'a'}), test_json)
-    credentials = pika.PlainCredentials('super', 'super')
-    
+def main():
+    credentials = pika.PlainCredentials(QUEUE_USER, QUEUE_PASS)
     connection = None
     ready = False
     while not ready:
@@ -76,4 +76,11 @@ if __name__ == "__main__":
     finally:
         if connection:
             connection.close()
-        
+
+            
+if __name__ == "__main__":
+    #test handler:
+    #callback(None, None, pika.BasicProperties(headers = {'foo':'a'}), test_json)
+    
+    main()
+    
