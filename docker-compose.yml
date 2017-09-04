@@ -1,5 +1,18 @@
 version: '2'
 services:
+    haproxy:
+        image: dockercloud/haproxy:latest
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        environment:
+            MODE: tcp
+        expose:
+            - 5672
+        links:
+            - cbemq
+        ports:
+            - '5672:5672'
+            
     cbe_microservice_loyalty:
         build: microservices/market_to_customers/caluclate_loyalty_transaction/
         depends_on:
@@ -26,6 +39,7 @@ services:
             - cbemq
         ports:
             - "8000:8000"
+            
     cbedb:
         image: postgres:10-alpine
         volumes:
@@ -34,11 +48,13 @@ services:
             POSTGRES_PASSWORD: super
             POSTGRES_USER: super
             POSTGRES_DB: cbe
+            
     cbemq:
         image: rabbitmq:3-management-alpine
         environment:
             RABBITMQ_DEFAULT_USER: super
             RABBITMQ_DEFAULT_PASS: super
+            TCP_PORTS: "5672"
         ports:
             - "8080:15672"
 

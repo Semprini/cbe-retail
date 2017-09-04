@@ -1,0 +1,7 @@
+version: '2'
+services:
+    cbe_microservice_loyalty:
+        build: microservices/market_to_customers/caluclate_loyalty_transaction/
+        depends_on:
+            - cbeapp
+            - cbemq
