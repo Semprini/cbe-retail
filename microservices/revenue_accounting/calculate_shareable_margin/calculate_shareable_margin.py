@@ -17,7 +17,7 @@ service_charge_template = '{ "total_margin": "{TOTAL_MARGIN}", "home_margin": "{
 
 def callback(ch, method, properties, body):
     # Create a disctionary from message body
-    message_json=json.loads(body)
+    message_json=json.loads(body.decode('utf-8'))
     
     total=float(message_json['amount'])
     

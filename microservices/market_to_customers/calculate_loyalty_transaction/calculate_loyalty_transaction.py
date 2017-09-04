@@ -16,7 +16,7 @@ loyalty_transaction_template = '{"scheme": "https://cbe.sphinx.co.nz/api/loyalty
 
 def callback(ch, method, properties, body):
     # Create a disctionary from message body
-    message_json=json.loads(body)
+    message_json=json.loads(body.decode('utf-8'))
     
     # If the customer swiped a card then add some airpoints
     if message_json['identification'] != None:
