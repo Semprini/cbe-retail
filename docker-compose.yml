@@ -56,9 +56,11 @@ services:
         environment:
             RABBITMQ_DEFAULT_USER: super
             RABBITMQ_DEFAULT_PASS: super
-            TCP_PORTS: "5672"
+            TCP_PORTS: "5672,5671"
         ports:
             - "8080:15672"
+            - '5671'
+            - '5672'
 
 volumes:
     db-data:
