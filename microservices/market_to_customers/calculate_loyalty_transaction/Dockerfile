@@ -9,4 +9,4 @@ RUN pip install -U pip
 RUN pip install requests pika
 ADD *.py /
 
-CMD [ "python", "-u", "./caluclate_loyalty_transaction.py" ]
+CMD [ "python", "-u", "./calculate_loyalty_transaction.py" ]

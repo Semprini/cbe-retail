@@ -7,10 +7,12 @@ services:
         environment:
             MODE: tcp
         expose:
+            - 5671
             - 5672
         links:
             - cbemq
         ports:
+            - '5671:5671'
             - '5672:5672'
             
     cbe_microservice_loyalty:
