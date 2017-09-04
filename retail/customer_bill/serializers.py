@@ -46,7 +46,7 @@ class JobBillItemSerializer(serializers.HyperlinkedModelSerializer):
 
 class CustomerBillSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
-    account = CustomerAccountSerializer()
+    account = CustomerAccountSerializer(read_only=True)
     accountbillitems = AccountBillItemSerializer(many=True)
     jobbillitems = JobBillItemSerializer(many=True)
     
@@ -55,6 +55,29 @@ class CustomerBillSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('type','url','account','specification','customer','number','created','period_from','period_to','status',
                     'amount','discounted','adjusted','rebated','disputed','allocated','accountbillitems','jobbillitems','servicebillitems')
 
+    def create(self, validated_data):
+        account_data = validated_data.pop('account')
+        accountbillitems_data = validated_data.pop('accountbillitems')
+        jobbillitems_data = validated_data.pop('jobbillitems')
+        bill = CustomerBill.objects.create(**validated_data)
+        
+         #TODO sub objects
+        return bill             
+
+    def update(self, instance, validated_data):
+        #account_data = validated_data.pop('account')
+        accountbillitems_data = validated_data.pop('accountbillitems')
+        jobbillitems_data = validated_data.pop('jobbillitems')
+        
+        for key, value in validated_data.items():
+            setattr( instance, key, value )
+        
+        if self.partial == True:
+            print("PARTIAL")
+
+        instance.save()
+        return instance                     
+                    
         
 class SubscriptionBillItemSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
