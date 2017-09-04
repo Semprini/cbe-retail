@@ -126,6 +126,11 @@ def main(host,user,password):
             time.sleep(5)
     try:
        queue_setup(connection).start_consuming()
+    except pika.exceptions.ConnectionClosed:
+        print( "Connection to MQ closed. retry..." )
+        connection = None
+        time.sleep(5)
+        main(host,user,password)
     except KeyboardInterrupt:
         print( 'Bye' )
     finally:
