@@ -1,4 +1,5 @@
-import json, time
+#!/usr/bin/env python 
+import os, sys, json, time
 from datetime import datetime, timedelta
 import pickle
 
@@ -136,5 +137,5 @@ if __name__ == "__main__":
     #test handler:
     #callback(None, None, pika.BasicProperties(headers = {'foo':'a'}), test_json)
     
-    main(QUEUE_HOST,QUEUE_USER,QUEUE_PASS)
+    main(os.environ['QUEUE_HOST'],os.environ['QUEUE_USER'],os.environ['QUEUE_PASS'])
     

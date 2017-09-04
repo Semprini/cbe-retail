@@ -1,5 +1,5 @@
 #!/usr/bin/env python 
-import sys, time, json
+import os, sys, time, json
 import requests
 
 import pika
@@ -82,5 +82,5 @@ if __name__ == "__main__":
     #test handler:
     #callback(None, None, pika.BasicProperties(headers = {'foo':'a'}), test_json)
     
-    main(QUEUE_HOST,QUEUE_USER,QUEUE_PASS)
+    main(os.environ['QUEUE_HOST'],os.environ['QUEUE_USER'],os.environ['QUEUE_PASS'])
     
