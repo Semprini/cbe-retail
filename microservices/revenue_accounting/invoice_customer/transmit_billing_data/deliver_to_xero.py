@@ -109,13 +109,13 @@ def test_xero():
     print( result )
     
     
-def main():
-    credentials = pika.PlainCredentials(QUEUE_USER, QUEUE_PASS)
+def main(host,user,password):
+    credentials = pika.PlainCredentials(user, password)
     connection = None
     ready = False
     while not ready:
         try:
-            connection = pika.BlockingConnection(pika.ConnectionParameters(host=QUEUE_HOST, credentials=credentials))
+            connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, credentials=credentials))
             print( "Completed connection to MQ..." )
             ready = True
         except KeyboardInterrupt:
@@ -136,5 +136,5 @@ if __name__ == "__main__":
     #test handler:
     #callback(None, None, pika.BasicProperties(headers = {'foo':'a'}), test_json)
     
-    main()
+    main(QUEUE_HOST,QUEUE_USER,QUEUE_PASS)
     
