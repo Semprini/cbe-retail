@@ -15,11 +15,6 @@ services:
             - '5671:5671'
             - '5672:5672'
             
-    cbe_microservice_loyalty:
-        build: microservices/market_to_customers/caluclate_loyalty_transaction/
-        depends_on:
-            - cbeapp
-            - cbemq
     cbeapp:
         image: semprini/cbe-retail
         environment:
