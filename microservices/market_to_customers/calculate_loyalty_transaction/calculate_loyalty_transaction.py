@@ -8,6 +8,9 @@ QUEUE_HOST = "cbemq"
 QUEUE_USER = "super"
 QUEUE_PASS = "super"
 
+EXCHANGES = ['notify.retail.sale.Sale.updated','notify.retail.sale.Sale.created',]
+QUEUE = 'microservice.loyalty_transaction.Sale'
+
 LOYALTY_TRANSACTION_URL = "https://cbe.sphinx.co.nz/api/loyalty/loyalty_transaction/"
 LOYALTY_RATE = 0.01
 
@@ -45,18 +48,17 @@ def callback(ch, method, properties, body):
 def queue_setup(connection):
     channel = connection.channel()
 
-    channel.exchange_declare(exchange='notify.retail.sale.Sale.updated', exchange_type='headers')
-
-    result = channel.queue_declare(exclusive=True)
+    result = channel.queue_declare(exclusive=False, queue_name=QUEUE, durable=True )
     if not result:
         print( 'Queue didnt declare properly!' )
         sys.exit(1)
-    queue_name = result.method.queue
 
-    channel.queue_bind(exchange='notify.retail.sale.Sale.updated', queue = queue_name, routing_key = '',)
+    for exchange in EXCHANGES:
+        channel.exchange_declare(exchange=exchange, exchange_type='headers')
+        channel.queue_bind(exchange=exchange, queue = QUEUE, routing_key = '',)
                        #arguments = {'ham': 'good', 'x-match':'any'})
 
-    channel.basic_consume(callback, queue = queue_name, no_ack=True)
+    channel.basic_consume(callback, queue = QUEUE, no_ack=True)
     return channel
     
 
