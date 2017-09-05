@@ -85,8 +85,8 @@ def main(host,user,password):
         except pika.exceptions.ConnectionClosed:
             print( "Connection to MQ closed. retry..." )
             connection = None
+            ready = False
             time.sleep(5)
-            main(host,user,password)
         except KeyboardInterrupt:
             print( 'Bye' )
             done = True
