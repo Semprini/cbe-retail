@@ -17,7 +17,7 @@ LOYALTY_RATE = 0.01
 test_json = b'{"type":"Sale","url":"http://127.0.0.1:8000/api/sale/sale/1/","channel":"http://127.0.0.1:8000/api/sale/sales_channel/1/","store":"http://127.0.0.1:8000/api/store/store/1/","seller":"http://127.0.0.1:8000/api/party/organisation/1/","datetime":"2000-01-01T07:25:00Z","docket_number":"1","total_amount":"9.98","total_amount_excl":"8.68","total_discount":"0.00","total_tax":"1.30","customer":"http://127.0.0.1:8000/api/customer/customer/1234567/","account":"http://127.0.0.1:8000/api/customer/account/1234567/","purchaser":null,"identification":"http://127.0.0.1:8000/api/human_resources/identification/1/","promotion":null,"till":"http://127.0.0.1:8000/api/resource/physical_resource/1/","staff":"http://127.0.0.1:8000/api/human_resources/staff/1/","price_channel":null,"price_calculation":null,"tenders":[{"type":"Tender","url":"http://127.0.0.1:8000/api/sale/tender/1/","sale":"http://127.0.0.1:8000/api/sale/sale/1/","tender_type":"http://127.0.0.1:8000/api/sale/tender_type/1/","amount":"9.98","reference":null}],"credit_balance_events":[],"sale_items":[{"type":"SaleItem","url":"http://127.0.0.1:8000/api/sale/sale_item/1/","sale":"http://127.0.0.1:8000/api/sale/sale/1/","product_offering":{"type":"ProductOffering","url":"http://127.0.0.1:8000/api/product/product_offering/1/","valid_from":null,"valid_to":null,"product":{"type":"Product","url":"http://127.0.0.1:8000/api/product/product/1/","valid_from":null,"valid_to":null,"name":"GAS CARTRIDGE BUTANE 220G 4 PACK NO. 8","description":"","unit_of_measure":"each","sku":"243728","bundle":[],"categories":[],"cross_sell_products":[]},"channels":["http://127.0.0.1:8000/api/sale/sales_channel/1/"],"segments":[],"strategies":[],"supplier_code":null,"retail_price":"9.98","product_offering_prices":["http://127.0.0.1:8000/api/price/product_offering_price/1/"],"supplier":null,"buyer":null},"amount":"8.68","discount":"0.00","promotion":null}]}'
 loyalty_transaction_template = '{"scheme": "https://cbe.sphinx.co.nz/api/loyalty/loyalty_scheme/1/","promotion": null,"sale": "{SALE}","items": [],"loyalty_amount": {AMOUNT},"identification": "{ID}"}'
 
-def callback(ch, method, properties, body):
+def queue_callback(ch, method, properties, body):
     # Create a disctionary from message body
     message_json=json.loads(body.decode('utf-8'))
     
@@ -45,7 +45,7 @@ def callback(ch, method, properties, body):
         print("No ID in sale so no loyalty transaction created")
         
 
-def queue_setup(connection):
+def queue_setup(connection, callback):
     channel = connection.channel()
 
     result = channel.queue_declare(exclusive=False, queue=QUEUE, durable=True )
@@ -66,33 +66,38 @@ def main(host,user,password):
     credentials = pika.PlainCredentials(user, password)
     connection = None
     ready = False
-    while not ready:
+    done = False
+    
+    while not done:
+        while not ready:
+            try:
+                connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, credentials=credentials))
+                print( "Completed connection to MQ..." )
+                ready = True
+            except KeyboardInterrupt:
+                ready = True
+                done = True
+            except:
+                print( "Connection to MQ not ready, retry..." )
+                time.sleep(5)
         try:
-            connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, credentials=credentials))
-            print( "Completed connection to MQ..." )
-            ready = True
-        except KeyboardInterrupt:
-            ready = True
-        except:
-            print( "Connection to MQ not ready, retry..." )
+           queue_setup(connection, queue_callback).start_consuming()
+        except pika.exceptions.ConnectionClosed:
+            print( "Connection to MQ closed. retry..." )
+            connection = None
             time.sleep(5)
-    try:
-       queue_setup(connection).start_consuming()
-    except pika.exceptions.ConnectionClosed:
-        print( "Connection to MQ closed. retry..." )
-        connection = None
-        time.sleep(5)
-        main(host,user,password)
-    except KeyboardInterrupt:
-        print( 'Bye' )
-    finally:
-        if connection:
-            connection.close()
+            main(host,user,password)
+        except KeyboardInterrupt:
+            print( 'Bye' )
+            done = True
+        finally:
+            if connection:
+                connection.close()
 
             
 if __name__ == "__main__":
     #test handler:
-    #callback(None, None, pika.BasicProperties(headers = {'foo':'a'}), test_json)
+    #queue_callback(None, None, pika.BasicProperties(headers = {'foo':'a'}), test_json)
     
     main(os.environ['QUEUE_HOST'],os.environ['QUEUE_USER'],os.environ['QUEUE_PASS'])
     
