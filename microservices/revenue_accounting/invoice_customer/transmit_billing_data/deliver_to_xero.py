@@ -14,7 +14,7 @@ QUEUE_USER = "super"
 QUEUE_PASS = "super"
 
 EXCHANGES = ['notify.retail.sale.Sale.updated','notify.retail.sale.Sale.created',]
-QUEUE = 'microservice.service_charge.Sale'
+QUEUE = 'microservice.transmit_billing_data.Sale'
 
 HTTP_HOST = "https://cbe.sphinx.co.nz"
 
@@ -133,8 +133,8 @@ def main(host,user,password):
         except pika.exceptions.ConnectionClosed:
             print( "Connection to MQ closed. retry..." )
             connection = None
+            ready = False
             time.sleep(5)
-            main(host,user,password)
         except KeyboardInterrupt:
             print( 'Bye' )
             done = True
