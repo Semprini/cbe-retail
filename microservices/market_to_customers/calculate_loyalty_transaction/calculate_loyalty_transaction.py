@@ -66,7 +66,7 @@ def queue_setup(connection, callback):
         channel.queue_bind(exchange=exchange, queue=QUEUE, routing_key = '',)
                        #arguments = {'ham': 'good', 'x-match':'any'})
 
-    channel.basic_consume(callback, queue=QUEUE, no_ack=True)
+    channel.basic_consume(callback, queue=QUEUE, no_ack=False)
     return channel
     
 
