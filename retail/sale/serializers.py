@@ -6,8 +6,8 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField, GenericRelatedField
-from cbe.party.serializers import PartyRelatedField, PartyRoleAssociationFromBasicSerializer, PartyRoleAssociationToBasicSerializer
-from cbe.party.models import PartyRoleAssociation
+from cbe.party.serializers import PartyRoleAssociationFromBasicSerializer, PartyRoleAssociationToBasicSerializer, IndividualSerializer, OrganisationSerializer
+from cbe.party.models import Individual, Organisation, PartyRoleAssociation
 from cbe.credit.serializers import CreditBalanceEventSerializer
 
 from retail.sale.models import SalesChannel, Sale, SaleItem, TenderType, Tender, Purchaser
@@ -121,11 +121,11 @@ class SalesChannelSerializer(serializers.HyperlinkedModelSerializer):
                   
                   
 class PurchaserSerializer(serializers.HyperlinkedModelSerializer):
-    #party = GenericRelatedField( many=False, serializer_dict={
-    #        Individual: IndividualSerializer(),
-    #        Organisation: OrganisationSerializer(),
-    #    })
-    party = PartyRelatedField()
+    party = GenericRelatedField( many=False, 
+        serializer_dict={ 
+            Individual: IndividualSerializer(),
+            Organisation: OrganisationSerializer(),
+        })
     type = TypeField()
 
     associations_from = GenericRelatedField( many=True, serializer_dict={PartyRoleAssociation: PartyRoleAssociationFromBasicSerializer(), } )

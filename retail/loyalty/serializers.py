@@ -6,7 +6,6 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField
-from cbe.party.serializers import PartyRelatedField
 from retail.loyalty.models import LoyaltyTransaction, LoyaltyScheme
 
                  
