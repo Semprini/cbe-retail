@@ -48,17 +48,17 @@ def callback(ch, method, properties, body):
 def queue_setup(connection):
     channel = connection.channel()
 
-    result = channel.queue_declare(exclusive=False, queue_name=QUEUE, durable=True )
+    result = channel.queue_declare(exclusive=False, queue=QUEUE, durable=True )
     if not result:
         print( 'Queue didnt declare properly!' )
         sys.exit(1)
 
     for exchange in EXCHANGES:
         channel.exchange_declare(exchange=exchange, exchange_type='headers')
-        channel.queue_bind(exchange=exchange, queue = QUEUE, routing_key = '',)
+        channel.queue_bind(exchange=exchange, queue=QUEUE, routing_key = '',)
                        #arguments = {'ham': 'good', 'x-match':'any'})
 
-    channel.basic_consume(callback, queue = QUEUE, no_ack=True)
+    channel.basic_consume(callback, queue=QUEUE, no_ack=True)
     return channel
     
 
