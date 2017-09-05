@@ -49,7 +49,7 @@ def queue_callback(ch, method, properties, body):
     for item in message_json['sale_items']:
         lineitems.append(
             {
-                'Description': 'Job %s'%item['product_offering']['product']['name'], 
+                'Description': 'Job %s'%item['product']['name'], 
                 'Quantity': 1, 
                 'UnitAmount': float(item['amount']), 
                 'AccountCode': 200
