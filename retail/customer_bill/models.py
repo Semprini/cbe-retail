@@ -154,4 +154,7 @@ class ServiceCharge(models.Model):
     total_margin = models.DecimalField(default = 0, max_digits=10, decimal_places=2)
     home_margin = models.DecimalField(default = 0, max_digits=10, decimal_places=2)
     satellite_margin = models.DecimalField(default = 0, max_digits=10, decimal_places=2)
+
+    class Meta:
+        ordering = ['id']
     
