@@ -49,13 +49,13 @@ def queue_callback(channel, method, properties, body):
         else:
             print( "Error creating loyalty transaction" )
             print( response.__dict__ )
-            print( channel.basic_publish( RETRY_EXCHANGE, method.routing_key, body, properties=properties, mandatory=True, immediate=True ) )
+            print( "requeued:", channel.basic_publish( RETRY_EXCHANGE, method.routing_key, body, properties=properties, mandatory=True, immediate=True ) )
             #TODO: Fatal errors
     else:
         print("No ID in sale so no loyalty transaction created")
     
     # Always ack (after work has completed) as retry handled via new message passed to retry exchange
-    channel.basic_ack(delivery_tag=method.delivery_tag, multiple=False)
+    print( "ackd:",channel.basic_ack(delivery_tag=method.delivery_tag, multiple=False))
         
 
 def queue_setup(connection, callback):
