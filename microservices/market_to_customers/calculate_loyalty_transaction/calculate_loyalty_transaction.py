@@ -13,7 +13,7 @@ DLX = 'microservice.loyalty_transaction.dlx'
 RETRY_EXCHANGE = 'microservice.loyalty_transaction.retry'
 QUEUE = 'microservice.loyalty_transaction.Sale'
 RETRY_QUEUE = 'microservice.loyalty_transaction.retry'
-RETRY_DELAY = 300000
+RETRY_DELAY = 30000
 
 API_HOST = "https://cbe.sphinx.co.nz"
 API_USER = "microservice"
@@ -46,17 +46,16 @@ def queue_callback(channel, method, properties, body):
         response = requests.post(LOYALTY_TRANSACTION_URL, data=data, headers=headers, auth=(API_USER, API_PASS))
         if response.status_code == 201: # (201) Created
             print( "Loyalty transaction created" )
-            #channel.basic_ack(method.delivery_tag, multiple=False)
         else:
             print( "Error creating loyalty transaction" )
             print( response.__dict__ )
-            channel.basic_publish( RETRY_EXCHANGE, method.routing_key, body, properties=properties )
+            print( channel.basic_publish( RETRY_EXCHANGE, method.routing_key, body, properties=properties, mandatory=True, immediate=True ) )
             #TODO: Fatal errors
     else:
         print("No ID in sale so no loyalty transaction created")
     
     # Always ack (after work has completed) as retry handled via new message passed to retry exchange
-    channel.basic_ack(method.delivery_tag, multiple=False)
+    channel.basic_ack(delivery_tag=method.delivery_tag, multiple=False)
         
 
 def queue_setup(connection, callback):
@@ -107,7 +106,8 @@ def main(host,user,password):
                 print( "Connection to MQ not ready, retry..." )
                 time.sleep(5)
         try:
-           queue_setup(connection, queue_callback).start_consuming()
+           channel = queue_setup(connection, queue_callback)
+           channel.start_consuming()
         except pika.exceptions.ConnectionClosed:
             print( "Connection to MQ closed. retry..." )
             connection = None
@@ -116,9 +116,10 @@ def main(host,user,password):
         except KeyboardInterrupt:
             print( 'Bye' )
             done = True
-        finally:
-            if connection:
-                connection.close()
+            channel.stop_consuming()
+
+    if connection:
+        connection.close()
 
             
 if __name__ == "__main__":
