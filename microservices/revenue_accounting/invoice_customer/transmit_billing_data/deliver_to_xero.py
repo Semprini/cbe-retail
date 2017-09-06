@@ -45,7 +45,7 @@ def get_xero_connection(account):
     return Xero(credentials)
 
     
-def queue_callback(ch, method, properties, body):
+def queue_callback(channel, method, properties, body):
     # Create a disctionary from message body
     message_json=json.loads(body.decode('utf-8'))
     account = message_json['account'].split('/')[-2]
