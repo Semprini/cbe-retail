@@ -58,8 +58,9 @@ def queue_callback(channel, method, properties, body):
         logging.info( response.__dict__ )
             
     # Always ack (after work has completed) as retry handled via new message passed to retry exchange
-    logging.info( "ackd:",channel.basic_ack(delivery_tag=method.delivery_tag, multiple=False))
-
+    channel.basic_ack(delivery_tag=method.delivery_tag, multiple=False)
+    logging.info( "ackd" )
+    
         
 def queue_setup(connection, callback):
     channel = connection.channel()

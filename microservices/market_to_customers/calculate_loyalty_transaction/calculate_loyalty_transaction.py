@@ -64,8 +64,9 @@ def queue_callback(channel, method, properties, body):
         logging.info("No ID in sale so no loyalty transaction created")
     
     # Always ack (after work has completed) as retry handled via new message passed to retry exchange
-    logging.info( "ackd:",channel.basic_ack(delivery_tag=method.delivery_tag, multiple=False))
-        
+    channel.basic_ack(delivery_tag=method.delivery_tag, multiple=False)
+    logging.info( "ackd" )
+    
 
 def queue_setup(connection, callback):
     channel = connection.channel()

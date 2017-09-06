@@ -76,7 +76,8 @@ def queue_callback(channel, method, properties, body):
     # TODO: Handle failures with retry or exceptions
     
     # Always ack (after work has completed) as retry handled via new message passed to retry exchange
-    logging.info( "ackd:",channel.basic_ack(delivery_tag=method.delivery_tag, multiple=False))
+    channel.basic_ack(delivery_tag=method.delivery_tag, multiple=False)
+    logging.info( "ackd" )
     
     
 def test_callback():
