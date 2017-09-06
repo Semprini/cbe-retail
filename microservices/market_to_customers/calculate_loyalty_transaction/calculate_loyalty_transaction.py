@@ -28,6 +28,8 @@ loyalty_transaction_template = '{"scheme": "https://cbe.sphinx.co.nz/api/loyalty
 the_channel = None
 
 def queue_callback(channel, method, properties, body):
+    global the_channel
+
     # Create a disctionary from message body
     message_json=json.loads(body.decode('utf-8'))
     
@@ -65,6 +67,7 @@ def queue_callback(channel, method, properties, body):
         
 
 def queue_setup(connection, callback):
+    global the_channel
     channel = connection.channel()
     the_channel = channel
 
