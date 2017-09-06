@@ -1,8 +1,11 @@
 #!/usr/bin/env python 
 import os, sys, time, json
 import requests
+import logging
 
 import pika
+
+logging.basicConfig(format='%(asctime)s %(message)s')
 
 QUEUE_HOST = "cbemq"
 QUEUE_USER = "super"
@@ -33,7 +36,7 @@ def queue_callback(channel, method, properties, body):
     
     # If the customer swiped a card then add some airpoints
     if message_json['identification'] != None:
-        print( "Sale with Airpoints triggered loyalty calc" )
+        logging.info( "Sale with Airpoints triggered loyalty calc: {0}".format(message_json['identification']) )
         total=float(message_json['total_amount'])
         loyalty_amount = total * LOYALTY_RATE
         
@@ -47,17 +50,21 @@ def queue_callback(channel, method, properties, body):
         headers = {'Content-type': 'application/json',}
         response = requests.post(LOYALTY_TRANSACTION_URL, data=data, headers=headers, auth=(API_USER, API_PASS))
         if response.status_code == 201: # (201) Created
-            print( "Loyalty transaction created" )
-        else:
-            print( "Error creating loyalty transaction" )
-            print( response.__dict__ )
-            print( "requeued:", channel.basic_publish( RETRY_EXCHANGE, '', body ) )
-            #TODO: Fatal errors
+            logging.info( "Loyalty transaction created" )
+        elif response.status_code >= 500 or response.status_code in (401,403):
+            logging.warning( "Retryable error creating loyalty transaction" )
+            logging.info( response.__dict__ )
+            logging.info( "requeued:", channel.basic_publish( RETRY_EXCHANGE, '', body ) )
+        else:   
+            # Fatal errors which can't be retried
+            logging.error( "Fatal error creating loyalty transaction" )
+            logging.info( response.__dict__ )
+            
     else:
-        print("No ID in sale so no loyalty transaction created")
+        logging.info("No ID in sale so no loyalty transaction created")
     
     # Always ack (after work has completed) as retry handled via new message passed to retry exchange
-    print( "ackd:",channel.basic_ack(delivery_tag=method.delivery_tag, multiple=False))
+    logging.info( "ackd:",channel.basic_ack(delivery_tag=method.delivery_tag, multiple=False))
         
 
 def queue_setup(connection, callback):
@@ -67,7 +74,7 @@ def queue_setup(connection, callback):
     # Create a queue for our messages to be read from
     result = channel.queue_declare(exclusive=False, queue=QUEUE, durable=True )
     if not result:
-        print( 'Queue didnt declare properly!' )
+        logging.critical( 'Queue didnt declare properly!' )
         sys.exit(1)
 
     # Subscribe (bind) to object message exchanges
@@ -100,19 +107,19 @@ def main(host,user,password):
         while not ready:
             try:
                 connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, credentials=credentials))
-                print( "Completed connection to MQ..." )
+                logging.info( "Completed connection to MQ..." )
                 ready = True
             except KeyboardInterrupt:
                 ready = True
                 done = True
             except:
-                print( "Connection to MQ not ready, retry..." )
+                logging.warning( "Connection to MQ not ready, retry..." )
                 time.sleep(5)
         try:
            channel = queue_setup(connection, queue_callback)
            channel.start_consuming()
         except pika.exceptions.ConnectionClosed:
-            print( "Connection to MQ closed. retry..." )
+            logging.warning( "Connection to MQ closed. retry..." )
             connection = None
             ready = False
             time.sleep(5)
