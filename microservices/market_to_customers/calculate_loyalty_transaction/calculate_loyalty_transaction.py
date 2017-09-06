@@ -52,7 +52,7 @@ def queue_callback(channel, method, properties, body):
             print( "Error creating loyalty transaction" )
             print( response.__dict__ )
             print( "requeued:", the_channel.basic_publish( RETRY_EXCHANGE, method.routing_key, body, properties=properties, mandatory=True, immediate=True ) )
-            if( the_channel == channel )
+            if( the_channel == channel ):
                 print( "Good channel" )
             else:
                 print( "Bad channel" )
