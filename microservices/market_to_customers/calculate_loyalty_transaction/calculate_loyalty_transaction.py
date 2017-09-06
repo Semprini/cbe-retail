@@ -51,8 +51,7 @@ def queue_callback(channel, method, properties, body):
         else:
             print( "Error creating loyalty transaction" )
             print( response.__dict__ )
-            channel.confirm_delivery()
-            print( "requeued:", channel.basic_publish( RETRY_EXCHANGE, method.routing_key, body, properties=properties, mandatory=True, immediate=True ) )
+            print( "requeued:", channel.basic_publish( RETRY_EXCHANGE, method.routing_key, body ) )
             #TODO: Fatal errors
     else:
         print("No ID in sale so no loyalty transaction created")
@@ -63,6 +62,7 @@ def queue_callback(channel, method, properties, body):
 
 def queue_setup(connection, callback):
     channel = connection.channel()
+    channel.confirm_delivery()
 
     # Create a queue for our messages to be read from
     result = channel.queue_declare(exclusive=False, queue=QUEUE, durable=True )
