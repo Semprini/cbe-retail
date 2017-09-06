@@ -5,7 +5,7 @@ import logging
 
 import pika
 
-logging.basicConfig(format='%(asctime)s %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(message)s')
 
 QUEUE_HOST = "cbemq"
 QUEUE_USER = "super"

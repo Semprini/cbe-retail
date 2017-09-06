@@ -5,7 +5,7 @@ import logging
 
 import pika
 
-logging.basicConfig(format='%(asctime)s %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(message)s')
 
 QUEUE_HOST = "cbemq"
 QUEUE_USER = "super"
@@ -57,7 +57,6 @@ def queue_callback(channel, method, properties, body):
         logging.error( "Fatal error creating Service charge" )
         logging.info( response.__dict__ )
             
-    
     # Always ack (after work has completed) as retry handled via new message passed to retry exchange
     logging.info( "ackd:",channel.basic_ack(delivery_tag=method.delivery_tag, multiple=False))
 
