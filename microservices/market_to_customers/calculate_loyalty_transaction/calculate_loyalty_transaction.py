@@ -13,7 +13,7 @@ DLX = 'microservice.loyalty_transaction.dlx'
 RETRY_EXCHANGE = 'microservice.loyalty_transaction.retry'
 QUEUE = 'microservice.loyalty_transaction.Sale'
 RETRY_QUEUE = 'microservice.loyalty_transaction.retry'
-RETRY_DELAY = 3000
+RETRY_DELAY = 30000
 
 API_HOST = "https://cbe.sphinx.co.nz"
 API_USER = "microservice"
