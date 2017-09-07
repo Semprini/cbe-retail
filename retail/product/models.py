@@ -35,7 +35,7 @@ class ProductAssociation(models.Model):
     
        
 class Product(models.Model):
-    barcode = models.CharField(max_length=50, primary_key=True)
+    code = models.CharField(max_length=50, null=True, blank=True)
 
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
@@ -52,7 +52,7 @@ class Product(models.Model):
                                            related_name='associated_to+')
 
     class Meta:
-        ordering = ['barcode']
+        ordering = ['id']
     
     def __str__(self):
         return self.name
@@ -99,6 +99,7 @@ class Product(models.Model):
             
 class SupplierProduct(models.Model):
     supplier_sku = models.CharField(max_length=200, primary_key=True)
+    barcode = models.CharField(max_length=50, null=True, blank=True)
 
     product = models.ForeignKey(Product)
     supplier = models.ForeignKey(Supplier, null=True, blank=True)
@@ -118,6 +119,7 @@ class SupplierProduct(models.Model):
 class ProductOffering(models.Model):
     sku = models.CharField(max_length=50, primary_key=True)
     product = models.ForeignKey(Product, related_name="product_offerings")
+    barcode = models.CharField(max_length=50, null=True, blank=True)
 
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)

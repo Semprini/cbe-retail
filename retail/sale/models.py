@@ -251,7 +251,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
             
             # Create or get product
             if sku not in products:
-                product = Product.objects.create(name=product_name, barcode=sku,status="active",)
+                product = Product.objects.create(name=product_name, code=sku,status="active",)
                 products[sku] = ProductOffering.objects.create(product=product, sku=sku, retail_price=retail)
             po = products[sku]
             po.channels.add(channel)
