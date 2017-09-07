@@ -2,8 +2,8 @@ from rest_framework import permissions, renderers, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
-from retail.product.models import Product, ProductOffering, ProductCategory, ProductStockLevel, ProductAssociation
-from retail.product.serializers import ProductSerializer, ProductOfferingSerializer, ProductCategorySerializer, ProductStockLevelSerializer, ProductAssociationSerializer
+from retail.product.models import Product, ProductOffering, ProductCategory, ProductStock, ProductStockTake, ProductAssociation
+from retail.product.serializers import ProductSerializer, ProductOfferingSerializer, ProductCategorySerializer, ProductStockSerializer, ProductStockTakeSerializer, ProductAssociationSerializer
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -18,11 +18,17 @@ class ProductOfferingViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.DjangoModelPermissions, )
 
     
-class ProductStockLevelViewSet(viewsets.ModelViewSet):
-    queryset = ProductStockLevel.objects.all()
-    serializer_class = ProductStockLevelSerializer
+class ProductStockViewSet(viewsets.ModelViewSet):
+    queryset = ProductStock.objects.all()
+    serializer_class = ProductStockSerializer
     permission_classes = (permissions.DjangoModelPermissions, )
 
+    
+class ProductStockTakeViewSet(viewsets.ModelViewSet):
+    queryset = ProductStockTake.objects.all()
+    serializer_class = ProductStockTakeSerializer
+    permission_classes = (permissions.DjangoModelPermissions, )
+    
     
 class ProductCategoryViewSet(viewsets.ModelViewSet):
     queryset = ProductCategory.objects.all()

@@ -4,6 +4,7 @@ from django.db.models import Q
 from cbe.party.models import Organisation
 from cbe.location.models import Location
 from cbe.supplier_partner.models import Supplier, Buyer
+from cbe.human_resources.models import Staff
 
 from retail.store.models import Store
 from retail.market.models import MarketSegment, MarketStrategy
@@ -139,16 +140,30 @@ class ProductOffering(models.Model):
         return "%s" %(self.product.name)
 
         
-class ProductStockLevel(models.Model):
-    datetime = models.DateTimeField(auto_now_add=True)
-    product = models.ForeignKey(Product, related_name='product_stock_levels')
+class ProductStock(models.Model):
+    product = models.ForeignKey(Product, related_name='product_stock')
     store = models.ForeignKey(Store)
     location = models.ForeignKey(Location, null=True, blank=True)
 
     unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
     amount = models.DecimalField(max_digits=8, decimal_places=4)
     average = models.DecimalField(max_digits=8, decimal_places=4, null=True, blank=True)
+
+    reorder_minimum = models.DecimalField(max_digits=8, decimal_places=4)
+
     
     def __str__(self):
         return "%s:%d"%(self.product.name, self.amount)
+
+        
+class ProductStockTake(models.Model):
+    datetime = models.DateTimeField(auto_now_add=True)
+    product_stock = models.ForeignKey(ProductStock, related_name='product_stock_takes')
+
+    store = models.ForeignKey(Store)
+    location = models.ForeignKey(Location, null=True, blank=True)
+    staff = models.ForeignKey(Staff, null=True, blank=True)
+
+    unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
+    amount = models.DecimalField(max_digits=8, decimal_places=4)
     
