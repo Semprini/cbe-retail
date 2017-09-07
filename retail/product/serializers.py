@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField
-from retail.product.models import Product, ProductOffering, ProductCategory, ProductStock, ProductStockTake, ProductAssociation
+from retail.product.models import Product, ProductOffering, ProductCategory, ProductStock, ProductStockTake, ProductAssociation, SupplierProduct
 
 
 class ProductAssociationSerializer(serializers.HyperlinkedModelSerializer):
@@ -34,7 +34,7 @@ class ProductOfferingSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = ProductOffering
-        fields = ('type', 'url', 'valid_from', 'valid_to', 'sku', 'product', 'channels', 'segments', 'strategies', 'unit_of_measure', 'retail_price', 'product_offering_prices' )
+        fields = ('type', 'url', 'valid_from', 'valid_to', 'sku', 'product', 'channels', 'segments', 'strategies', 'unit_of_measure', 'retail_price', 'average_cost_price', 'product_offering_prices' )
 
                   
 class ProductStockSerializer(serializers.HyperlinkedModelSerializer):
@@ -61,3 +61,10 @@ class ProductCategorySerializer(serializers.HyperlinkedModelSerializer):
         fields = ('type', 'url', 'valid_from', 'valid_to', 'parent', 'level', 'name', 'description', )
 
 
+class SupplierProductSerializer(serializers.HyperlinkedModelSerializer):
+    type = TypeField()
+
+    class Meta:
+        model = SupplierProduct
+        fields = ( 'type', 'url', 'supplier_sku', 'barcode', 'product', 'supplier', 'buyer', 'unit_of_measure','cost_price','reccomended_retail_price' )
+        

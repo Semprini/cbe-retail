@@ -109,6 +109,7 @@ class SupplierProduct(models.Model):
 
     unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
     cost_price = models.DecimalField(max_digits=10, decimal_places=2)
+    reccomended_retail_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     class Meta:
         ordering = ['supplier_sku']
@@ -132,6 +133,7 @@ class ProductOffering(models.Model):
     
     unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
     retail_price = models.DecimalField(max_digits=10, decimal_places=2)
+    average_cost_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     class Meta:
         ordering = ['sku']
@@ -151,7 +153,6 @@ class ProductStock(models.Model):
 
     reorder_minimum = models.DecimalField(max_digits=8, decimal_places=4)
 
-    
     def __str__(self):
         return "%s:%d"%(self.product.name, self.amount)
 
