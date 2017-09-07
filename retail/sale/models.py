@@ -251,8 +251,8 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
             
             # Create or get product
             if sku not in products:
-                product = Product.objects.create(name=product_name, sku=sku,status="active",)
-                products[sku] = ProductOffering.objects.create(product=product, retail_price=retail)
+                product = Product.objects.create(name=product_name, barcode=sku,status="active",)
+                products[sku] = ProductOffering.objects.create(product=product, sku=sku, retail_price=retail)
             po = products[sku]
             po.channels.add(channel)
 
@@ -396,8 +396,8 @@ def fake(stores=test5_stores, day_count=2,year=2000,month=1,day=1,path = None):
 
     print( "Indexing %d products"%ProductOffering.objects.count() )
     products = {}
-    for product in ProductOffering.objects.all():
-        products[product.product.sku] = product
+    for offering in ProductOffering.objects.all():
+        products[offering.sku] = offering
     
     if path != None:
         listdir = os.listdir(path)

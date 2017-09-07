@@ -33,17 +33,16 @@ class ProductAssociation(models.Model):
     association_type = models.CharField(max_length=200, choices=(('cross-selling', 'cross-selling'), ('other', 'other'), ), default='cross-selling')
     rank = models.IntegerField( default=0 )
     
-        
+       
 class Product(models.Model):
+    barcode = models.CharField(max_length=50, primary_key=True)
+
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=200, choices=(('active', 'active'), ('inactive', 'inactive'), ), default='active')
 
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
-    unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
-    sku = models.CharField(max_length=50)
-    barcode = models.CharField(max_length=50, blank=True, null=True)
     
     bundle = models.ManyToManyField('Product', blank=True)
     categories = models.ManyToManyField(ProductCategory, blank=True)
@@ -53,7 +52,7 @@ class Product(models.Model):
                                            related_name='associated_to+')
 
     class Meta:
-        ordering = ['id']
+        ordering = ['barcode']
     
     def __str__(self):
         return self.name
@@ -98,24 +97,41 @@ class Product(models.Model):
             to_products__from_product=self)            
 
             
+class SupplierProduct(models.Model):
+    supplier_sku = models.CharField(max_length=200, primary_key=True)
+
+    product = models.ForeignKey(Product)
+    supplier = models.ForeignKey(Supplier, null=True, blank=True)
+
+    buyer = models.ForeignKey(Buyer, null=True, blank=True)
+
+    unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
+    cost_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        ordering = ['supplier_sku']
+    
+    def __str__(self):
+        return "%s" %(self.product.name)
+    
+    
 class ProductOffering(models.Model):
+    sku = models.CharField(max_length=50, primary_key=True)
+    product = models.ForeignKey(Product, related_name="product_offerings")
+
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=200, choices=(('active', 'active'), ('inactive', 'inactive'), ), default='active')
 
-    product = models.ForeignKey(Product)
-    
     channels = models.ManyToManyField('sale.SalesChannel', blank=True)
     segments = models.ManyToManyField(MarketSegment, blank=True)
     strategies = models.ManyToManyField(MarketStrategy, blank=True)
     
+    unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
     retail_price = models.DecimalField(max_digits=10, decimal_places=2)
-    supplier = models.ForeignKey(Supplier, null=True, blank=True)
-    supplier_code = models.CharField(max_length=200, null=True, blank=True)
-    buyer = models.ForeignKey(Buyer, null=True, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ['sku']
     
     def __str__(self):
         return "%s" %(self.product.name)
@@ -126,6 +142,8 @@ class ProductStockLevel(models.Model):
     product = models.ForeignKey(Product, related_name='product_stock_levels')
     store = models.ForeignKey(Store)
     location = models.ForeignKey(Location, null=True, blank=True)
+
+    unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
     amount = models.DecimalField(max_digits=8, decimal_places=4)
     average = models.DecimalField(max_digits=8, decimal_places=4, null=True, blank=True)
     

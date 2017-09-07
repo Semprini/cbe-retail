@@ -78,6 +78,7 @@ customerbillrouter.register(r'service_charge', CustomerBillViews.ServiceChargeVi
 
 orderrouter = AppRouter(root_view_name='app-order')
 orderrouter.register(r'order', OrderViews.OrderViewSet)
+orderrouter.register(r'quote', OrderViews.QuoteViewSet)
 orderrouter.register(r'order_item', OrderViews.OrderItemViewSet)
 
 supplychainrouter = AppRouter(root_view_name='app-supply_chain')
@@ -130,6 +131,7 @@ urlpatterns = [
     url(r'^api/product/', include(productrouter.urls)),
     url(r'^api/price/', include(pricerouter.urls)),
     url(r'^api/sale/', include(salerouter.urls)),
+    url(r'^api/order/', include(orderrouter.urls)),
     url(r'^api/loyalty/', include(loyaltyrouter.urls)),
     url(r'^api/market/', include(marketrouter.urls)),
     url(r'^api/customer_bill/', include(customerbillrouter.urls)),

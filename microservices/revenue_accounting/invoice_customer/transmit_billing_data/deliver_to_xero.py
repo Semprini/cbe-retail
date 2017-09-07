@@ -55,8 +55,8 @@ def queue_callback(channel, method, properties, body):
         lineitems.append(
             {
                 'Description': 'Job %s'%item['product']['name'], 
-                'Quantity': 1, 
-                'UnitAmount': float(item['amount']), 
+                'Quantity': float(item['quantity']), 
+                'UnitAmount': float(item['amount']),
                 'AccountCode': 200
             }
         )

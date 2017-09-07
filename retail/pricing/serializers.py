@@ -14,8 +14,8 @@ class ProductOfferingPriceSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ProductOfferingPrice
-        fields = ('type', 'url', 'product_offering', 'promotion', 'valid_from', 'valid_to', 'name',
-                  'description', 'categories', 'amount')
+        fields = ('type', 'url', 'product_offering', 'promotion', 'account', 'valid_from', 'valid_to', 'name',
+                  'description', 'categories', 'mode', 'amount')
 
                   
 class PromotionSerializer(serializers.HyperlinkedModelSerializer):
