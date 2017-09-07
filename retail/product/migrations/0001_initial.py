@@ -19,7 +19,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Product',
             fields=[
-                ('barcode', models.CharField(max_length=50, primary_key=True, serialize=False)),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('code', models.CharField(max_length=50)),
                 ('valid_from', models.DateField(blank=True, null=True)),
                 ('valid_to', models.DateField(blank=True, null=True)),
                 ('status', models.CharField(choices=[('active', 'active'), ('inactive', 'inactive')], default='active', max_length=200)),
