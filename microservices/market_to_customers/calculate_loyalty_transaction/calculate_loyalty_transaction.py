@@ -54,7 +54,7 @@ def queue_callback(channel, method, properties, body):
         elif response.status_code >= 500 or response.status_code in (401,403):
             logging.warning( "Retryable error creating loyalty transaction" )
             logging.info( response.__dict__ )
-            logging.info( "requeued:", channel.basic_publish( RETRY_EXCHANGE, '', body ) )
+            logging.info( "requeued: %s"%channel.basic_publish( RETRY_EXCHANGE, '', body ) )
         else:   
             # Fatal errors which can't be retried
             logging.error( "Fatal error creating loyalty transaction" )

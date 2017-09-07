@@ -276,6 +276,8 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
             # Add this price to the list of prices for the offering
             if( len(po.product_offering_prices.filter(amount=retail) ) == 0 ):
                 pop = ProductOfferingPrice.objects.create( product_offering=po, amount=retail, promotion=promotion, name="Uncategorised price" )
+            else:
+                pop = po.product_offering_prices.filter(amount=retail)[0]
                 
             # Create or get staff
             if staff_code not in staff_list:
