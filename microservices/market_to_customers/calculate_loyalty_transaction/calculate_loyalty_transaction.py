@@ -1,9 +1,7 @@
 #!/usr/bin/env python 
-import os, sys, time, json
+import os, sys, json
 import requests
 import logging
-
-import pika
 
 from cbe.utils.microservices.queue_trigger_pattern import QueueTriggerPattern, RequeableError, FatalError
 
@@ -56,8 +54,6 @@ class CalculateLoyaltyTransaction(QueueTriggerPattern):
 
         
 if __name__ == "__main__":
-    #test handler:
-    #queue_callback(None, None, pika.BasicProperties(headers = {'foo':'a'}), test_json)
     API_HOST = os.environ['API_HOST']
     API_USER = os.environ['API_USER']
     API_PASS = os.environ['API_PASS']
