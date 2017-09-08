@@ -12,7 +12,9 @@ class LoyaltyScheme( models.Model ):
 
         
 class LoyaltyTransaction( models.Model ):
-    sale = models.ForeignKey(Sale, db_index=True, related_name='loyalty_transactions', on_delete=models.CASCADE)
+    sale = models.ForeignKey(Sale, db_index=True, related_name='loyalty_transactions', null=True,blank=True)
+    #payment = models.ForeignKey(Payment, db_index=True, related_name='loyalty_transactions', null=True,blank=True)
+    
     items = models.ManyToManyField(SaleItem, blank=True)
     promotion = models.ForeignKey(Promotion, null=True,blank=True)
     scheme = models.ForeignKey(LoyaltyScheme, null=True,blank=True)
