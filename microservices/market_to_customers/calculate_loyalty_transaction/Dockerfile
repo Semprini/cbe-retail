@@ -11,12 +11,13 @@ ENV API_PASS super
 
 RUN apk update
 RUN apk add py-pip
+RUN apk add git
 
 RUN pip install -U pip
 
 ADD *.py /
-ADD requirements.txt
-RUN pip install -Ur requirements.txt
+ADD requirements.txt /
+RUN pip install -Ur /requirements.txt
 
 
 CMD [ "python", "-u", "./calculate_loyalty_transaction.py" ]
