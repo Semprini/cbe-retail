@@ -23,7 +23,6 @@ loyalty_transaction_template = '{"scheme": "https://cbe.sphinx.co.nz/api/loyalty
 class CalculateLoyaltyTransaction(QueueTriggerPattern):
     
     def worker(self, message_json):
-        print( "Should override worker and do something here" )
 
         # If the customer swiped a card then add some airpoints
         if message_json['identification'] != None:
