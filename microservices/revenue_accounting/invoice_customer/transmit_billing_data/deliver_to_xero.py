@@ -6,6 +6,10 @@ import logging
 
 from cbe.utils.microservices.queue_trigger_pattern import QueueTriggerPattern, RequeableError, FatalError
 
+from xero import Xero
+from xero.auth import PublicCredentials
+from local_settings import CREDENTIALS
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(message)s')
 
 NAME = 'transmit_billing_data'    
