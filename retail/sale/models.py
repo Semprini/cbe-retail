@@ -48,7 +48,7 @@ class SalesChannel(models.Model):
 class Sale(models.Model):
     channel = models.ForeignKey(SalesChannel)
     store = models.ForeignKey(Store)
-    seller = models.ForeignKey(Organisation)
+    vendor = models.ForeignKey(Organisation)
     datetime = models.DateTimeField(default=datetime.datetime.now)
     docket_number = models.CharField(max_length=50, null=True,blank=True )
 
@@ -288,7 +288,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
             # Is the current line a new sale or another item for an existing sale
             if len(sales) == 0 or sales[-1].docket_number != docket_number:
                 sale = Sale(    store=store,
-                                seller=store_org,
+                                vendor=store_org,
                                 datetime=date_time, 
                                 docket_number=docket_number, 
                                 total_amount=amount_inc, 
@@ -347,7 +347,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
 
     Sale.objects.bulk_create(sales)
     sales = {}
-    for sale in Sale.objects.filter(store=store, seller=store_org, datetime__year=date.year, datetime__month=date.month, datetime__day=date.day,):
+    for sale in Sale.objects.filter(store=store, vendor=store_org, datetime__year=date.year, datetime__month=date.month, datetime__day=date.day,):
         sales[sale.docket_number] = sale
 
     for tender in tenders:
