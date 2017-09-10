@@ -25,4 +25,29 @@ class LoyaltyTransactionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = LoyaltyTransaction
-        fields = ('type', 'url', 'created','scheme', 'vendor', 'promotion', 'sale', 'items', 'loyalty_amount', 'identification')           
+        fields = ('type', 'url', 'created','scheme', 'vendor', 'promotion', 'sale', 'items', 'loyalty_amount', 'identification')
+
+        
+    def get_validation_exclusions(self):
+        exclusions = super(LoyaltyTransactionSerializer, self).get_validation_exclusions()
+        return exclusions + ['scheme', 'identification']
+
+        
+    def create(self, validated_data):
+        scheme_data = validated_data.pop('scheme')
+        identification_data = validated_data.pop('identification')
+        loyalty = LoyaltyTransaction.objects.create(**validated_data)    
+        return loyalty
+
+
+    def update(self, instance, validated_data):
+        scheme_data = validated_data.pop('scheme')
+        identification_data = validated_data.pop('identification')
+        
+        for key, value in validated_data.items():
+            setattr( instance, key, value )
+
+        instance.save()
+        return instance
+        
+        
