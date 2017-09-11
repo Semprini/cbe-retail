@@ -22,7 +22,6 @@ class LoyaltySchemeSerializer(serializers.HyperlinkedModelSerializer):
 class LoyaltyTransactionSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
     scheme = ExtendedSerializerField(LoyaltySchemeSerializer(), many=False)
-    vendor = ExtendedSerializerField(OrganisationSerializer(), many=False)
     identification = ExtendedSerializerField(IdentificationSerializer(), many=False)
 
     class Meta:
