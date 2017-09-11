@@ -32,7 +32,7 @@ class CalculateLoyaltyTransaction(QueueTriggerPattern):
             
             # Fill out LoyaltyTransaction json
             data = loyalty_transaction_template\
-                .replace("{VENDOR}","{}".format(message_json['seller']))\
+                .replace("{VENDOR}","{}".format(message_json['vendor']))\
                 .replace("{SALE}","{}".format(message_json['url']))\
                 .replace('{AMOUNT}',"{:0.2f}".format(loyalty_amount))\
                 .replace('{ID}',"{}".format(message_json['identification']))
