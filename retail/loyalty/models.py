@@ -1,6 +1,6 @@
 from django.db import models
 
-from cbe.party.models import Organisation
+from cbe.party.models import Organisation, Individual
 from cbe.human_resources.models import Identification, IdentificationType
 from retail.sale.models import Sale, SaleItem, Promotion
 
@@ -17,14 +17,15 @@ class LoyaltyTransaction( models.Model ):
     
     scheme = models.ForeignKey(LoyaltyScheme)
     vendor = models.ForeignKey(Organisation)
+    identification = models.ForeignKey(Identification)
     
     sale = models.ForeignKey(Sale, db_index=True, related_name='loyalty_transactions', null=True,blank=True)
-    #payment = models.ForeignKey(Payment, db_index=True, related_name='loyalty_transactions', null=True,blank=True)
-    
     items = models.ManyToManyField(SaleItem, blank=True)
+    #payment = models.ForeignKey(Payment, db_index=True, related_name='loyalty_transactions', null=True,blank=True)
     promotion = models.ForeignKey(Promotion, null=True,blank=True)
-    identification = models.ForeignKey(Identification, null=True,blank=True)
     
     loyalty_amount = models.DecimalField(max_digits=10, decimal_places=2)
 
+    class Meta:
+        ordering = ['id']    
     
