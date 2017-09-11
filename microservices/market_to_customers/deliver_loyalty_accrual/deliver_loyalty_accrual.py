@@ -33,12 +33,12 @@ class DeliverLoyaltyTransaction(QueueTriggerPattern):
         if response.status_code >= 500 or response.status_code in (401,403):
             logging.warning( "Retryable error sending loyalty accrual. Could not get vendor info." )
             logging.info( response.__dict__ )
-            raise RequeableError()
+            raise RequeableError("Get vendor returned: {}".format(response.status_code))
         elif response.status_code != 200:   
             # Fatal errors which can't be retried
             logging.error( "Fatal error sending loyalty accrual. Could not get vendor info." )
             logging.info( response.__dict__ )
-            raise FatalError()
+            raise FatalError("Get vendor returned: {}".format(response.status_code))
     
         vendor = json.loads(response.body)
     
@@ -59,12 +59,12 @@ class DeliverLoyaltyTransaction(QueueTriggerPattern):
         elif response.status_code >= 500 or response.status_code in (401,403):
             logging.warning( "Retryable error sending loyalty accrual" )
             logging.info( response.__dict__ )
-            raise RequeableError()
+            raise RequeableError("AirNZ NAL post returned: {}".format(response.status_code))
         else:   
             # Fatal errors which can't be retried
             logging.error( "Fatal error sending loyalty accrual" )
             logging.info( response.__dict__ )
-            raise FatalError()
+            raise FatalError("AirNZ NAL post returned: {}".format(response.status_code))
 
         
 if __name__ == "__main__":
