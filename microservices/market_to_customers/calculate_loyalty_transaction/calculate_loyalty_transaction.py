@@ -18,7 +18,7 @@ LOYALTY_TRANSACTION_URL = API_HOST + "/api/loyalty/loyalty_transaction/"
 LOYALTY_RATE = 0.01
 
 #loyalty_transaction_template = '{"scheme": "https://cbe.sphinx.co.nz/api/loyalty/loyalty_scheme/1/","promotion": null,"sale": "{SALE}","items": [],"loyalty_amount": {AMOUNT},"identification": "{ID}"}'
-loyalty_transaction_template = '{ "scheme": "{0}/api/loyalty/loyalty_scheme/1/", "vendor": "{VENDOR}", "promotion": null, "sale": "{SALE}", "items": [], "loyalty_amount": "{AMOUNT}", "identification": "{ID}" }'.format(API_HOST)
+loyalty_transaction_template = '{ "scheme": "' + API_HOST + '/api/loyalty/loyalty_scheme/1/", "vendor": "{VENDOR}", "promotion": null, "sale": "{SALE}", "items": [], "loyalty_amount": "{AMOUNT}", "identification": "{ID}" }'
 
 class CalculateLoyaltyTransaction(QueueTriggerPattern):
     

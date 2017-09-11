@@ -26,4 +26,6 @@ class LoyaltyTransaction( models.Model ):
     
     loyalty_amount = models.DecimalField(max_digits=10, decimal_places=2)
 
+    class Meta:
+        ordering = ['id']    
     
