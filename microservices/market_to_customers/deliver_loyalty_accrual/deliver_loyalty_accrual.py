@@ -23,6 +23,7 @@ class mock_response():
     status_code = 201
     
 def mock_post(url,data,headers,auth):
+    print( "Mock post of:{}".format(data) )
     return mock_response()
 
 class DeliverLoyaltyTransaction(QueueTriggerPattern):
