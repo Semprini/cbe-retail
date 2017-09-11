@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import serializers
 
-from cbe.utils.serializer_fields import TypeField
+from cbe.utils.serializer_fields import TypeField, ExtendedSerializerField
 from retail.loyalty.models import LoyaltyTransaction, LoyaltyScheme
 from cbe.human_resources.serializers import IdentificationSerializer
                  
@@ -20,8 +20,8 @@ class LoyaltySchemeSerializer(serializers.HyperlinkedModelSerializer):
         
 class LoyaltyTransactionSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
-    scheme = LoyaltySchemeSerializer()
-    identification = IdentificationSerializer()
+    scheme = ExtendedSerializerField(LoyaltySchemeSerializer(), many=False)
+    identification = ExtendedSerializerField(IdentificationSerializer(), many=False)
 
     class Meta:
         model = LoyaltyTransaction

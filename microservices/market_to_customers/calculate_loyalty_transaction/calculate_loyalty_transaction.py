@@ -17,8 +17,8 @@ EXCHANGES = (('notify.retail.sale.Sale.updated',None),('notify.retail.sale.Sale.
 LOYALTY_TRANSACTION_URL = API_HOST + "/api/loyalty/loyalty_transaction/"
 LOYALTY_RATE = 0.01
 
-loyalty_transaction_template = '{"scheme": "https://cbe.sphinx.co.nz/api/loyalty/loyalty_scheme/1/","promotion": null,"sale": "{SALE}","items": [],"loyalty_amount": {AMOUNT},"identification": "{ID}"}'
-nal_accrue_template = '{"apnumber": "{APNUMBER}","pointcode": "TEST","txndate": "{DATE}","apdamount": "{AMOUNT}","transactionid": "{ID}","partnerreference": "{REFERENCE}","retailer": "{STORE}"}'
+#loyalty_transaction_template = '{"scheme": "https://cbe.sphinx.co.nz/api/loyalty/loyalty_scheme/1/","promotion": null,"sale": "{SALE}","items": [],"loyalty_amount": {AMOUNT},"identification": "{ID}"}'
+loyalty_transaction_template = '{ "scheme": "{0}/api/loyalty/loyalty_scheme/1/", "vendor": "{VENDOR}", "promotion": null, "sale": "{SALE}", "items": [], "loyalty_amount": "{AMOUNT}", "identification": "{ID}" }'.format(API_HOST)
 
 class CalculateLoyaltyTransaction(QueueTriggerPattern):
     
@@ -32,6 +32,7 @@ class CalculateLoyaltyTransaction(QueueTriggerPattern):
             
             # Fill out LoyaltyTransaction json
             data = loyalty_transaction_template\
+                .replace("{VENDOR}","{}".format(message_json['seller']))\
                 .replace("{SALE}","{}".format(message_json['url']))\
                 .replace('{AMOUNT}',"{:0.2f}".format(loyalty_amount))\
                 .replace('{ID}',"{}".format(message_json['identification']))
