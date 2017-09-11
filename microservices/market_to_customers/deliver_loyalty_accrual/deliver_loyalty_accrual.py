@@ -41,7 +41,7 @@ class DeliverLoyaltyTransaction(QueueTriggerPattern):
             logging.info( response.__dict__ )
             raise FatalError("Get vendor returned: %s"%response.status_code)
     
-        vendor = json.loads(response.body)
+        vendor = json.loads(response.text)
     
         # Fill out nal_accrue_template json
         data = nal_accrue_template\
