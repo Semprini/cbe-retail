@@ -181,6 +181,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = '/usr/local/apache2/htdocs/'
 
+# LimitDepthMixin serializer setting
+DEPTH_MAX = 2
+
 # Try to use a local settings file if available
 try:
     from retail.local_settings import *

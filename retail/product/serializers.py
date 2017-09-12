@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import serializers
 
+from cbe.utils.serializers import LimitDepthMixin
 from cbe.utils.serializer_fields import TypeField
 from retail.product.models import Product, ProductOffering, ProductCategory, ProductStock, ProductStockTake, ProductAssociation, SupplierProduct
 
@@ -17,7 +18,7 @@ class ProductAssociationSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('type', 'url', 'valid_from', 'valid_to', 'from_product', 'to_product', 'association_type', 'rank',)
 
         
-class ProductSerializer(serializers.HyperlinkedModelSerializer):
+class ProductSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()
     #product_associations = serializers.HyperlinkedIdentityField(many=True, view_name='productassociation-detail')
     #product_associations = ProductAssociationSerializer(many=True)
@@ -28,7 +29,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('type', 'url', 'code', 'name', 'description',  'bundle', 'categories', 'cross_sell_products','product_offerings')
 
 
-class ProductOfferingSerializer(serializers.HyperlinkedModelSerializer):
+class ProductOfferingSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()
     product = ProductSerializer()
     

@@ -15,6 +15,7 @@ from cbe.credit.models import Credit, CreditBalanceEvent
 from retail.store.models import Store
 from retail.product.models import ProductOffering, Product
 from retail.pricing.models import PriceChannel, PriceCalculation, Promotion, ProductOfferingPrice
+from retail.sale.models import Sale, SaleItem, Tender, TenderType, SalesChannel, Purchaser
 
 
 def ImportDSRLine(storecode,datetxt,dsrsale):
@@ -24,7 +25,15 @@ def ImportDSRLine(storecode,datetxt,dsrsale):
     org_type = ContentType.objects.get_for_model(Organisation)
     owner_role, created = Owner.objects.get_or_create( organisation=store_org )
     date = datetime.date(day=int(datetxt[0:2]),month=int(datetxt[3:5]),year=int(datetxt[6:10]))
-
+    store_channel, created = SalesChannel.objects.get_or_create( name="Store" )
+    internet_channel, created = SalesChannel.objects.get_or_create( name="Internet" )
+    airpoints, created = IdentificationType.objects.get_or_create( name="Airpoints Card" )
+    
+    sale = None
+    tender = None
+    credit_event = None
+    items = []
+    
     for line in dsrsale:
         data = line.split(',')
         
@@ -114,7 +123,7 @@ def ImportDSRLine(storecode,datetxt,dsrsale):
             till = tills[0]
         
         # Create or get product
-        products =  ProductOffering.objects.filter(product=product, sku=sku, retail_price=retail)
+        products =  ProductOffering.objects.filter( sku=sku, retail_price=retail)
         if len(products) == 0:
             product = Product.objects.create(name=product_name, code=sku,status="active",)
             po = ProductOffering.objects.create(product=product, sku=sku, retail_price=retail)
@@ -150,6 +159,66 @@ def ImportDSRLine(storecode,datetxt,dsrsale):
         person, created = Individual.objects.get_or_create(name=staff_code)
         staff = Staff.objects.create(name=staff_code, individual=person, company=store_org)
 
+        if sale == None:
+            sale = Sale( store=store,
+                            vendor=store_org,
+                            datetime=date_time, 
+                            docket_number=docket_number, 
+                            total_amount=amount_inc, 
+                            total_amount_excl=amount_excl, 
+                            total_tax=amount_tax, 
+                            staff=staff, 
+                            total_discount=discount, 
+                            promotion=promotion,
+                            channel=channel,
+                            customer=customer,
+                            account=account,
+                            identification=id,
+                            till=till )
+                            
+            if tender_type == "$":
+                tender = Tender(tender_type=cash, amount=amount_inc)
+            elif account != None:
+                if account.credit_liabilities.count() > 0:
+                    credit = account.credit_liabilities.first()
+                else:
+                    credit = Credit( account=account, liability_ownership=store_org, customer=customer )
+                credit.credit_balance += amount_inc
+                credit.save()
+                
+                credit_event = CreditBalanceEvent(credit=credit,amount=amount_inc, balance = credit.credit_balance, customer=customer, account=account)
+            else:
+                print( "Unhandled tender type: %s. No tender or credit created"%tender_type)                            
+        
+        else:
+            sale.total_amount += amount_inc
+            sale.total_amount_excl += amount_excl
+            sale.total_tax += amount_tax
+            sale.total_discount += discount
+            if tender_type == "$":
+                tender.amount += amount_inc
+            elif account != None:
+                credit.amount += amount_inc
+                account.credit_balance += amount_inc
+                credit.balance = account.credit_balance
+
+        item = SaleItem(    amount=amount_excl, 
+                            tax=amount_tax, 
+                            product=po.product,
+                            product_offering=po,
+                            product_offering_price=pop,
+                            quantity=quantity, 
+                            discount=discount, 
+                            promotion=promotion)
+        items.append(item)
+    
+    sale.pre_signal_xtra_related = {'items': (items,'sale'),}
+    if tender:
+        sale.pre_signal_xtra_related['tender'] = (tender,'sale')
+    if credit_event:
+        sale.pre_signal_xtra_related['credit_event'] = (credit_event,'sale')
+    sale.save()
+    
         
 def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
     from cbe.credit.models import CreditBalanceEvent
@@ -456,13 +525,20 @@ def fake(stores=test5_stores, day_count=2,year=2000,month=1,day=1,path = None):
         for date in (start_date + datetime.timedelta(n) for n in range(day_count)):
             for store in stores:
                 products = ImportDSR(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr_sample, products)
-    
 
-dsr_sale = """
-1,"X18","30/11/2016","2","14","3114","173502","SPRITE 600ML","","1","3.37","2.56","","","","$","9300675009867","","CCAL","5736",3.88,38,"","N","ZZBUCKLL","0649","ME",1,"RET","retail","",3.88,2.57
+
+
+def fake_sale(stores=test5_stores, day_count=2,year=2000,month=1,day=1):
+    start_date = datetime.date(day=day, month=month, year=year)
+
+    for date in (start_date + datetime.timedelta(n) for n in range(day_count)):
+        for store in stores:
+            ImportDSRLine(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr_sale)
+                
+
+dsr_sale = """1,"X18","30/11/2016","2","14","3114","173502","SPRITE 600ML","","1","3.37","2.56","","","","$","9300675009867","","CCAL","5736",3.88,38,"","N","ZZBUCKLL","0649","ME",1,"RET","retail","",3.88,2.57
 1,"X18","30/11/2016","3","14","3114","173500","LIFT PLUS 355ML","","1","2.92","1.99","","","","$","9300675014496","","CCAL","8684",3.36,60,"","N","ZZROSSER","0650","ME",1,"RET","retail","",3.36,2
-1,"X18","30/11/2016","3","14","3114","224726","WAIWERA WATER STILL SIPPER 750ML","","1","1.25","0.89","","","","$","9418482000226","","WWTR","WW0750P1ST",1.69,49,"","N","ZZROSSER","0650","ME",2,"RET","matrix","ME",1.69,0.92
-"""
+1,"X18","30/11/2016","3","14","3114","224726","WAIWERA WATER STILL SIPPER 750ML","","1","1.25","0.89","","","","$","9418482000226","","WWTR","WW0750P1ST",1.69,49,"","N","ZZROSSER","0650","ME",2,"RET","matrix","ME",1.69,0.92""".split('\n')
     
 dsr_sample = """
 0,"X18","30/11/2016"

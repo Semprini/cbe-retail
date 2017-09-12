@@ -5,7 +5,8 @@ from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import serializers
 
-from cbe.utils.serializer_fields import TypeField, GenericRelatedField
+from cbe.utils.serializers import LimitDepthMixin
+from cbe.utils.serializer_fields import TypeField, GenericRelatedField, ExtendedModelSerializerField
 from cbe.party.serializers import PartyRoleAssociationFromBasicSerializer, PartyRoleAssociationToBasicSerializer, IndividualSerializer, OrganisationSerializer
 from cbe.party.models import Individual, Organisation, PartyRoleAssociation
 from cbe.credit.serializers import CreditBalanceEventSerializer
@@ -14,7 +15,7 @@ from retail.sale.models import SalesChannel, Sale, SaleItem, TenderType, Tender,
 from retail.product.serializers import ProductOfferingSerializer, ProductSerializer
 
 
-class TenderTypeSerializer(serializers.HyperlinkedModelSerializer):
+class TenderTypeSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
     class Meta:
@@ -23,22 +24,23 @@ class TenderTypeSerializer(serializers.HyperlinkedModelSerializer):
                   'description', )
 
 
-class TenderSerializer(serializers.HyperlinkedModelSerializer):
+class TenderSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()
     #TODO: Waiting on pull request from django-rest
     #url = serializers.HyperlinkedIdentityField(view_name='tender-detail', read_only=False, queryset=Tender.objects.all())
-
+    tender_type = ExtendedModelSerializerField(TenderTypeSerializer())
+    
     class Meta:
         model = Tender
         fields = ('type', 'url', 'sale', 'tender_type', 'amount',
                   'reference', )
 
                   
-class SaleItemSerializer(serializers.HyperlinkedModelSerializer):
+class SaleItemSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()
     #TODO: Waiting on pull request from django-rest
     #url = serializers.HyperlinkedIdentityField(view_name='saleitem-detail', read_only=False, queryset=SaleItem.objects.all())
-    product = ProductSerializer()
+    product = ExtendedModelSerializerField(ProductSerializer())
     
     class Meta:
         model = SaleItem
@@ -46,12 +48,12 @@ class SaleItemSerializer(serializers.HyperlinkedModelSerializer):
                   'discount','promotion' )
 
                   
-class SaleSerializer(serializers.HyperlinkedModelSerializer):
+class SaleSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()
     sale_items = SaleItemSerializer( many=True )
     tenders = TenderSerializer( many=True, read_only=False )
     credit_balance_events = CreditBalanceEventSerializer( many=True )
-    url = serializers.HyperlinkedIdentityField(view_name='sale-detail', read_only=True)
+    #url = serializers.HyperlinkedIdentityField(view_name='sale-detail', read_only=True)
     
     class Meta:
         model = Sale
@@ -76,6 +78,8 @@ class SaleSerializer(serializers.HyperlinkedModelSerializer):
                     setattr( object, key, value )  
             else:
                 Tender.objects.create(sale=sale, **tender_data)
+                
+        # TODO: sale.pre_signal_xtra_related['credit_event'] = (credit_event,'sale')
         return sale             
 
     def update(self, instance, validated_data):
@@ -112,7 +116,7 @@ class SaleSerializer(serializers.HyperlinkedModelSerializer):
         return instance             
         
 
-class SalesChannelSerializer(serializers.HyperlinkedModelSerializer):
+class SalesChannelSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
     class Meta:
@@ -120,7 +124,7 @@ class SalesChannelSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('type', 'url', 'name',)
                   
                   
-class PurchaserSerializer(serializers.HyperlinkedModelSerializer):
+class PurchaserSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     party = GenericRelatedField( many=False, 
         serializer_dict={ 
             Individual: IndividualSerializer(),
