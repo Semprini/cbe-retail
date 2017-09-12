@@ -1,6 +1,7 @@
 from django.test import TestCase
 
-from retail.sale.models import Sale, ImportDSR, dsr_sample
+from retail.sale.models import Sale
+from retail.sale.utils import ImportDSR, dsr_sample
 
 class SaleTestCase(TestCase):
 
