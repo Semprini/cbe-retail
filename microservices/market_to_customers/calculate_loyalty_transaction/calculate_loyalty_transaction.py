@@ -43,14 +43,12 @@ class CalculateLoyaltyTransaction(QueueTriggerPattern):
             if response.status_code == 201: # (201) Created
                 logging.info( "Loyalty transaction created" )
             elif response.status_code >= 500 or response.status_code in (401,403):
-                logging.warning( "Retryable error creating loyalty transaction" )
-                logging.info( response.__dict__ )
-                raise RequeableError("Loyalty transaction post returned: %s"%response.status_code)
+                logging.warning( "Retryable error creating loyalty transaction:{}".format(response.content) )
+                raise RequeableError("Loyalty transaction post returned: {}".format(response.status_code))
             else:   
                 # Fatal errors which can't be retried
-                logging.error( "Fatal error creating loyalty transaction" )
-                logging.info( response.__dict__ )
-                raise FatalError("Loyalty transaction post returned: %s"%response.status_code)
+                logging.error( "Fatal error creating loyalty transaction:{}".format(response.content) )
+                raise FatalError("Loyalty transaction post returned: {}".format(response.status_code))
 
         
 if __name__ == "__main__":

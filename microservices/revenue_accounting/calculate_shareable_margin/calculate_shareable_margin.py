@@ -37,20 +37,18 @@ class CalculateShareableMargin(QueueTriggerPattern):
             # GET sale to find satellite store
             response = requests.get(message_json['sale_url'], auth=(API_USER, API_PASS))
             if response.status_code >= 500 or response.status_code in (401,403):
-                logging.warning( "Retryable error calculating shareable margin. Could not get sale info." )
-                logging.info( response.__dict__ )
-                raise RequeableError("Get sale returned: %s"%response.status_code)
+                logging.warning( "Retryable error calculating shareable margin. Could not get sale info:{}".format(response.content) )
+                raise RequeableError("Get sale returned: {}".format(response.status_code))
             elif response.status_code != 200:   
                 # Fatal errors which can't be retried
-                logging.error( "Fatal error calculating shareable margin. Could not get sale info." )
-                logging.info( response.__dict__ )
-                raise FatalError("Get sale returned: %s"%response.status_code)
+                logging.error( "Fatal error calculating shareable margin. Could not get sale info:{}".format(response.content) )
+                raise FatalError("Get sale returned: {}".format(response.status_code))
         
             sale = json.loads(response.text)
             satellite_store = sale['vendor']
         
             if home_store == satellite_store:
-                print( "Sale is a home store sale, no shareable margin on sale {}".format(sale_url) )
+                logging.info( "Sale is a home store sale, no shareable margin on sale {}".format(sale_url) )
             else:
                 total += float(sale['amount'])
                 service_charge_sales.append(sale_url)
@@ -71,14 +69,12 @@ class CalculateShareableMargin(QueueTriggerPattern):
         if response.status_code == 201: # (201) Created
             logging.info( "Service charge created" )
         elif response.status_code >= 500 or response.status_code in (401,403):
-            logging.warning( "Retryable error creating Service charge" )
-            logging.info( response.__dict__ )
-            raise RequeableError()
+            logging.warning( "Retryable error creating Service charge: {}".format(response.content) )
+            raise RequeableError("Post service charge returned: {}".format(response.status_code))
         else:   
             # Fatal errors which can't be retried
-            logging.error( "Fatal error creating Service charge" )
-            logging.info( response.__dict__ )
-            raise FatalError()
+            logging.error( "Fatal error creating Service charge: {}".format(response.content) )
+            raise FatalError("Post service charge returned: {}".format(response.status_code))
 
 
 if __name__ == "__main__":
