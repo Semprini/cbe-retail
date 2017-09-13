@@ -17,27 +17,50 @@ EXCHANGES = (('notify.retail.customer_bill.CustomerBill.updated',None),('notify.
 SERVICE_CHARGE_URL = API_HOST + "/api/customer_bill/service_charge/"
 RATE = 0.5
 
-service_charge_template = '{ "total_margin": "{TOTAL_MARGIN}", "home_margin": "{HOME_MARGIN}", "satellite_margin": "{SATELLITE_MARGIN}", "bill": "{BILL}", "service_bill_item": null, "sale": "{SALE}", "home_store": "{HOME_STORE}", "satellite_store": "http://127.0.0.1:8000/api/store/store/2/" }'
+service_charge_template = '{ "total_margin": "{TOTAL_MARGIN}", "home_margin": "{HOME_MARGIN}", "satellite_margin": "{SATELLITE_MARGIN}", "bill": "{BILL}", "service_bill_item": null, "sales": {SALES}, "home_store": "{HOME_STORE}", "satellite_store": "{SATELLITE_STORE}" }'
 
 
 class CalculateShareableMargin(QueueTriggerPattern):
     
     def worker(self, message_json):
-        total = float(message_json['amount'])
+        total = float(0)
         try:
-            sale = message_json['accountbillitems'][0]['sale_events'][0]
+            sales = message_json['accountbillitems'][0]['sale_events']
         except KeyError:
             print( "No account sales recorded in bill. No service charge to calculate" )
             return
         home_store = message_json['account']['managed_by']
         
-        # TODO: GET sale to find satellite store
+        service_charge_sales = []
         
+        for sale_url in sales:
+            # GET sale to find satellite store
+            response = requests.get(message_json['sale_url'], auth=(API_USER, API_PASS))
+            if response.status_code >= 500 or response.status_code in (401,403):
+                logging.warning( "Retryable error calculating shareable margin. Could not get sale info." )
+                logging.info( response.__dict__ )
+                raise RequeableError("Get sale returned: %s"%response.status_code)
+            elif response.status_code != 200:   
+                # Fatal errors which can't be retried
+                logging.error( "Fatal error calculating shareable margin. Could not get sale info." )
+                logging.info( response.__dict__ )
+                raise FatalError("Get sale returned: %s"%response.status_code)
+        
+            sale = json.loads(response.text)
+            satellite_store = sale['vendor']
+        
+            if home_store == satellite_store:
+                print( "Sale is a home store sale, no shareable margin on sale {}".format(sale_url) )
+            else:
+                total += float(sale['amount'])
+                service_charge_sales.append(sale_url)
+                
         # Fill out Service charge json
         data = service_charge_template\
             .replace("{BILL}",message_json['url'])\
-            .replace('{SALE}',sale)\
+            .replace('{SALES}',"{}".format(service_charge_sales))\
             .replace('{HOME_STORE}',home_store)\
+            .replace('{SATELLITE_STORE}',satellite_store)\
             .replace('{TOTAL_MARGIN}',"{:0.2f}".format(total))\
             .replace('{HOME_MARGIN}',"{:0.2f}".format(total/RATE))\
             .replace('{SATELLITE_MARGIN}',"{:0.2f}".format(total-(total/RATE)))

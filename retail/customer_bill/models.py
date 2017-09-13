@@ -147,7 +147,7 @@ class ServiceCharge(models.Model):
     bill = models.ForeignKey( CustomerBill, related_name="%(class)ss" )
     service_bill_item = models.ForeignKey( ServiceBillItem, related_name="%(class)ss", null=True, blank=True )
     
-    sale = models.ForeignKey( Sale )
+    sales = models.ManyToManyField(Sale, blank=True)
     home_store = models.ForeignKey( Organisation, null=True, blank=True, related_name="home_service_charges" )
     satellite_store = models.ForeignKey( Organisation, null=True, blank=True, related_name="satellite_service_charges" )
 
