@@ -17,17 +17,27 @@ EXCHANGES = (('notify.retail.customer_bill.CustomerBill.updated',None),('notify.
 SERVICE_CHARGE_URL = API_HOST + "/api/customer_bill/service_charge/"
 RATE = 0.5
 
-service_charge_template = '{ "total_margin": "{TOTAL_MARGIN}", "home_margin": "{HOME_MARGIN}", "satellite_margin": "{SATELLITE_MARGIN}", "bill": "{BILL}", "service_bill_item": null, "sale": "http://127.0.0.1:8000/api/sale/sale/1/", "home_store": "http://127.0.0.1:8000/api/store/store/1/", "satellite_store": "http://127.0.0.1:8000/api/store/store/2/" }'
+service_charge_template = '{ "total_margin": "{TOTAL_MARGIN}", "home_margin": "{HOME_MARGIN}", "satellite_margin": "{SATELLITE_MARGIN}", "bill": "{BILL}", "service_bill_item": null, "sale": "{SALE}", "home_store": "{HOME_STORE}", "satellite_store": "http://127.0.0.1:8000/api/store/store/2/" }'
 
 
 class CalculateShareableMargin(QueueTriggerPattern):
     
     def worker(self, message_json):
-        total=float(message_json['amount'])
+        total = float(message_json['amount'])
+        try:
+            sale = message_json['accountbillitems'][0]['sale_events'][0]
+        except KeyError:
+            print( "No account sales recorded in bill. No service charge to calculate" )
+            return
+        home_store = message_json['account']['managed_by']
+        
+        #TODO: GET sale to find satellite store
         
         # Fill out Service charge json
         data = service_charge_template\
-            .replace("{BILL}","{}".format(message_json['url']))\
+            .replace("{BILL}",message_json['url'])\
+            .replace('{SALE}',sale)\
+            .replace('{HOME_STORE}',home_store)\
             .replace('{TOTAL_MARGIN}',"{:0.2f}".format(total))\
             .replace('{HOME_MARGIN}',"{:0.2f}".format(total/RATE))\
             .replace('{SATELLITE_MARGIN}',"{:0.2f}".format(total-(total/RATE)))
