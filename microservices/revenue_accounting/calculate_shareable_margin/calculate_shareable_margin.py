@@ -50,7 +50,8 @@ class CalculateShareableMargin(QueueTriggerPattern):
             if home_store == satellite_store:
                 logging.info( "Sale is a home store sale, no shareable margin on sale {}".format(sale_url) )
             else:
-                total += float(sale['total_amount'])
+                for item in sale['sale_items']:
+                    total += ( float(item['amount']) - float(item['cost_price']) )
                 service_charge_sales.append(sale_url)
                 
         if total == 0:
