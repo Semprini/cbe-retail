@@ -35,7 +35,7 @@ class CalculateShareableMargin(QueueTriggerPattern):
         
         for sale_url in sales:
             # GET sale to find satellite store
-            response = requests.get(message_json['sale_url'], auth=(API_USER, API_PASS))
+            response = requests.get('sale_url', auth=(API_USER, API_PASS))
             if response.status_code >= 500 or response.status_code in (401,403):
                 logging.warning( "Retryable error calculating shareable margin. Could not get sale info:{}".format(response.content) )
                 raise RequeableError("Get sale returned: {}".format(response.status_code))
