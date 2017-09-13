@@ -53,7 +53,7 @@ class CalculateShareableMargin(QueueTriggerPattern):
                 total += float(sale['total_amount'])
                 service_charge_sales.append(sale_url)
                 
-        if total = 0:
+        if total == 0:
             logging.info( "Satellite store sales value is 0, no shareable margin created for bill {}".format(message_json['url']) )
             return
             
