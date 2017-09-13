@@ -1,6 +1,4 @@
-import django_filters.rest_framework
-from rest_framework import filters
-from rest_framework import permissions, renderers, viewsets
+from rest_framework import permissions, viewsets
 
 from retail.customer_bill.models import CustomerBillingCycle, CustomerBillSpecification, CustomerBill, ServiceCharge
 from retail.customer_bill.models import AccountBillItem, JobBillItem, SubscriptionBillItem, ServiceBillItem, RebateBillItem, AllocationBillItem, AdjustmentBillItem, DisputeBillItem
@@ -12,7 +10,7 @@ class ServiceChargeViewSet(viewsets.ModelViewSet):
     queryset = ServiceCharge.objects.all()
     serializer_class = ServiceChargeSerializer
     permission_classes = (permissions.DjangoModelPermissions, )
-
+    filter_fields = ('bill',)
     
 class CustomerBillingCycleViewSet(viewsets.ModelViewSet):
     queryset = CustomerBillingCycle.objects.all()
@@ -30,6 +28,7 @@ class CustomerBillViewSet(viewsets.ModelViewSet):
     queryset = CustomerBill.objects.all()
     serializer_class = CustomerBillSerializer
     permission_classes = (permissions.DjangoModelPermissions, )
+    filter_fields = ('status','account__managed_by')
 
     
 class AccountBillItemViewSet(viewsets.ModelViewSet):

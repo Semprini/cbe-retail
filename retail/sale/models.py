@@ -67,7 +67,7 @@ class Sale(models.Model):
     credit_balance_events = models.ManyToManyField(CreditBalanceEvent, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ['-datetime']
         
     def __str__(self):
         return "%s|%s|%d"%(self.store,self.datetime,self.total_amount)

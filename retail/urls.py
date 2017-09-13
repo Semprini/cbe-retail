@@ -5,7 +5,6 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 from rest_framework.schemas import get_schema_view
-from rest_framework_raml.renderers import RAMLRenderer, RAMLDocsRenderer
 
 from cbe.routers import AppRouter
 from cbe.urls import apps as cbeapps
@@ -25,12 +24,6 @@ import retail.job_management.views as JobManagmentViews
 
 admin.site.site_title = 'CBE Retail'
 admin.site.site_header = 'Retail Business Entities'
-
-schema_view = get_schema_view(
-    title='CBE-Retail API',
-    renderer_classes=[RAMLRenderer, RAMLDocsRenderer]
-)
-
 
 storerouter = AppRouter(root_view_name='app-store')
 storerouter.register(r'store', StoreViews.StoreViewSet)
@@ -126,7 +119,6 @@ router.register(r'auth/users', CBEViews.UserViewSet)
 router.register(r'content_types', CBEViews.ContentTypeViewSet)
         
 urlpatterns = [
-    url(r'^raml/$', schema_view),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^api/', include(router.urls)),
