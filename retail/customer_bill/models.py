@@ -2,9 +2,9 @@ from django.db import models
 
 from cbe.location.models import Location
 from cbe.customer.models import Customer, CustomerAccount
+from cbe.party.models import Organisation
 
 from retail.sale.models import Sale
-from retail.store.models import Store
 from retail.job_management.models import Job
 
 
@@ -148,8 +148,8 @@ class ServiceCharge(models.Model):
     service_bill_item = models.ForeignKey( ServiceBillItem, related_name="%(class)ss", null=True, blank=True )
     
     sale = models.ForeignKey( Sale )
-    home_store = models.ForeignKey( Store, null=True, blank=True, related_name="home_service_charges" )
-    satellite_store = models.ForeignKey( Store, null=True, blank=True, related_name="satellite_service_charges" )
+    home_store = models.ForeignKey( Organisation, null=True, blank=True, related_name="home_service_charges" )
+    satellite_store = models.ForeignKey( Organisation, null=True, blank=True, related_name="satellite_service_charges" )
 
     total_margin = models.DecimalField(default = 0, max_digits=10, decimal_places=2)
     home_margin = models.DecimalField(default = 0, max_digits=10, decimal_places=2)

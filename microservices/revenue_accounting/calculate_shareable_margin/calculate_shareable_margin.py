@@ -31,7 +31,7 @@ class CalculateShareableMargin(QueueTriggerPattern):
             return
         home_store = message_json['account']['managed_by']
         
-        #TODO: GET sale to find satellite store
+        # TODO: GET sale to find satellite store
         
         # Fill out Service charge json
         data = service_charge_template\
