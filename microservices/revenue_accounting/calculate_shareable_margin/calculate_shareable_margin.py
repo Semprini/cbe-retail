@@ -60,7 +60,7 @@ class CalculateShareableMargin(QueueTriggerPattern):
         # Fill out Service charge json
         data = service_charge_template\
             .replace("{BILL}",message_json['url'])\
-            .replace('{SALES}',"{}".format(service_charge_sales))\
+            .replace('{SALES}',json.dumps(service_charge_sales))\
             .replace('{HOME_STORE}',home_store)\
             .replace('{SATELLITE_STORE}',satellite_store)\
             .replace('{TOTAL_MARGIN}',"{:0.2f}".format(total))\
