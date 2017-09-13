@@ -204,6 +204,7 @@ def ImportDSRLine(storecode,datetxt,dsrsale):
 
         item = SaleItem(    amount=amount_excl, 
                             tax=amount_tax, 
+                            cost_price=cost,
                             product=po.product,
                             product_offering=po,
                             product_offering_price=pop,
@@ -429,6 +430,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
 
             item = SaleItem(    amount=amount_excl, 
                                 tax=amount_tax, 
+                                cost_price=cost,
                                 product=po.product,
                                 product_offering=po,
                                 product_offering_price=pop,

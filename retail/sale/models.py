@@ -85,6 +85,7 @@ class SaleItem(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     discount = models.DecimalField(max_digits=10, decimal_places=2)
     tax = models.DecimalField(max_digits=10, decimal_places=2)
+    cost_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     promotion = models.ForeignKey(Promotion, null=True,blank=True)
 

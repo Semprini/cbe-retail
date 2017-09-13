@@ -45,7 +45,7 @@ class SaleItemSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer
     class Meta:
         model = SaleItem
         fields = ('type', 'url', 'sale', 'product_offering', 'product', 'product_offering_price', 'quantity', 'unit_of_measure', 'amount',
-                  'discount','promotion' )
+                  'discount','promotion','cost_price' )
 
                   
 class SaleSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):

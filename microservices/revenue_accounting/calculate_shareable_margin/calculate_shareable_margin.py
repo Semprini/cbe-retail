@@ -64,8 +64,8 @@ class CalculateShareableMargin(QueueTriggerPattern):
             .replace('{HOME_STORE}',home_store)\
             .replace('{SATELLITE_STORE}',satellite_store)\
             .replace('{TOTAL_MARGIN}',"{:0.2f}".format(total))\
-            .replace('{HOME_MARGIN}',"{:0.2f}".format(total/RATE))\
-            .replace('{SATELLITE_MARGIN}',"{:0.2f}".format(total-(total/RATE)))
+            .replace('{HOME_MARGIN}',"{:0.2f}".format(total*RATE))\
+            .replace('{SATELLITE_MARGIN}',"{:0.2f}".format(total-(total*RATE)))
             
         # Create a new Service charge transaction by calling API
         headers = {'Content-type': 'application/json',}
