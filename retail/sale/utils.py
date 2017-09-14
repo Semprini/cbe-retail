@@ -18,13 +18,8 @@ from retail.pricing.models import PriceChannel, PriceCalculation, Promotion, Pro
 from retail.sale.models import Sale, SaleItem, Tender, TenderType, SalesChannel, Purchaser
 
 
-def ImportDSRLine(storecode,datetxt,dsrsale):
+def ImportDSRLine(dsrsale):
     cash, created = TenderType.objects.get_or_create(name="Cash")
-    store_org, created = Organisation.objects.get_or_create( organisation_type="Store", name=storecode )
-    store, created = Store.objects.get_or_create( name=storecode, code=storecode, organisation=store_org )
-    org_type = ContentType.objects.get_for_model(Organisation)
-    owner_role, created = Owner.objects.get_or_create( organisation=store_org )
-    date = datetime.date(day=int(datetxt[0:2]),month=int(datetxt[3:5]),year=int(datetxt[6:10]))
     store_channel, created = SalesChannel.objects.get_or_create( name="Store" )
     internet_channel, created = SalesChannel.objects.get_or_create( name="Internet" )
     airpoints, created = IdentificationType.objects.get_or_create( name="Airpoints Card" )
@@ -34,9 +29,13 @@ def ImportDSRLine(storecode,datetxt,dsrsale):
     credit_event = None
     items = []
     
-    for line in dsrsale:
+    for line in dsrsale.split('\n'):
         data = line.split(',')
+        store_org, created = Organisation.objects.get_or_create( organisation_type="Store", name=data[1] )
+        store, created = Store.objects.get_or_create( name=data[1], code=data[1], organisation=store_org )
+        owner_role, created = Owner.objects.get_or_create( organisation=store_org )
         
+        date = datetime.date(day=int(data[2][1:3]),month=int(data[2][4:6]),year=int(data[2][7:11]))
         time = datetime.time(int(data[25][1:3]),int(data[25][3:5]),0)
         date_time = timezone.make_aware(datetime.datetime.combine(date,time), timezone.get_current_timezone())
         docket_number = data[3].strip('"')
@@ -219,6 +218,7 @@ def ImportDSRLine(storecode,datetxt,dsrsale):
     if credit_event:
         sale.pre_signal_xtra_related['credit_event'] = (credit_event,'sale')
     sale.save()
+    return sale
     
         
 def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
@@ -227,7 +227,6 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
     cash, created = TenderType.objects.get_or_create(name="Cash")
     store_org, created = Organisation.objects.get_or_create( organisation_type="Store", name=storecode )
     store, created = Store.objects.get_or_create( name=storecode, code=storecode, organisation=store_org )
-    org_type = ContentType.objects.get_for_model(Organisation)
     owner_role, created = Owner.objects.get_or_create( organisation=store_org )
     date = datetime.date(day=int(datetxt[0:2]),month=int(datetxt[3:5]),year=int(datetxt[6:10]))
 
@@ -540,7 +539,7 @@ def fake_sale(stores=test5_stores, day_count=2,year=2000,month=1,day=1):
 
 dsr_sale = """1,"X18","30/11/2016","2","14","3114","173502","SPRITE 600ML","","1","3.37","2.56","","","","$","9300675009867","","CCAL","5736",3.88,38,"","N","ZZBUCKLL","0649","ME",1,"RET","retail","",3.88,2.57
 1,"X18","30/11/2016","3","14","3114","173500","LIFT PLUS 355ML","","1","2.92","1.99","","","","$","9300675014496","","CCAL","8684",3.36,60,"","N","ZZROSSER","0650","ME",1,"RET","retail","",3.36,2
-1,"X18","30/11/2016","3","14","3114","224726","WAIWERA WATER STILL SIPPER 750ML","","1","1.25","0.89","","","","$","9418482000226","","WWTR","WW0750P1ST",1.69,49,"","N","ZZROSSER","0650","ME",2,"RET","matrix","ME",1.69,0.92""".split('\n')
+1,"X18","30/11/2016","3","14","3114","224726","WAIWERA WATER STILL SIPPER 750ML","","1","1.25","0.89","","","","$","9418482000226","","WWTR","WW0750P1ST",1.69,49,"","N","ZZROSSER","0650","ME",2,"RET","matrix","ME",1.69,0.92"""
     
 dsr_sample = """
 0,"X18","30/11/2016"

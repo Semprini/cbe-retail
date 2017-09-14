@@ -17,13 +17,13 @@ EXCHANGES = (('notify.retail.sale.Sale.updated',None),('notify.retail.sale.Sale.
 LOYALTY_TRANSACTION_URL = API_HOST + "/api/loyalty/loyalty_transaction/"
 LOYALTY_RATE = 0.01
 
-#loyalty_transaction_template = '{"scheme": "https://cbe.sphinx.co.nz/api/loyalty/loyalty_scheme/1/","promotion": null,"sale": "{SALE}","items": [],"loyalty_amount": {AMOUNT},"identification": "{ID}"}'
 loyalty_transaction_template = '{ "scheme": "' + API_HOST + '/api/loyalty/loyalty_scheme/1/", "vendor": "{VENDOR}", "promotion": null, "sale": "{SALE}", "items": [], "loyalty_amount": "{AMOUNT}", "identification": "{ID}" }'
 
 class CalculateLoyaltyTransaction(QueueTriggerPattern):
     
-    def worker(self, message_json):
-
+    def create_loyalty_from_sale(self, message_json):
+        data = None
+        
         # If the customer swiped a card then add some airpoints
         if message_json['identification'] != None:
             logging.info( "Sale with Airpoints triggered loyalty calc: {0}".format(message_json['identification']) )
@@ -35,8 +35,26 @@ class CalculateLoyaltyTransaction(QueueTriggerPattern):
                 .replace("{VENDOR}","{}".format(message_json['vendor']))\
                 .replace("{SALE}","{}".format(message_json['url']))\
                 .replace('{AMOUNT}',"{:0.2f}".format(loyalty_amount))\
-                .replace('{ID}',"{}".format(message_json['identification']))
-                
+                .replace('{ID}',"{}".format(message_json['identification']))        
+    
+        return data
+    
+    
+    def create_loyalty_from_payment(self, message_json):
+        data = None
+   
+        return data
+
+        
+    def worker(self, message_json):
+        if message_json['type'] == "Sale":
+            data = self.create_loyalty_from_sale(message_json)
+        elif message_json['type'] == "Payment":
+            data = self.create_loyalty_from_payment(message_json)
+        else:
+            raise FatalError("Unknown input type: {}".format(message_json['type']))
+
+        if data:
             # Create a new LoyaltyTransaction transaction by calling API
             headers = {'Content-type': 'application/json',}
             response = requests.post(LOYALTY_TRANSACTION_URL, data=data, headers=headers, auth=(API_USER, API_PASS))

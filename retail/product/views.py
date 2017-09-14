@@ -16,18 +16,21 @@ class ProductOfferingViewSet(viewsets.ModelViewSet):
     queryset = ProductOffering.objects.all()
     serializer_class = ProductOfferingSerializer
     permission_classes = (permissions.DjangoModelPermissions, )
+    filter_fields = ('status',)
 
     
 class ProductStockViewSet(viewsets.ModelViewSet):
     queryset = ProductStock.objects.all()
     serializer_class = ProductStockSerializer
     permission_classes = (permissions.DjangoModelPermissions, )
+    filter_fields = ('store',)
 
     
 class ProductStockTakeViewSet(viewsets.ModelViewSet):
     queryset = ProductStockTake.objects.all()
     serializer_class = ProductStockTakeSerializer
     permission_classes = (permissions.DjangoModelPermissions, )
+    filter_fields = ('store',)
     
     
 class ProductCategoryViewSet(viewsets.ModelViewSet):
@@ -40,6 +43,7 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
     queryset = ProductAssociation.objects.all()
     serializer_class = ProductAssociationSerializer
     permission_classes = (permissions.DjangoModelPermissions, )
+    filter_fields = ('rank',)
 
     
 class SupplierProductViewSet(viewsets.ModelViewSet):

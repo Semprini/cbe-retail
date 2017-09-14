@@ -7,6 +7,7 @@ from retail.sale.models import Sale, SaleItem, Promotion
 
 class LoyaltyScheme( models.Model ):
     name = models.CharField(max_length=200)
+    loyalty_rate = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __str__(self):
         return "{}".format(self.name,)

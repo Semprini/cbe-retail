@@ -1,8 +1,25 @@
 from rest_framework import permissions, viewsets
+from rest_framework.decorators import detail_route, list_route, parser_classes
+from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import BaseParser
 
 from retail.sale.models import Sale, SaleItem, Tender, TenderType, SalesChannel, Purchaser
 from retail.sale.serializers import SaleSerializer, SaleItemSerializer, TenderSerializer, TenderTypeSerializer, SalesChannelSerializer, PurchaserSerializer
+from retail.sale.utils import ImportDSRLine
 
+class PlainTextParser(BaseParser):
+    """
+    Plain text parser.
+    """
+    media_type = 'text/plain'
+
+    def parse(self, stream, media_type=None, parser_context=None):
+        """
+        Simply return a string representing the body of the request.
+        """
+        return stream.read()
+        
 
 class SaleViewSet(viewsets.ModelViewSet):
     queryset = Sale.objects.all()
@@ -10,6 +27,18 @@ class SaleViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.DjangoModelPermissions, )
     filter_fields = ('channel','store','vendor',)
 
+    parser_classes = (PlainTextParser,)
+    
+    @list_route(methods=['post'], parser_classes=(PlainTextParser,))
+    def create_from_dsr(self, request):
+        try:
+            sale = ImportDSRLine(request.data.decode("utf-8", "ignore"))
+            serializer = self.get_serializer(sale)
+            return Response(serializer.data)
+        except:
+            return Response({'Error':'foo'},
+                            status=status.HTTP_400_BAD_REQUEST)
+    
     
 class SalesChannelViewSet(viewsets.ModelViewSet):
     queryset = SalesChannel.objects.all()

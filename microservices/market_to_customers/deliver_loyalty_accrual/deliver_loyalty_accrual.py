@@ -21,6 +21,7 @@ nal_accrue_template = '{"apnumber": "{APNUMBER}","pointcode": "TEST","txndate": 
 
 class mock_response():
     status_code = 201
+    content = "Mock response content"
     
 def mock_post(url,data,headers,auth):
     print( "Mock post of:{}".format(data) )
