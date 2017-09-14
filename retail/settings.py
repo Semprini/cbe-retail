@@ -58,6 +58,7 @@ INSTALLED_APPS = (
     'cbe.resource',
     'cbe.human_resources',
     'cbe.information_technology',
+    'cbe.accounts_receivable',
     'cbe.project',
     'retail.store',
     'retail.market',
