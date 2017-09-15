@@ -8,5 +8,6 @@ django-crispy-forms
 django-gm2m
 django-allauth
 djangorestframework-csv
+django-rest-swagger
 pika
 git+https://github.com/Semprini/cbe.git

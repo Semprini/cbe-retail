@@ -22,6 +22,9 @@ import retail.order.views as OrderViews
 import retail.supply_chain.views as SupplyChainViews
 import retail.job_management.views as JobManagmentViews
 
+from rest_framework_swagger.views import get_swagger_view
+schema_view = get_swagger_view(title='CBE Retail API')
+
 admin.site.site_title = 'CBE Retail'
 admin.site.site_header = 'Retail Business Entities'
 
@@ -119,6 +122,7 @@ router.register(r'auth/users', CBEViews.UserViewSet)
 router.register(r'content_types', CBEViews.ContentTypeViewSet)
         
 urlpatterns = [
+    url(r'^$', schema_view),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^api/', include(router.urls)),

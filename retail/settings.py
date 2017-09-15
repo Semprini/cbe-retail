@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'django_filters',
     'gm2m',
+    'rest_framework_swagger',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -161,6 +162,9 @@ MQ_FRAMEWORK = {
         'SERVER_PORT': 8000,
     }
 }
+
+LOGIN_URL = "api-auth/login/"
+LOGOUT_URL = "api-auth/logout/"
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
