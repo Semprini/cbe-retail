@@ -27,7 +27,8 @@ SECRET_KEY = ')kk==!u*^l&q#s)2%d!4=+jq&)x_1+tx@5vl#x8q%6(0ykeg@9'
 DEBUG = True
 
 ALLOWED_HOSTS = ['*',]
-
+USE_X_FORWARDED_HOST=True
+USE_X_FORWARDED_PORT=True
 
 # Application definition
 
