@@ -26,7 +26,7 @@ class LoyaltyTransactionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = LoyaltyTransaction
-        fields = ('type', 'url', 'created','scheme', 'vendor', 'promotion', 'sale', 'items', 'loyalty_amount', 'identification')
+        fields = ('type', 'url', 'created','scheme', 'vendor', 'promotion', 'sale', 'sale_items', 'payment', 'loyalty_amount', 'identification')
 
         
         

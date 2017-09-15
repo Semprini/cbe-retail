@@ -2,6 +2,7 @@ from django.db import models
 
 from cbe.party.models import Organisation, Individual
 from cbe.human_resources.models import Identification, IdentificationType
+from cbe.accounts_receivable.models import CustomerPayment
 from retail.sale.models import Sale, SaleItem, Promotion
 
 
@@ -21,8 +22,9 @@ class LoyaltyTransaction( models.Model ):
     identification = models.ForeignKey(Identification)
     
     sale = models.ForeignKey(Sale, db_index=True, related_name='loyalty_transactions', null=True,blank=True)
-    items = models.ManyToManyField(SaleItem, blank=True)
-    #payment = models.ForeignKey(Payment, db_index=True, related_name='loyalty_transactions', null=True,blank=True)
+    sale_items = models.ManyToManyField(SaleItem, blank=True)
+    payment = models.ForeignKey(CustomerPayment, db_index=True, related_name='loyalty_transactions', null=True,blank=True)
+    
     promotion = models.ForeignKey(Promotion, null=True,blank=True)
     
     loyalty_amount = models.DecimalField(max_digits=10, decimal_places=2)
