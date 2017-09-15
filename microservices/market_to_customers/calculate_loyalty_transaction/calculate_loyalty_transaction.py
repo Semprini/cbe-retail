@@ -13,7 +13,9 @@ class CalculateLoyaltyTransaction(QueueTriggerPattern):
 
     def __init__(self, queue_host, queue_user, queue_pass):
         self.name = 'loyalty_transaction'    
-        self.exchanges = (('notify.retail.sale.Sale.updated',None),('notify.retail.sale.Sale.created',None))
+        self.exchanges =    (('notify.retail.sale.Sale.updated',None),('notify.retail.sale.Sale.created',None),
+                            ('notify.cbe.accounts_receivable.CustomerPayment.created',None),('notify.cbe.accounts_receivable.CustomerPayment.updated',None), )
+                            
         super(CalculateLoyaltyTransaction, self).__init__(self.name, self.exchanges, queue_host, queue_user, queue_pass)
         
         self.api_host = 'https://cbe.sphinx.co.nz'
