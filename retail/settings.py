@@ -29,6 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*',]
 USE_X_FORWARDED_HOST=True
 USE_X_FORWARDED_PORT=True
+SHOW_REQUEST_HEADERS=True
 
 # Application definition
 
