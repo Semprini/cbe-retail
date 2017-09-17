@@ -534,7 +534,7 @@ def fake_sale(stores=test5_stores, day_count=2,year=2000,month=1,day=1):
 
     for date in (start_date + datetime.timedelta(n) for n in range(day_count)):
         for store in stores:
-            ImportDSRLine(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr_sale)
+            ImportDSRLine(dsr_sale)
                 
 
 dsr_sale = """1,"X18","30/11/2016","2","14","3114","173502","SPRITE 600ML","","1","3.37","2.56","","","","$","9300675009867","","CCAL","5736",3.88,38,"","N","ZZBUCKLL","0649","ME",1,"RET","retail","",3.88,2.57

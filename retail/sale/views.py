@@ -27,8 +27,6 @@ class SaleViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.DjangoModelPermissions, )
     filter_fields = ('channel','store','vendor',)
 
-    parser_classes = (PlainTextParser,)
-    
     @list_route(methods=['post'], parser_classes=(PlainTextParser,))
     def create_from_dsr(self, request):
         try:
