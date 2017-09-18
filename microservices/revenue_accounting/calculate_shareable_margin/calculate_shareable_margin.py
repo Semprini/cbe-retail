@@ -87,5 +87,6 @@ if __name__ == "__main__":
     qtp.api_user = os.environ['API_USER']
     qtp.api_pass = os.environ['API_PASS']
     
+    qtp.main_loop()
    
     
