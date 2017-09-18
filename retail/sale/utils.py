@@ -28,11 +28,17 @@ def ImportDSRLine(dsrsale):
     tender = None
     credit_event = None
     items = []
-    
     for line in dsrsale.split('\n'):
+        if len(line) < 19 or line[0] != "1":
+            continue
         data = line.split(',')
-        store_org, created = Organisation.objects.get_or_create( organisation_type="Store", name=data[1] )
-        store, created = Store.objects.get_or_create( name=data[1], code=data[1], organisation=store_org )
+        store, created = Store.objects.get_or_create( name=data[1], code=data[1] )
+        if store.organisation == None:
+            store_org, created = Organisation.objects.get_or_create( organisation_type="Store", name=data[1] )
+            store.organisation = store_org
+            store.save()
+        else:
+            store_org = store.organisation
         owner_role, created = Owner.objects.get_or_create( organisation=store_org )
         
         date = datetime.date(day=int(data[2][1:3]),month=int(data[2][4:6]),year=int(data[2][7:11]))
@@ -221,14 +227,12 @@ def ImportDSRLine(dsrsale):
     return sale
     
         
-def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
+def ImportDSR(store_org_code, dsrdata, create_notification=True, products={}, customer_accounts={}, staff_list={}, promotions={}, ids={}):
     from cbe.credit.models import CreditBalanceEvent
     
     cash, created = TenderType.objects.get_or_create(name="Cash")
-    store_org, created = Organisation.objects.get_or_create( organisation_type="Store", name=storecode )
-    store, created = Store.objects.get_or_create( name=storecode, code=storecode, organisation=store_org )
+    store_org, created = Organisation.objects.get_or_create( organisation_type="Store", name=store_org_code )
     owner_role, created = Owner.objects.get_or_create( organisation=store_org )
-    date = datetime.date(day=int(datetxt[0:2]),month=int(datetxt[3:5]),year=int(datetxt[6:10]))
 
     store_channel, created = SalesChannel.objects.get_or_create( name="Store" )
     internet_channel, created = SalesChannel.objects.get_or_create( name="Internet" )
@@ -240,33 +244,18 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
     tenders = []
     sales = []
     credit_events = []
-
-    staff_list = {}
-    for staff in Staff.objects.all():
-        staff_list[staff.name] = staff
-            
-    promotions = {}
-    for promotion in Promotion.objects.all():
-        promotions[promotion.name] = promotion
-        
+    date = None
     tills = {}
     for till in PhysicalResource.objects.filter( name="Till", owner=owner_role ):
         tills["%s:%s"%(till.owner,till.serial_number)] = till
-        
-    customer_accounts = {}
-    for account in CustomerAccount.objects.all():
-        customer_accounts[account.account_number] = account # account number = loyalty number or trade customer #
 
-    ids = {}
-    for id in Identification.objects.all():
-        ids[id.number] = id
-        
     for line in dsrdata:
         data = line.split(',')
         if data[0] == "1":
+            store, created = Store.objects.get_or_create( name=data[1], code=data[1], organisation=store_org )
+            date = datetime.date(day=int(data[2][1:3]),month=int(data[2][4:6]),year=int(data[2][7:11]))
             time = datetime.time(int(data[25][1:3]),int(data[25][3:5]),0)
             date_time = timezone.make_aware(datetime.datetime.combine(date,time), timezone.get_current_timezone())
-            #date_time = datetime.datetime.combine(date,time)
             docket_number = data[3].strip('"')
             sku = data[6].strip('"')
             product_name = data[7].strip('"')
@@ -441,7 +430,7 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
 
     Sale.objects.bulk_create(sales)
     sales = {}
-    for sale in Sale.objects.filter(store=store, vendor=store_org, datetime__year=date.year, datetime__month=date.month, datetime__day=date.day,):
+    for sale in Sale.objects.filter(vendor=store_org, datetime__year=date.year, datetime__month=date.month, datetime__day=date.day,):
         sales[sale.docket_number] = sale
 
     for tender in tenders:
@@ -459,10 +448,14 @@ def ImportDSR(storecode,datetxt,dsrdata,products={}): #DD/MM/YYYY
     for key, account in customer_accounts.items():
         if getattr(account, 'tmp_changed', False) == True:
             account.save()
+
+    if create_notification:
+        for sale in sales.values():
+            sale.save()
+            
+    print("{} | lines:{} | Sales:{} | Tenders:{} | Credit Sales:{} | Items:{}".format(store_org_code,len(dsrdata),len(sales),len(tenders),len(credit_events),len(items)))
     
-    print("{}|{}|lines:{} | Sales:{} | Tenders:{} | Credit Sales:{} | Items:{}".format(storecode,datetxt,len(dsrdata),len(sales),len(tenders),len(credit_events),len(items)))
-    
-    return products
+    return (products, customer_accounts, staff_list, promotions, ids)
 
     
 default_stores = [
@@ -485,6 +478,22 @@ test50_stores = test20_stores + [
     "Fake Store 41","Fake Store 42","Fake Store 43","Fake Store 44","Fake Store 45","Fake Store 46","Fake Store 47","Fake Store 48","Fake Store 49","Fake Store 50",
 ]
 
+
+def replace_date_and_store(date_txt, store_txt, dsrdata):
+    # 1,"X18","30/11/2016"
+    output = ""
+    for line in dsrdata:
+        if len(line) > 19 and line[0] == "1":
+            if line[6] == '"':
+                line = line[0:9] + date_txt + line[19:]
+                line = line[0:3] + store_txt + line[6:]
+            else:
+                line = line[0:8] + date_txt + line[18:]
+                line = line[0:3] + store_txt + line[5:]
+        output += (line + "\n")
+    return output
+
+    
 def fake(stores=test5_stores, day_count=2,year=2000,month=1,day=1,path = None):
     from django.db import connections
     from django.db.utils import DatabaseError
@@ -496,6 +505,26 @@ def fake(stores=test5_stores, day_count=2,year=2000,month=1,day=1,path = None):
     products = {}
     for offering in ProductOffering.objects.all():
         products[offering.sku] = offering
+    
+    print( "Indexing %d accounts"%CustomerAccount.objects.count() )
+    customer_accounts = {}
+    for account in CustomerAccount.objects.all():
+        customer_accounts[account.account_number] = account # account number = loyalty number or trade customer #
+    
+    print( "Indexing %d accounts"%CustomerAccount.objects.count() )
+    staff_list = {}
+    for staff in Staff.objects.all():
+        staff_list[staff.name] = staff
+            
+    print( "Indexing %d promotions"%Promotion.objects.count() )
+    promotions = {}
+    for promotion in Promotion.objects.all():
+        promotions[promotion.name] = promotion
+        
+    print( "Indexing %d IDs"%Identification.objects.count() )
+    ids = {}
+    for id in Identification.objects.all():
+        ids[id.number] = id
     
     if path != None:
         listdir = os.listdir(path)
@@ -511,7 +540,9 @@ def fake(stores=test5_stores, day_count=2,year=2000,month=1,day=1,path = None):
                     done = False
                     while not done:
                         try:
-                            products = ImportDSR(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr, products)
+                            date_txt = "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year)
+                            dsr_data = replace_date_and_store(date_txt, store, dsr).split('\n')
+                            products, customer_accounts, staff_list, promotions, ids = ImportDSR(store, dsr_data, False, products, customer_accounts, staff_list, promotions, ids)
                             done = True
                         except DatabaseError as err:
                             print( "DATABASE ERROR! Closing unusable connections and retrying shortly. %s"%err )
@@ -519,14 +550,14 @@ def fake(stores=test5_stores, day_count=2,year=2000,month=1,day=1,path = None):
                             for conn in connections.all():
                                 conn.close_if_unusable_or_obsolete()
                             sleep(10)
-                        
                 except UnicodeDecodeError as err:
                     print( "ERROR: %s"%err )
     else:
         for date in (start_date + datetime.timedelta(n) for n in range(day_count)):
             for store in stores:
-                products = ImportDSR(store, "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year), dsr_sample, products)
-
+                date_txt = "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year)
+                dsr_data = replace_date_and_store(date_txt, store, dsr_sample).split('\n')
+                products, customer_accounts, staff_list, promotions, ids = ImportDSR(store, dsr_data, False, products, customer_accounts, staff_list, promotions, ids)
 
 
 def fake_sale(stores=test5_stores, day_count=2,year=2000,month=1,day=1):
@@ -534,7 +565,9 @@ def fake_sale(stores=test5_stores, day_count=2,year=2000,month=1,day=1):
 
     for date in (start_date + datetime.timedelta(n) for n in range(day_count)):
         for store in stores:
-            ImportDSRLine(dsr_sale)
+            date_txt = "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year)
+            dsr_data = replace_date_and_store(date_txt, store, dsr_sale.split('\n'))
+            ImportDSRLine(dsr_data)
                 
 
 dsr_sale = """1,"X18","30/11/2016","2","14","3114","173502","SPRITE 600ML","","1","3.37","2.56","","","","$","9300675009867","","CCAL","5736",3.88,38,"","N","ZZBUCKLL","0649","ME",1,"RET","retail","",3.88,2.57
