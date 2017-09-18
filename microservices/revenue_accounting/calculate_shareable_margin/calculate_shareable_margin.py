@@ -7,21 +7,27 @@ from cbe.utils.microservices.queue_trigger_pattern import QueueTriggerPattern, R
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(message)s')
 
-API_HOST = "https://cbe.sphinx.co.nz"
-API_USER = "microservice"
-API_PASS = "microservice"
-
-NAME = 'service_charge'    
-EXCHANGES = (('notify.retail.customer_bill.CustomerBill.updated',None),('notify.retail.customer_bill.CustomerBill.created',None))
-
-SERVICE_CHARGE_URL = API_HOST + "/api/customer_bill/service_charge/"
 RATE = 0.5
 
 service_charge_template = '{ "total_margin": "{TOTAL_MARGIN}", "home_margin": "{HOME_MARGIN}", "satellite_margin": "{SATELLITE_MARGIN}", "bill": "{BILL}", "service_bill_item": null, "sales": {SALES}, "home_store": "{HOME_STORE}", "satellite_store": "{SATELLITE_STORE}" }'
 
-
 class CalculateShareableMargin(QueueTriggerPattern):
-    
+    def __init__(self, queue_host, queue_user, queue_pass):
+        self.name = 'service_charge'    
+        self.exchanges =    (('notify.retail.customer_bill.CustomerBill.updated',None),('notify.retail.customer_bill.CustomerBill.created',None))
+                            
+        super(CalculateShareableMargin, self).__init__(self.name, self.exchanges, queue_host, queue_user, queue_pass)
+        
+        self.api_host = 'https://cbe.sphinx.co.nz'
+        self.api_user = 'microservice'
+        self.api_pass = 'microservice'
+
+        
+    @property
+    def service_charge_url(self):
+        return self.api_host + "/api/customer_bill/service_charge/"
+        
+        
     def worker(self, message_json):
         total = float(0)
         try:
@@ -35,16 +41,9 @@ class CalculateShareableMargin(QueueTriggerPattern):
         
         for sale_url in sales:
             # GET sale to find satellite store
-            response = requests.get(sale_url, auth=(API_USER, API_PASS))
-            if response.status_code >= 500 or response.status_code in (401,403):
-                logging.warning( "Retryable error calculating shareable margin. Could not get sale info:{}".format(response.content) )
-                raise RequeableError("Get sale returned: {}".format(response.status_code))
-            elif response.status_code != 200:   
-                # Fatal errors which can't be retried
-                logging.error( "Fatal error calculating shareable margin. Could not get sale info:{}".format(response.content) )
-                raise FatalError("Get sale returned: {}".format(response.status_code))
-        
-            sale = json.loads(response.text)
+            sale = self.request( sale_url, self.api_user, self.api_pass, 
+                                    "error calculating shareable margin. Could not get sale info." )
+            
             satellite_store = sale['vendor']
         
             if home_store == satellite_store:
@@ -70,7 +69,7 @@ class CalculateShareableMargin(QueueTriggerPattern):
             
         # Create a new Service charge transaction by calling API
         headers = {'Content-type': 'application/json',}
-        response = requests.post(SERVICE_CHARGE_URL, data=data, headers=headers, auth=(API_USER, API_PASS))
+        response = requests.post(self.service_charge_url, data=data, headers=headers, auth=(self.api_user, self.api_pass))
         if response.status_code == 201: # (201) Created
             logging.info( "Service charge created" )
         elif response.status_code >= 500 or response.status_code in (401,403):
@@ -83,10 +82,10 @@ class CalculateShareableMargin(QueueTriggerPattern):
 
 
 if __name__ == "__main__":
-    API_HOST = os.environ['API_HOST']
-    API_USER = os.environ['API_USER']
-    API_PASS = os.environ['API_PASS']
+    qtp = CalculateShareableMargin(os.environ['QUEUE_HOST'],os.environ['QUEUE_USER'],os.environ['QUEUE_PASS'])
+    qtp.api_host = os.environ['API_HOST']
+    qtp.api_user = os.environ['API_USER']
+    qtp.api_pass = os.environ['API_PASS']
     
-    qtp = CalculateShareableMargin(NAME, EXCHANGES, os.environ['QUEUE_HOST'],os.environ['QUEUE_USER'],os.environ['QUEUE_PASS'])
-    qtp.main_loop()
+   
     

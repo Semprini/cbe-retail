@@ -5,7 +5,7 @@ ENV QUEUE_HOST cbeq
 ENV QUEUE_USER super
 ENV QUEUE_PASS super
 
-ENV API_HOST cbeq
+ENV API_HOST cbe
 ENV API_USER super
 ENV API_PASS super
 
