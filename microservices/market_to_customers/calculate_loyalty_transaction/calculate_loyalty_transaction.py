@@ -64,6 +64,7 @@ class CalculateLoyaltyTransaction(QueueTriggerPattern):
             if len(contact['party']['identifications']) > 0:
                 identification = contact['party']['identifications'][0]
 
+                # Calculate loyalty amount
                 logging.info( "Payment with Airpoints member as contact triggered loyalty calc: {0}".format(message_json['url']) )
                 total=float(message_json['amount'])
                 loyalty_amount = total * LOYALTY_RATE
