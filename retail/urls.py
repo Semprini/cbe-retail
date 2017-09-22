@@ -42,6 +42,8 @@ productrouter.register(r'product_association', ProductViews.ProductAssociationVi
 
 
 pricerouter = AppRouter(root_view_name='app-price')
+pricerouter.register(r'price_channel', PriceViews.PriceChannelViewSet)
+pricerouter.register(r'price_calculation', PriceViews.PriceCalculationViewSet)
 pricerouter.register(r'promotion', PriceViews.PromotionViewSet)
 pricerouter.register(r'product_offering_price', PriceViews.ProductOfferingPriceViewSet)
 
@@ -109,6 +111,7 @@ jobmanagementrouter.register(r'job_party_role', JobManagmentViews.JobPartyRoleVi
 
 apps={                      'store':'app-store',
                             'product':'app-product',
+                            'price':'app-price',
                             'promotion':'app-promotion',
                             'sale':'app-sale',
                             'loyalty':'app-loyalty',

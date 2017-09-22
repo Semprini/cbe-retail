@@ -44,8 +44,9 @@ class SaleItemSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer
     
     class Meta:
         model = SaleItem
-        fields = ('type', 'url', 'sale', 'product_offering', 'product', 'product_offering_price', 'quantity', 'unit_of_measure', 'amount',
-                  'discount','promotion','cost_price' )
+        fields = ('type', 'url', 'sale', 'product_offering', 'product', 'price_channel', 'price_calculation',
+                    'product_offering_price', 'quantity', 'unit_of_measure', 'amount',
+                    'discount','promotion','cost_price' )
 
                   
 class SaleSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
@@ -59,8 +60,8 @@ class SaleSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
         model = Sale
         fields = ('type', 'url', 'channel', 'store', 'vendor', 'datetime', 'docket_number',
                   'total_amount', 'total_amount_excl', 'total_discount', 'total_tax',
-                  'customer', 'account', 'purchaser', 'identification', 'promotion','till', 'staff', 
-                  'price_channel', 'price_calculation', 'tenders', 'credit_balance_events', 'sale_items',)
+                  'customer', 'account', 'job', 'purchaser', 'identification', 'promotion','till', 'staff', 
+                  'tenders', 'credit_balance_events', 'sale_items',)
         
     def create(self, validated_data):
         tenders_data = validated_data.pop('tenders')
