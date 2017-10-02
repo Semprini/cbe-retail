@@ -26,7 +26,7 @@ class ProductSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer)
     
     class Meta:
         model = Product
-        fields = ('type', 'url', 'code', 'name', 'description',  'bundle', 'categories', 'cross_sell_products', 'product_offerings', 'supplier_products', 'specifiactions')
+        fields = ('type', 'url', 'code', 'name', 'description',  'bundle', 'categories', 'cross_sell_products', 'product_offerings', 'supplier_products', 'specifications')
 
 
 class ProductOfferingSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
