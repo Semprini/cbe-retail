@@ -350,7 +350,7 @@ def ImportDSR(store_org_code, dsrdata, create_notification=True, products={}, cu
                 if promo_code not in promotions.keys():
                     promotions[promo_code] = Promotion.objects.create( name=promo_code, valid_from=promo_start, valid_to=promo_end)
                 promotion = promotions[promo_code]
-                promotion.stores.add(store_org)
+                promotion.stores.add(store)
                 if customer != None:
                     promotion.customers.add(customer)
                 promotion.product_offerings.add(po)
@@ -556,7 +556,7 @@ def fake(stores=test5_stores, day_count=2,year=2000,month=1,day=1,path = None):
         for date in (start_date + datetime.timedelta(n) for n in range(day_count)):
             for store in stores:
                 date_txt = "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year)
-                dsr_data = replace_date_and_store(date_txt, store, dsr_sample).split('\n')
+                dsr_data = replace_date_and_store(date_txt, store, dsr_sample.split('\n')).split('\n')
                 products, customer_accounts, staff_list, promotions, ids = ImportDSR(store, dsr_data, False, products, customer_accounts, staff_list, promotions, ids)
 
 
@@ -582,8 +582,8 @@ dsr_sample = """
 1,"X18","30/11/2016","3","14","3114","224726","WAIWERA WATER STILL SIPPER 750ML","","1","1.25","0.89","","","","$","9418482000226","","WWTR","WW0750P1ST",1.69,49,"","N","ZZROSSER","0650","ME",2,"RET","matrix","ME",1.69,0.92
 1,"X18","30/11/2016","4","03","2575","180837","NAILER IMPULSE FRAMEMASTER-LI PASLODE","P","1","695.65","721","DEPT 03","02/02/2012","31/12/2016","0","9315104015746","","PASL","B20543",800,0,"","T","CRMPLUMB","0741","KB",1,"RET","promo","DEPT 03",949,771.75
 1,"X18","30/11/2016","5","33","2794","277084","AUGER BIT 45HSC     12MM JOBMATE","","1","11.29","3.78","","","","$","9420047514901","","ARCH","J810-9212",12.98,9,"","N","$","0713","ME",1,"RET","retail","",12.98,3.8
-1,"L9", "30/11/2016","6","07","3680","232144","NO-FIL ROLL 120GRIT 115MM X 5M","","1","16.03","7.22","","","","$","9310357270669","2642083224119","SAIN","66623398237",18.44,4,"","N","$","0834","RA",1,"RET","retail","",18.47,7.23
+1,"L9","30/11/2016","6","07","3680","232144","NO-FIL ROLL 120GRIT 115MM X 5M","","1","16.03","7.22","","","","$","9310357270669","2642083224119","SAIN","66623398237",18.44,4,"","N","$","0834","RA",1,"RET","retail","",18.47,7.23
 1,"A3","30/11/2016","147","05","1590","234415","SCREW CAP STORM/W   90MM","","1","5.08","2.61","","","","0","9323714055687","2642083462658","MRLY","736C.90",6.49,2,"","C","M10-FARMLANDS","1142","MB",6,"RET","matrix","M10-FARMLANDSGR",6.49,2.61
 1,"A3","30/11/2016","169","05","1595","159238","HANSEN LD 15MM BEND","","1","5.74","5.31","","","","0","9414940000944","","HANP","HB15",10.8,8,"","N","HANSON","1159","RH",2,"RET","matrix","STAFFD",10.29,5.31
 9,FinishedEx
-""".split('\n')    
+"""

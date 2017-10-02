@@ -11,12 +11,13 @@ from retail.market.models import MarketSegment, MarketStrategy
 
 
 class ProductCategory(models.Model):
+    id = models.IntegerField(primary_key=True)
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
 
     parent = models.ForeignKey('ProductCategory', null=True,blank=True)
 
-    level = models.CharField(max_length=200, choices=(('department', 'department'), ('subdepartment', 'subdepartment'), ('fineline', 'fineline'), ))
+    level = models.CharField(max_length=200, choices=(('department', 'department'), ('sub_department', 'sub_department'), ('fineline', 'fineline'), ))
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
 
@@ -36,7 +37,7 @@ class ProductAssociation(models.Model):
     
        
 class Product(models.Model):
-    code = models.CharField(max_length=50, null=True, blank=True)
+    code = models.CharField(max_length=50, unique=True)
 
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
@@ -44,6 +45,7 @@ class Product(models.Model):
 
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
+    business_unit = models.ForeignKey(Organisation, null=True, blank=True)
     
     bundle = models.ManyToManyField('Product', blank=True)
     categories = models.ManyToManyField(ProductCategory, blank=True)
@@ -97,18 +99,31 @@ class Product(models.Model):
             to_products__association_type=type,
             to_products__from_product=self)            
 
+
+            
+class ProductSpecification(models.Model):
+    product = models.ForeignKey(Product, related_name="specifications")
+    
+    colour_name = models.CharField(max_length=50, null=True, blank=True)
+    colour_value = models.CharField(max_length=50, null=True, blank=True)
+    
+    size_name = models.CharField(max_length=50, null=True, blank=True)
+    size_value = models.CharField(max_length=50, null=True, blank=True)
+        
+    
             
 class SupplierProduct(models.Model):
     supplier_sku = models.CharField(max_length=200, primary_key=True)
     barcode = models.CharField(max_length=50, null=True, blank=True)
 
-    product = models.ForeignKey(Product)
+    product = models.ForeignKey(Product, related_name="supplier_products")
+    specification = models.ForeignKey(ProductSpecification, related_name="supplier_products", null=True, blank=True)
     supplier = models.ForeignKey(Supplier, null=True, blank=True)
 
     buyer = models.ForeignKey(Buyer, null=True, blank=True)
 
     unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
-    cost_price = models.DecimalField(max_digits=10, decimal_places=2)
+    cost_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     reccomended_retail_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     class Meta:
@@ -121,18 +136,24 @@ class SupplierProduct(models.Model):
 class ProductOffering(models.Model):
     sku = models.CharField(max_length=50, primary_key=True)
     product = models.ForeignKey(Product, related_name="product_offerings")
+    specification = models.ForeignKey(ProductSpecification, related_name="product_offerings", null=True, blank=True)
     barcode = models.CharField(max_length=50, null=True, blank=True)
 
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=200, choices=(('active', 'active'), ('inactive', 'inactive'), ), default='active')
+    type = models.CharField(max_length=100, choices=(('standard','standard'), ('fractional','fractional'), ('kit','kit')), default='standard')
 
     channels = models.ManyToManyField('sale.SalesChannel', blank=True)
     segments = models.ManyToManyField(MarketSegment, blank=True)
     strategies = models.ManyToManyField(MarketStrategy, blank=True)
     
+    department = models.ForeignKey(ProductCategory, related_name='department_offerings', null=True, blank=True)
+    sub_department = models.ForeignKey(ProductCategory, related_name='sub_department_offerings', null=True, blank=True)
+    fineline = models.ForeignKey(ProductCategory, related_name='fineline_offerings', null=True, blank=True)
+    
     unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
-    retail_price = models.DecimalField(max_digits=10, decimal_places=2)
+    retail_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     average_cost_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     class Meta:

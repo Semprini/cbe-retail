@@ -73,6 +73,7 @@ INSTALLED_APPS = (
     'retail.customer_bill',
     'retail.job_management',
     'retail.supply_chain',
+    'retail.forecast',
 )
 
 # python manage.py makemigrations store market product pricing sale order loyalty customer_bill job_management supply_chain

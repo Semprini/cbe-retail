@@ -7,7 +7,7 @@ from rest_framework import serializers
 
 from cbe.utils.serializers import LimitDepthMixin
 from cbe.utils.serializer_fields import TypeField
-from retail.product.models import Product, ProductOffering, ProductCategory, ProductStock, ProductStockTake, ProductAssociation, SupplierProduct
+from retail.product.models import Product, ProductOffering, ProductCategory, ProductStock, ProductStockTake, ProductAssociation, SupplierProduct, ProductSpecification
 
 
 class ProductAssociationSerializer(serializers.HyperlinkedModelSerializer):
@@ -26,7 +26,7 @@ class ProductSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer)
     
     class Meta:
         model = Product
-        fields = ('type', 'url', 'code', 'name', 'description',  'bundle', 'categories', 'cross_sell_products','product_offerings')
+        fields = ('type', 'url', 'code', 'name', 'description',  'bundle', 'categories', 'cross_sell_products', 'product_offerings', 'supplier_products', 'specifiactions')
 
 
 class ProductOfferingSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
@@ -35,7 +35,9 @@ class ProductOfferingSerializer(LimitDepthMixin, serializers.HyperlinkedModelSer
     
     class Meta:
         model = ProductOffering
-        fields = ('type', 'url', 'valid_from', 'valid_to', 'sku', 'product', 'channels', 'segments', 'strategies', 'unit_of_measure', 'retail_price', 'average_cost_price', 'product_offering_prices' )
+        fields = ('type', 'url', 'valid_from', 'valid_to', 'sku', 'product', 'specification',
+                    'department', 'sub_department', 'fineline', 'channels', 'segments', 'strategies', 
+                    'unit_of_measure', 'retail_price', 'average_cost_price', 'product_offering_prices' )
 
                   
 class ProductStockSerializer(serializers.HyperlinkedModelSerializer):
@@ -59,7 +61,7 @@ class ProductCategorySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ProductCategory
-        fields = ('type', 'url', 'valid_from', 'valid_to', 'parent', 'level', 'name', 'description', )
+        fields = ('type', 'url', 'valid_from', 'valid_to', 'id', 'parent', 'level', 'name', 'description', )
 
 
 class SupplierProductSerializer(serializers.HyperlinkedModelSerializer):
@@ -68,4 +70,13 @@ class SupplierProductSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = SupplierProduct
         fields = ( 'type', 'url', 'supplier_sku', 'barcode', 'product', 'supplier', 'buyer', 'unit_of_measure','cost_price','reccomended_retail_price' )
+
+        
+class ProductSpecificationSerializer(serializers.HyperlinkedModelSerializer):
+    type = TypeField()
+
+    class Meta:
+        model = ProductSpecification
+        fields = ( 'type', 'url', 'colour_name', 'colour_value', 'size_name', 'size_value')
+
         
