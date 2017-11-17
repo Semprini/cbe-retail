@@ -61,8 +61,8 @@ class CalculateLoyaltyTransaction(QueueTriggerPattern):
         if len(message_json['account']['customer_account_contact']) > 0:
             contact = self.request( message_json['account']['customer_account_contact'][0], self.api_user, self.api_pass, 
                                     "error calculating loyalty accrual. Could not get customer account contact info" )
-            if len(contact['party']['identifications']) > 0:
-                identification = contact['party']['identifications'][0]
+            if len(contact['party']['identifiers']) > 0:
+                identification = contact['party']['identifiers'][0]
 
                 # Calculate loyalty amount
                 logging.info( "Payment with Airpoints member as contact triggered loyalty calc: {0}".format(message_json['url']) )
