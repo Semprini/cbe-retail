@@ -1,5 +1,5 @@
 # Start with a Python image.
-FROM python:3.6-alpine
+FROM python:3.6-alpine3.6
 
 # Set default required environment variables
 ENV PYTHONUNBUFFERED 1
