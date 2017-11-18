@@ -24,12 +24,12 @@ ENV MQRESTPORT 8000
 # Install some necessary things.
 RUN apk update
 RUN apk add swig 
-RUN apk add openssl-dev 
+#RUN apk add openssl-dev 
 RUN apk add dpkg-dev 
 RUN apk add netcat-openbsd 
 RUN apk add git
 RUN apk add py-pip
-#RUN apk add postgresql-dev
+RUN apk add postgresql-dev
 RUN apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/main py3-psycopg2
 RUN cp -R /usr/lib/python3.6/site-packages/psycopg2 /usr/local/lib/python3.6/site-packages/
 
