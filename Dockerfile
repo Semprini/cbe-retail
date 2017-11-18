@@ -1,5 +1,5 @@
 # Start with a Python image.
-FROM python:slim
+FROM python:rc-alpine
 
 # Set default required environment variables
 ENV PYTHONUNBUFFERED 1
