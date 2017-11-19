@@ -3,7 +3,7 @@ import os, sys, json
 import requests
 import logging
 
-from cbe.utils.microservices.queue_trigger_pattern import QueueTriggerPattern, RequeableError, FatalError
+from cbe.utils.microservices.queue_trigger_pattern import QueueTriggerPattern, RetryableError, FatalError
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(message)s')
 
@@ -54,7 +54,7 @@ class DeliverLoyaltyTransaction(QueueTriggerPattern):
             logging.info( "Loyalty accrual sent" )
         elif response.status_code >= 500 or response.status_code in (401,403):
             logging.warning( "Retryable error sending loyalty accrual:{}".format(response.content) )
-            raise RequeableError("AirNZ NAL post returned: {}".format(response.status_code))
+            raise RetryableError("AirNZ NAL post returned: {}".format(response.status_code))
         else:   
             # Fatal errors which can't be retried
             logging.error( "Fatal error sending loyalty accrual:{}".format(response.content) )

@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import pickle
 import logging
 
-from cbe.utils.microservices.queue_trigger_pattern import QueueTriggerPattern, RequeableError, FatalError
+from cbe.utils.microservices.queue_trigger_pattern import QueueTriggerPattern, RetryableError, FatalError
 
 from xero import Xero
 from xero.auth import PublicCredentials

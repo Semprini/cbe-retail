@@ -3,7 +3,7 @@ import os, sys, json
 import requests
 import logging
 
-from cbe.utils.microservices.queue_trigger_pattern import QueueTriggerPattern, RequeableError, FatalError
+from cbe.utils.microservices.queue_trigger_pattern import QueueTriggerPattern, RetryableError, FatalError
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(message)s')
 
@@ -74,7 +74,7 @@ class CalculateShareableMargin(QueueTriggerPattern):
             logging.info( "Service charge created" )
         elif response.status_code >= 500 or response.status_code in (401,403):
             logging.warning( "Retryable error creating Service charge: {}".format(response.content) )
-            raise RequeableError("Post service charge returned: {}".format(response.status_code))
+            raise RetryableError("Post service charge returned: {}".format(response.status_code))
         else:   
             # Fatal errors which can't be retried
             logging.error( "Fatal error creating Service charge: {}".format(response.content) )
