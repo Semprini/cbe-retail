@@ -166,8 +166,8 @@ MQ_FRAMEWORK = {
     }
 }
 
-LOGIN_URL = "api-auth/login/"
-LOGOUT_URL = "api-auth/logout/"
+LOGIN_URL = "accounts/login/"
+LOGOUT_URL = "accounts/logout/"
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
