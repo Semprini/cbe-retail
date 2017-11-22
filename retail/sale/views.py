@@ -1,4 +1,4 @@
-from rest_framework import permissions, viewsets
+from rest_framework import permissions, viewsets, status
 from rest_framework.decorators import detail_route, list_route, parser_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
@@ -6,7 +6,7 @@ from rest_framework.parsers import BaseParser
 
 from retail.sale.models import Sale, SaleItem, Tender, TenderType, SalesChannel, Purchaser
 from retail.sale.serializers import SaleSerializer, SaleItemSerializer, TenderSerializer, TenderTypeSerializer, SalesChannelSerializer, PurchaserSerializer
-from retail.sale.utils import ImportDSRLine
+from retail.sale.utils import ImportDSRLine, ImportDSR
 
 class PlainTextParser(BaseParser):
     """
@@ -28,7 +28,7 @@ class SaleViewSet(viewsets.ModelViewSet):
     filter_fields = ('channel','store','vendor',)
 
     @list_route(methods=['post'], parser_classes=(PlainTextParser,))
-    def create_from_dsr(self, request):
+    def dsr_single(self, request):
         try:
             sale = ImportDSRLine(request.data.decode("utf-8", "ignore"))
             serializer = self.get_serializer(sale)
@@ -36,7 +36,16 @@ class SaleViewSet(viewsets.ModelViewSet):
         except:
             return Response({'Error':'foo'},
                             status=status.HTTP_400_BAD_REQUEST)
-    
+
+    @list_route(methods=['post'], parser_classes=(PlainTextParser,))
+    def dsr(self, request):
+        try:
+            sale = ImportDSR(request.data.decode("utf-8", "ignore"))
+            return Response("Created {} sales".format(sale[5]))
+        except:
+            return Response({'Error':'foo'},
+                            status=status.HTTP_400_BAD_REQUEST)
+                            
     
 class SalesChannelViewSet(viewsets.ModelViewSet):
     queryset = SalesChannel.objects.all()

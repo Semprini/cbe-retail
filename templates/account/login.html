@@ -1,0 +1,13 @@
+﻿{% extends "rest_framework/login_base.html" %}
+{% load account socialaccount %}
+{% block title %}CBE API Login{% endblock %}
+{% block branding %}
+<h3><a class="navbar-brand" rel="nofollow" href="https://github.com/Semprini/cbe">Common Business Entities API</a></h3>
+        <div class="row-fluid">
+            <div class="socialaccount_ballot">
+              <ul class="socialaccount_providers">
+                {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+              </ul>
+            </div>
+        </div>
+{% endblock %}

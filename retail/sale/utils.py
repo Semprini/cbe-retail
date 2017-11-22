@@ -227,16 +227,18 @@ def ImportDSRLine(dsrsale):
     return sale
     
         
-def ImportDSR(store_org_code, dsrdata, create_notification=True, products={}, customer_accounts={}, staff_list={}, promotions={}, ids={}):
+def ImportDSR(dsrdata, store_org_code=None, create_notification=True, products={}, customer_accounts={}, staff_list={}, promotions={}, ids={}):
     from cbe.credit.models import CreditBalanceEvent
     
-    cash, created = TenderType.objects.get_or_create(name="Cash")
-    store_org, created = Organisation.objects.get_or_create( organisation_type="Store", name=store_org_code )
-    owner_role, created = Owner.objects.get_or_create( organisation=store_org )
+    splitdata = dsrdata.split('\n')
 
+    cash, created = TenderType.objects.get_or_create(name="Cash")
     store_channel, created = SalesChannel.objects.get_or_create( name="Store" )
     internet_channel, created = SalesChannel.objects.get_or_create( name="Internet" )
     airpoints, created = IdentificationType.objects.get_or_create( name="Airpoints Card" )
+
+    store_org = None
+    owner_role = None
     
     # TODO: 'Local' Product category if nat_retail & nat_cost = 0
     
@@ -246,12 +248,18 @@ def ImportDSR(store_org_code, dsrdata, create_notification=True, products={}, cu
     credit_events = []
     date = None
     tills = {}
-    for till in PhysicalResource.objects.filter( name="Till", owner=owner_role ):
-        tills["%s:%s"%(till.owner,till.serial_number)] = till
 
-    for line in dsrdata:
+    for line in splitdata:
         data = line.split(',')
-        if data[0] == "1":
+        if data[0] == "0":
+            if store_org_code == None:
+                store_org_code = data[1].strip('"')
+            store_org, created = Organisation.objects.get_or_create( organisation_type="Store", name=store_org_code )
+            owner_role, created = Owner.objects.get_or_create( organisation=store_org )
+            for till in PhysicalResource.objects.filter( name="Till", owner=owner_role ):
+                tills["%s:%s"%(till.owner,till.serial_number)] = till
+        
+        elif data[0] == "1":
             store, created = Store.objects.get_or_create( name=data[1], code=data[1], organisation=store_org )
             date = datetime.date(day=int(data[2][1:3]),month=int(data[2][4:6]),year=int(data[2][7:11]))
             time = datetime.time(int(data[25][1:3]),int(data[25][3:5]),0)
@@ -453,9 +461,9 @@ def ImportDSR(store_org_code, dsrdata, create_notification=True, products={}, cu
         for sale in sales.values():
             sale.save()
             
-    print("{} | lines:{} | Sales:{} | Tenders:{} | Credit Sales:{} | Items:{}".format(store_org_code,len(dsrdata),len(sales),len(tenders),len(credit_events),len(items)))
+    print("{} | lines:{} | Sales:{} | Tenders:{} | Credit Sales:{} | Items:{}".format(store_org_code,len(splitdata),len(sales),len(tenders),len(credit_events),len(items)))
     
-    return (products, customer_accounts, staff_list, promotions, ids)
+    return (products, customer_accounts, staff_list, promotions, ids, len(sales))
 
     
 default_stores = [
@@ -541,8 +549,8 @@ def fake(stores=test5_stores, day_count=2,year=2000,month=1,day=1,path = None):
                     while not done:
                         try:
                             date_txt = "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year)
-                            dsr_data = replace_date_and_store(date_txt, store, dsr).split('\n')
-                            products, customer_accounts, staff_list, promotions, ids = ImportDSR(store, dsr_data, False, products, customer_accounts, staff_list, promotions, ids)
+                            dsr_data = replace_date_and_store(date_txt, store, dsr)
+                            products, customer_accounts, staff_list, promotions, ids, sale_count = ImportDSR(dsr_data, store, False, products, customer_accounts, staff_list, promotions, ids)
                             done = True
                         except DatabaseError as err:
                             print( "DATABASE ERROR! Closing unusable connections and retrying shortly. %s"%err )
@@ -556,8 +564,8 @@ def fake(stores=test5_stores, day_count=2,year=2000,month=1,day=1,path = None):
         for date in (start_date + datetime.timedelta(n) for n in range(day_count)):
             for store in stores:
                 date_txt = "{0:02d}/{1:02d}/{2:04d}".format(date.day,date.month,date.year)
-                dsr_data = replace_date_and_store(date_txt, store, dsr_sample.split('\n')).split('\n')
-                products, customer_accounts, staff_list, promotions, ids = ImportDSR(store, dsr_data, False, products, customer_accounts, staff_list, promotions, ids)
+                dsr_data = replace_date_and_store(date_txt, store, dsr_sample.split('\n'))
+                products, customer_accounts, staff_list, promotions, ids, sale_count = ImportDSR(dsr_data, store, False, products, customer_accounts, staff_list, promotions, ids)
 
 
 def fake_sale(stores=test5_stores, day_count=2,year=2000,month=1,day=1):
