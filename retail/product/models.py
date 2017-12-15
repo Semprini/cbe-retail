@@ -34,10 +34,12 @@ class ProductAssociation(models.Model):
 
     association_type = models.CharField(max_length=200, choices=(('cross-selling', 'cross-selling'), ('other', 'other'), ), default='cross-selling')
     rank = models.IntegerField( default=0 )
+
     
-       
 class Product(models.Model):
+    parent = models.ForeignKey('Product', null=True, blank=True, related_name='child_products')
     code = models.CharField(max_length=50, unique=True)
+    brand = models.CharField(max_length=100, blank=True)
 
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
@@ -45,6 +47,13 @@ class Product(models.Model):
 
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
+    tax_code = models.CharField(max_length=50)
+    impulse_item = models.BooleanField(default=False)
+    key_value_item = models.BooleanField(default=False)
+    first_sale_date = models.DateField(null=True, blank=True)
+    core_abc = models.BooleanField(default=False)               # is this just kvi?
+    core_range = models.BooleanField(default=False)
+
     business_unit = models.ForeignKey(Organisation, null=True, blank=True)
     
     bundle = models.ManyToManyField('Product', blank=True)
@@ -99,7 +108,6 @@ class Product(models.Model):
             to_products__association_type=type,
             to_products__from_product=self)            
 
-
             
 class ProductSpecification(models.Model):
     product = models.ForeignKey(Product, related_name="specifications")
@@ -109,8 +117,7 @@ class ProductSpecification(models.Model):
     
     size_name = models.CharField(max_length=50, null=True, blank=True)
     size_value = models.CharField(max_length=50, null=True, blank=True)
-        
-    
+
             
 class SupplierProduct(models.Model):
     supplier_sku = models.CharField(max_length=200, primary_key=True)
@@ -123,9 +130,16 @@ class SupplierProduct(models.Model):
     buyer = models.ForeignKey(Buyer, null=True, blank=True)
 
     unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
+    carton_quantity = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
     cost_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     reccomended_retail_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    reccomended_markup = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
 
+    quantity_break1 = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
+    quantity_price1 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    quantity_break2 = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
+    quantity_price2 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
     class Meta:
         ordering = ['supplier_sku']
     
