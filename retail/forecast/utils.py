@@ -5,7 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from cbe.supplier_partner.models import Supplier
 from retail.forecast.models import MerchWeek, MerchDate, ProductForecast
-from retail.product.models import ProductCategory, Product, ProductOffering, SupplierProduct
+from retail.product.models import ProductCategory, Product, ProductOffering, SupplierProduct, ProductStock
 from retail.sale.models import SalesChannel
 
 
@@ -100,7 +100,7 @@ def import_product_line2(line, channels):
         # Get or create product and details
         product, created = Product.objects.get_or_create(name=name, code=id)
         if row[52] != '"N"':
-            product.channels.add(channels['Web']
+            product.channels.add(channels['Web'])
         product.tax_code = row[25].strip('"')
         product.brand=brand
         product.status=row[90].strip('"')
@@ -111,7 +111,8 @@ def import_product_line2(line, channels):
             product.key_value_item = True
         if row[59] == '"Y"':
             product.impulse_item = True
-        product.first_sale_date = yyyymmdd_to_date(row[146])
+        if row[146] != '0':
+            product.first_sale_date = yyyymmdd_to_date(row[146])
         if row[157] == '"Y"':
             product.core_abc = True
         # TODO: 2nd loop to set Parents
@@ -223,8 +224,94 @@ def import_line(line, count, records, products, merch_weeks):
     if count % 100000 == 0:
         return bulk_create(count, records)
     return records
-    
 
+
+def import_stock_line(line):
+    """
+    ZSWST|ZSWIT   |ZSWYR|ZSWW#|ZSWQT|ZSWS$|ZSWC$|ZSWOH |ZSWOO|ZSWRP   |ZSWAV
+    0     1        2     3     4     5     6     7      8     9        10
+    "A3" |" "     |2012 |43   |.0000|.00  |.00  |.0000 |.0000|.0000   |.00
+    "A3" |"!07454"|2012 |1    |.0000|.00  |.00  |2.0000|.0000|199.0000|.00
+    """
+    row = line.split('|')
+
+    store_code = row[0].strip('"')
+    
+    type = 'standard'
+    idtxt = row[1].strip('"')
+    if idtxt[0] == '-':
+        type = 'fractional'
+        idtxt = idtxt[1:]
+    elif idtxt[0] == '!':
+        type = 'kit'
+        idtxt = idtxt[1:]
+
+    try:
+        id = int(idtxt)
+    except ValueError:
+        print( "Ignoring non-numeric SKU: {}".format(row[1]) )
+        return
+
+    try:
+        product = Product.objects.get( code=id )
+    except ObjectDoesNotExist:
+        print( "Unknown product: {}".format(row[1]) )
+        return
+
+    try:
+        merch_week = MerchWeek.objects.get( number=int(row[3]), year=int(row[2]) )
+    except ObjectDoesNotExist:
+        print( "Unknown merch week: {} {}".format(int(row[3]), row[2]) )
+        return
+
+    try:
+        store = Store.objects.get( code=row[0].strip('"') )
+    except ObjectDoesNotExist:
+        store = Store.objects.create( code=row[0].strip('"'), name="Unknown store" )
+        
+        
+    stock_line, created = ProductStock.objects.get_or_create( product=product, store=store, merch_week=merch_week )
+    stock_line.amount = Decimal(row[7])
+    stock_line.retail_price = Decimal(row[9])
+    stock_line.save()
+        
+    return stock_line
+
+
+def dostocklines(filename):
+    stock_lines = {}
+    for stock_line in ProductStock.objects.all():
+        stock_lines[stock_line.id] = stock_line
+
+    with open(filename) as infile:
+        count = 0
+        for line in infile:
+            count += 1
+            if count > 1:
+                stock_line = import_stock_line(line)
+                if stock_line:
+                    stock_lines[stock_line.id] = stock_line
+    print( "Created {} stock lines".format(len(stock_lines)) )
+    return stock_lines
+
+    
+def domerchdates(filename):
+    merch_dates = {}
+    for merch_date in MerchDate.objects.all():
+        merch_dates[merch_date.calendar_date] = merch_date
+
+    with open(filename) as infile:
+        count = 0
+        for line in infile:
+            count += 1
+            if count > 1:
+                merch_date = import_date_line(line)
+                if merch_date:
+                    merch_dates[merch_date.calendar_date] = merch_date
+    print( "Created {} merch dates".format(len(merch_dates)) )
+    return merch_dates
+    
+    
 def doproducts(product_filename):
     products = {}
     for product in Product.objects.all():
@@ -258,7 +345,7 @@ def doproducts2(product_filename):
                 if product:
                     products[product.code] = product
                 
-    print( "Created products" )
+    print( "Created {} products".format(len(products)) )
     return products
 
     

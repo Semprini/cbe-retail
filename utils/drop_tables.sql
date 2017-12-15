@@ -1,3 +1,5 @@
+SELECT concat('DROP TABLE IF EXISTS ', table_name, ';') FROM information_schema.tables WHERE table_schema = 'data';
+
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS account_emailaddress;
 DROP TABLE IF EXISTS account_emailconfirmation;                         

@@ -181,11 +181,13 @@ class ProductStock(models.Model):
     product = models.ForeignKey(Product, related_name='product_stock')
     store = models.ForeignKey(Store)
     location = models.ForeignKey(Location, null=True, blank=True)
+    merch_week = models.ForeignKey('forecast.MerchWeek', related_name='product_stock', null=True, blank=True)
 
     unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
     amount = models.DecimalField(max_digits=8, decimal_places=4)
     average = models.DecimalField(max_digits=8, decimal_places=4, null=True, blank=True)
-
+    retail_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
     reorder_minimum = models.DecimalField(max_digits=8, decimal_places=4)
 
     def __str__(self):
