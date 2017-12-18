@@ -11,13 +11,13 @@ from retail.market.models import MarketSegment, MarketStrategy
 
 
 class ProductCategory(models.Model):
-    id = models.IntegerField(primary_key=True)
+    code = models.IntegerField()
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
 
     parent = models.ForeignKey('ProductCategory', null=True,blank=True)
 
-    level = models.CharField(max_length=200, choices=(('department', 'department'), ('sub_department', 'sub_department'), ('fineline', 'fineline'), ))
+    level = models.CharField(max_length=200, choices=(('division', 'division'),('category', 'category'),('department', 'department'), ('sub_department', 'sub_department'), ('fineline', 'fineline'), ))
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
 
@@ -181,14 +181,14 @@ class ProductStock(models.Model):
     product = models.ForeignKey(Product, related_name='product_stock')
     store = models.ForeignKey(Store)
     location = models.ForeignKey(Location, null=True, blank=True)
-    merch_week = models.ForeignKey('forecast.MerchWeek', related_name='product_stock', null=True, blank=True)
+    updated_date = models.DateField(null=True, blank=True)
 
     unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
     amount = models.DecimalField(max_digits=8, decimal_places=4)
     average = models.DecimalField(max_digits=8, decimal_places=4, null=True, blank=True)
     retail_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
-    reorder_minimum = models.DecimalField(max_digits=8, decimal_places=4)
+    reorder_minimum = models.DecimalField(max_digits=8, decimal_places=4, null=True, blank=True)
 
     def __str__(self):
         return "%s:%d"%(self.product.name, self.amount)

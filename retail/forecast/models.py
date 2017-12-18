@@ -23,12 +23,18 @@ class MerchDate(models.Model):
     merch_week = models.ForeignKey(MerchWeek, related_name='merch_dates')
     
 
-class ProductStockWeekly(models.Model):
-    store = models.ForeignKey(MerchWeek, related_name='product_stock_weekly')
-    product = models.ForeignKey(Product, related_name='product_stock_weekly')
-    merch_week = models.ForeignKey(MerchWeek, related_name='merch_weeks')
-    quantity = models.DecimalField(max_digits=12, decimal_places=4)
-    value = models.DecimalField(max_digits=10, decimal_places=2)
+class ProductSaleWeek(models.Model):
+    end_date = models.DateField()
+    store = models.ForeignKey(Store, related_name='sales_weekly')
+    product = models.ForeignKey(Product, related_name='sales_weekly')
+    merch_week = models.ForeignKey(MerchWeek, related_name='merch_weeks', null=True, blank=True)
+    
+    quantity = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
+    value = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    on_hand = models.DecimalField(max_digits=8, decimal_places=4, null=True, blank=True)
+    on_order = models.DecimalField(max_digits=8, decimal_places=4, null=True, blank=True)
+    retail_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    average_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
 
 class ProductForecast(models.Model):

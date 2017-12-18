@@ -4,7 +4,8 @@ from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 
 from cbe.supplier_partner.models import Supplier
-from retail.forecast.models import MerchWeek, MerchDate, ProductForecast
+from retail.store.models import Store
+from retail.forecast.models import MerchWeek, MerchDate, ProductForecast, ProductSaleWeek
 from retail.product.models import ProductCategory, Product, ProductOffering, SupplierProduct, ProductStock
 from retail.sale.models import SalesChannel
 
@@ -12,6 +13,36 @@ from retail.sale.models import SalesChannel
 def yyyymmdd_to_date(datetxt):
     return datetime.date(day=int(datetxt[6:8]), month=int(datetxt[4:6]), year=int(datetxt[:4] ) )
 
+
+def import_hierarchy_line(line):
+    """
+    DIVISION|CATEGORY|DEPARTMENT|DEPT_00001  |SUB_D00001|SUB_D00002|FINEL00001|FINEL00002
+    "RD"    |"DHW"   |"14"      |"HOUSEWARES"|"1441"    |"CLEANING"|"3462"    |"DAMP CONTROL"
+    """
+    row = line.strip('\n').split('|')
+    try:
+        department = ProductCategory.objects.get(code=int(row[2].strip('"')), level='department')
+    except ObjectDoesNotExist:
+        department = ProductCategory(code=int(row[2].strip('"')), level='department')
+    department.name=row[3].strip('"')
+    department.save()
+        
+    try:
+        sub_department = ProductCategory.objects.get(code=int(row[4].strip('"')), level='sub_department')
+    except ObjectDoesNotExist:
+        sub_department = ProductCategory(code=int(row[4].strip('"')), level='sub_department')
+    sub_department.parent=department
+    sub_department.name=row[5].strip('"')
+    sub_department.save()
+
+    try:
+        fineline = ProductCategory.objects.get(code=int(row[6].strip('"')), level='fineline')
+    except ObjectDoesNotExist:
+        fineline = ProductCategory(code=int(row[6].strip('"')), level='fineline')
+    fineline.parent=sub_department
+    fineline.name=row[7].strip('"')
+    fineline.save()
+    
     
 def import_product_line(line, count, products):
     """
@@ -35,9 +66,9 @@ def import_product_line(line, count, products):
         print( "Ignoring non-numeric SKU: {}".format(row[0]) )
         return
 
-    department, created = ProductCategory.objects.get_or_create(id=int(row[2][0:2]), name=row[2][3:], level='department')
-    sub_department, created = ProductCategory.objects.get_or_create(id=int(row[3][0:4]), name=row[3][5:], level='sub_department')
-    fineline, created = ProductCategory.objects.get_or_create(id=int(row[4][0:4]), name=row[4][5:],level='fineline')
+    department, created = ProductCategory.objects.get_or_create(code=int(row[2][0:2]), name=row[2][3:], level='department')
+    sub_department, created = ProductCategory.objects.get_or_create(code=int(row[3][0:4]), name=row[3][5:], level='sub_department')
+    fineline, created = ProductCategory.objects.get_or_create(code=int(row[4][0:4]), name=row[4][5:],level='fineline')
         
     try:
         product, created = Product.objects.get_or_create(name=row[5], description=row[6].strip(), code=id, status="active")
@@ -74,19 +105,20 @@ def import_product_line2(line, channels):
 
     
     try:
-        department = ProductCategory.objects.get( level='department', id=int(row[5]) )
+        department = ProductCategory.objects.get( level='department', code=int(row[5]) )
     except ObjectDoesNotExist:
-        department = ProductCategory.objects.create(level='department', id=int(row[5]), name='un-named dept')
+        department = ProductCategory.objects.create(level='department', code=int(row[5]), name='un-named dept')
 
     try:
-        sub_department = ProductCategory.objects.get( level='sub_department', id=int(row[89].strip('"')) )
+        sub_department = ProductCategory.objects.get( level='sub_department', code=int(row[89].strip('"')) )
     except ObjectDoesNotExist:
-        sub_department = ProductCategory.objects.create(level='sub_department', id=int(row[89].strip('"')), name='un-named sub-dept')
+        print(row[89], row[6])
+        sub_department = ProductCategory.objects.create(level='sub_department', code=int(row[89].strip('"')), name='un-named sub-dept')
 
     try:
-        fineline = ProductCategory.objects.get( level='fineline', id=int(row[6]) )
+        fineline = ProductCategory.objects.get( level='fineline', code=int(row[6]) )
     except ObjectDoesNotExist:
-        fineline = ProductCategory.objects.create(level='fineline', id=int(row[6]), name='un-named fineline')
+        fineline = ProductCategory.objects.create(level='fineline', code=int(row[6]), name='un-named fineline')
 
     brand = row[11].strip('"').strip(' ')
     unit_of_measure = row[12].strip('"').lower()
@@ -226,9 +258,10 @@ def import_line(line, count, records, products, merch_weeks):
     return records
 
 
-def import_stock_line(line):
+def import_sale_week_line(line):
     """
     ZSWST|ZSWIT   |ZSWYR|ZSWW#|ZSWQT|ZSWS$|ZSWC$|ZSWOH |ZSWOO|ZSWRP   |ZSWAV
+    Store Item     Year  Week  Quant Sales Cost  stock  onord rrp      av cost 
     0     1        2     3     4     5     6     7      8     9        10
     "A3" |" "     |2012 |43   |.0000|.00  |.00  |.0000 |.0000|.0000   |.00
     "A3" |"!07454"|2012 |1    |.0000|.00  |.00  |2.0000|.0000|199.0000|.00
@@ -250,48 +283,72 @@ def import_stock_line(line):
         id = int(idtxt)
     except ValueError:
         print( "Ignoring non-numeric SKU: {}".format(row[1]) )
-        return
+        return [None, None]
 
     try:
         product = Product.objects.get( code=id )
     except ObjectDoesNotExist:
         print( "Unknown product: {}".format(row[1]) )
-        return
+        return [None, None]
 
     try:
         merch_week = MerchWeek.objects.get( number=int(row[3]), year=int(row[2]) )
     except ObjectDoesNotExist:
         print( "Unknown merch week: {} {}".format(int(row[3]), row[2]) )
-        return
+        merch_week = None
 
     try:
         store = Store.objects.get( code=row[0].strip('"') )
     except ObjectDoesNotExist:
         store = Store.objects.create( code=row[0].strip('"'), name="Unknown store" )
-        
-        
-    stock_line, created = ProductStock.objects.get_or_create( product=product, store=store, merch_week=merch_week )
+    
+    end_date = "{}-{}-6".format(row[2], row[3])
+    end_date = datetime.datetime.strptime(end_date, "%Y-%W-%w").date()
+    
+    sale_week, created = ProductSaleWeek.objects.get_or_create( product=product, store=store, end_date=end_date)
+    sale_week.merch_week=merch_week
+    sale_week.quantity = Decimal(row[4])
+    sale_week.value = Decimal(row[5])
+    sale_week.on_hand = Decimal(row[7])
+    sale_week.on_order = Decimal(row[8])
+    sale_week.retail_price = Decimal(row[9])
+    sale_week.average_cost = Decimal(row[10])
+    sale_week.save()
+
+    try:
+        stock_line = ProductStock.objects.get( product=product, store=store )
+    except ObjectDoesNotExist:
+        stock_line = ProductStock( product=product, store=store )
     stock_line.amount = Decimal(row[7])
     stock_line.retail_price = Decimal(row[9])
     stock_line.save()
         
-    return stock_line
+    return [stock_line, sale_week]
 
 
-def dostocklines(filename):
+def dohierarchy(filename):
+    count = 0
+    with open(filename) as infile:
+        for line in infile:
+            count += 1
+            if count > 1:
+                import_hierarchy_line(line)
+    print( "Created {} product categories".format(count) )
+
+    
+def doweeklysaleslines(filename):
     stock_lines = {}
-    for stock_line in ProductStock.objects.all():
-        stock_lines[stock_line.id] = stock_line
+    sale_lines = {}
 
     with open(filename) as infile:
         count = 0
         for line in infile:
             count += 1
             if count > 1:
-                stock_line = import_stock_line(line)
-                if stock_line:
-                    stock_lines[stock_line.id] = stock_line
-    print( "Created {} stock lines".format(len(stock_lines)) )
+                stock_line, sale_line = import_sale_week_line(line)
+                if sale_line:
+                    sale_lines[sale_line.id] = sale_line
+    print( "Created {} weekly sale lines".format(len(sale_lines)) )
     return stock_lines
 
     
@@ -330,23 +387,20 @@ def doproducts(product_filename):
 
 def doproducts2(product_filename):
     web_channel, created = SalesChannel.objects.get_or_create(name="Web")
-    channels = {'Web':web_channel,}
+    m10_channel, created = SalesChannel.objects.get_or_create(name="Mitre 10")
+    mega_channel, created = SalesChannel.objects.get_or_create(name="Mega")
+    hammer_channel, created = SalesChannel.objects.get_or_create(name="Hammer")
+    channels = {'Web':web_channel,'Mitre 10',:m10_channel, 'Mega':mega_channel, 'Hammer':hammer_channel }
     
-    products = {}
-    for product in Product.objects.all():
-        products[product.code] = product
-
     with open(product_filename) as infile:
         count = 0
         for line in infile:
             count += 1
             if count > 1:
                 product = import_product_line2(line, channels)
-                if product:
-                    products[product.code] = product
-                
-    print( "Created {} products".format(len(products)) )
-    return products
+            if count%1000==0:
+                print( "so far {} products created".format(count) )
+    print( "Created {} products".format(count) )
 
     
 def doimport1(extract_filename="Extract.txt", product_filename="Products.csv", weeks_filename="WeeksAndDates.txt"):
