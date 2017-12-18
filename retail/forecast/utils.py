@@ -390,7 +390,7 @@ def doproducts2(product_filename):
     m10_channel, created = SalesChannel.objects.get_or_create(name="Mitre 10")
     mega_channel, created = SalesChannel.objects.get_or_create(name="Mega")
     hammer_channel, created = SalesChannel.objects.get_or_create(name="Hammer")
-    channels = {'Web':web_channel,'Mitre 10',:m10_channel, 'Mega':mega_channel, 'Hammer':hammer_channel }
+    channels = {'Web':web_channel,'Mitre 10':m10_channel, 'Mega':mega_channel, 'Hammer':hammer_channel }
     
     with open(product_filename) as infile:
         count = 0
