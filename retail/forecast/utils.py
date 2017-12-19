@@ -131,8 +131,6 @@ def import_product_line2(line, channels):
     try:
         # Get or create product and details
         product, created = Product.objects.get_or_create(name=name, code=id)
-        if row[52] != '"N"':
-            product.channels.add(channels['Web'])
         product.tax_code = row[25].strip('"')
         product.brand=brand
         product.status=row[90].strip('"')
@@ -152,6 +150,8 @@ def import_product_line2(line, channels):
 
         # Get or create offering and details
         po, created = ProductOffering.objects.get_or_create(product=product, sku=id, type=type, department=department, sub_department=sub_department, fineline=fineline, barcode=row[8].strip('"') )
+        if row[52] != '"N"':
+            po.channels.add(channels['Web'])
         
         # Get or supplier product and details
         supplier, created = Supplier.objects.get_or_create(code=row[9].strip('"'),name='unnamed supplier')
