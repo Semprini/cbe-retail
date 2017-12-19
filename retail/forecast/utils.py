@@ -362,10 +362,10 @@ def doweeklysaleslines(filename):
                 if sale_line:
                     sale_lines.append(sale_line)
                     
-            if count%10000 == 0:
+            if count%100000 == 0:
                 ProductSaleWeek.objects.bulk_create(sale_lines)
                 sale_lines = []
-                print( "Batch of 10k done. Current count:{}".format(count) )
+                print( "Batch of 100k done. Current count:{}".format(count) )
         
         if len(sale_lines) > 0:
             ProductSaleWeek.objects.bulk_create(sale_lines)        
