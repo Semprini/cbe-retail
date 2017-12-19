@@ -1,8 +1,11 @@
 import sys, traceback
 import datetime
 from decimal import Decimal
-from django.db.utils import IntegrityError
+from time import sleep
+
+from django.db.utils import IntegrityError, DatabaseError
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import connections
 
 from cbe.supplier_partner.models import Supplier
 from retail.store.models import Store
@@ -362,14 +365,45 @@ def doweeklysaleslines(filename):
                 if sale_line:
                     sale_lines.append(sale_line)
                     
-            if count%100000 == 0:
-                ProductSaleWeek.objects.bulk_create(sale_lines)
-                sale_lines = []
-                print( "Batch of 100k done. Current count:{}".format(count) )
+            if count%10000 == 0:
+                done = False
+                retry_count = 0
+                while not done and retry_count < 10:
+                    try:
+                        ProductSaleWeek.objects.bulk_create(sale_lines)
+                        sale_lines = []
+                        print( "Batch of 10k done. Current count:{}".format(count) )
+                        done = True
+                    except DatabaseError as err:
+                        print( "DATABASE ERROR! Closing unusable connections and retrying shortly. %s"%err )
+                        sleep(10)
+                        for conn in connections.all():
+                            conn.close_if_unusable_or_obsolete()
+                        sleep(10)
+                        retry_count+=1
+                if retry_count >= 10:
+                    raise Exception( "FATAL DATABASE ERROR!" )
+                    
         
         if len(sale_lines) > 0:
-            ProductSaleWeek.objects.bulk_create(sale_lines)        
-        
+            done = False
+            retry_count = 0
+            while not done and retry_count < 10:
+                try:
+                    ProductSaleWeek.objects.bulk_create(sale_lines)        
+                    done = True
+                except DatabaseError as err:
+                    print( "DATABASE ERROR! Closing unusable connections and retrying shortly. %s"%err )
+                    sleep(10)
+                    for conn in connections.all():
+                        conn.close_if_unusable_or_obsolete()
+                    sleep(10)
+                    retry_count+=1
+            if retry_count >= 10:
+                raise Exception( "FATAL DATABASE ERROR!" )
+
+
+                    
     print( "Created {} weekly sale lines".format(count) )
 
     
