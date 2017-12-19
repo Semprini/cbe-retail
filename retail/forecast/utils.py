@@ -259,7 +259,7 @@ def import_line(line, count, records, products, merch_weeks):
     return records
 
 
-def import_sale_week_line(line):
+def import_sale_week_line(line, products, merch_weeks, stores):
     """
     ZSWST|ZSWIT   |ZSWYR|ZSWW#|ZSWQT|ZSWS$|ZSWC$|ZSWOH |ZSWOO|ZSWRP   |ZSWAV
     Store Item     Year  Week  Quant Sales Cost  stock  onord rrp      av cost 
@@ -284,29 +284,30 @@ def import_sale_week_line(line):
         id = int(idtxt)
     except ValueError:
         print( "Ignoring non-numeric SKU: {}".format(row[1]) )
-        return [None, None]
+        return [None, stores]
 
     try:
-        product = Product.objects.get( code=id )
-    except ObjectDoesNotExist:
-        print( "Unknown product: {}".format(row[1]) )
-        return [None, None]
+        product = products["{}".format(id)]
+    except KeyError:
+        print( "Unknown product: {}".format(id) )
+        return [None, stores]
 
     try:
-        merch_week = MerchWeek.objects.get( number=int(row[3]), year=int(row[2]) )
-    except ObjectDoesNotExist:
+        merch_week = merch_weeks["{} {}".format(int(row[3]), int(row[2]))] #MerchWeek.objects.get( number=int(row[3]), year=int(row[2]) )
+    except KeyError:
         print( "Unknown merch week: {} {}".format(int(row[3]), row[2]) )
         merch_week = None
 
     try:
-        store = Store.objects.get( code=row[0].strip('"') )
-    except ObjectDoesNotExist:
+        store = stores[row[0].strip('"')] #Store.objects.get( code=row[0].strip('"') )
+    except KeyError:
         store = Store.objects.create( code=row[0].strip('"'), name="Unknown store" )
+        stores[store.code] = store
     
     end_date = "{}-{}-6".format(row[2], row[3])
     end_date = datetime.datetime.strptime(end_date, "%Y-%W-%w").date()
     
-    sale_week, created = ProductSaleWeek.objects.get_or_create( product=product, store=store, end_date=end_date)
+    sale_week = ProductSaleWeek( product=product, store=store, end_date=end_date)
     sale_week.merch_week=merch_week
     sale_week.quantity = Decimal(row[4])
     sale_week.value = Decimal(row[5])
@@ -314,17 +315,17 @@ def import_sale_week_line(line):
     sale_week.on_order = Decimal(row[8])
     sale_week.retail_price = Decimal(row[9])
     sale_week.average_cost = Decimal(row[10])
-    sale_week.save()
+    #sale_week.save()
 
-    try:
-        stock_line = ProductStock.objects.get( product=product, store=store )
-    except ObjectDoesNotExist:
-        stock_line = ProductStock( product=product, store=store )
-    stock_line.amount = Decimal(row[7])
-    stock_line.retail_price = Decimal(row[9])
-    stock_line.save()
-        
-    return [stock_line, sale_week]
+    #try:
+    #    stock_line = ProductStock.objects.get( product=product, store=store )
+    #except ObjectDoesNotExist:
+    #    stock_line = ProductStock( product=product, store=store )
+    #stock_line.amount = Decimal(row[7])
+    #stock_line.retail_price = Decimal(row[9])
+    #stock_line.save()
+    
+    return [sale_week, stores]
 
 
 def dohierarchy(filename):
@@ -338,19 +339,38 @@ def dohierarchy(filename):
 
     
 def doweeklysaleslines(filename):
-    stock_lines = {}
-    sale_lines = {}
+    sale_lines = []
+    products = {}
+    merch_weeks = {}
+    stores = {}
+    
+    for product in Product.objects.all():
+        products[product.code] = product
+        
+    for merch_week in MerchWeek.objects.all():
+        merch_weeks["{} {}".format(merch_week.number,merch_week.year)] = merch_week
+        
+    for store in Store.objects.all():
+        stores[store.code] = store
 
     with open(filename) as infile:
         count = 0
         for line in infile:
             count += 1
             if count > 1:
-                stock_line, sale_line = import_sale_week_line(line)
+                sale_line, stores = import_sale_week_line(line, products, merch_weeks, stores)
                 if sale_line:
-                    sale_lines[sale_line.id] = sale_line
-    print( "Created {} weekly sale lines".format(len(sale_lines)) )
-    return stock_lines
+                    sale_lines.append(sale_line)
+                    
+            if count%10000 == 0:
+                ProductSaleWeek.objects.bulk_create(sale_lines)
+                sale_lines = []
+                print( "Batch of 10k done. Current count:{}".format(count) )
+        
+        if len(sale_lines) > 0:
+            ProductSaleWeek.objects.bulk_create(sale_lines)        
+        
+    print( "Created {} weekly sale lines".format(count) )
 
     
 def domerchdates(filename):
