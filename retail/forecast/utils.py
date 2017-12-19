@@ -1,3 +1,4 @@
+import sys, traceback
 import datetime
 from decimal import Decimal
 from django.db.utils import IntegrityError
@@ -392,12 +393,18 @@ def doproducts2(product_filename):
     hammer_channel, created = SalesChannel.objects.get_or_create(name="Hammer")
     channels = {'Web':web_channel,'Mitre 10':m10_channel, 'Mega':mega_channel, 'Hammer':hammer_channel }
     
-    with open(product_filename) as infile:
+    with open(product_filename, encoding = "ISO-8859-1") as infile:
         count = 0
         for line in infile:
-            count += 1
-            if count > 1:
-                product = import_product_line2(line, channels)
+            try:
+                if count > 0:
+                    product = import_product_line2(line, channels)
+                count += 1
+            except Exception:
+                print("Exception in user code:")
+                print("-"*60)
+                traceback.print_exc(file=sys.stdout)
+                print("-"*60)
             if count%1000==0:
                 print( "so far {} products created".format(count) )
     print( "Created {} products".format(count) )
