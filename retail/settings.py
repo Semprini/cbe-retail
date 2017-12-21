@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
+    'explorer',
     'cbe.business_interaction',
     'cbe.location',
     'cbe.party',
@@ -168,6 +169,9 @@ MQ_FRAMEWORK = {
 
 LOGIN_URL = "accounts/login/"
 LOGOUT_URL = "accounts/logout/"
+
+EXPLORER_CONNECTIONS = { 'Default': 'default' } 
+EXPLORER_DEFAULT_CONNECTION = 'default'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/

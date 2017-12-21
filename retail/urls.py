@@ -129,6 +129,7 @@ urlpatterns = [
     url(r'^$', schema_view),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('allauth.urls')),
+    url(r'^explorer/', include('explorer.urls')),
     url(r'^api/', include(router.urls)),
     url(r'^api/store/', include(storerouter.urls)),
     url(r'^api/product/', include(productrouter.urls)),

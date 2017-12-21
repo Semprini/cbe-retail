@@ -10,4 +10,5 @@ django-allauth
 djangorestframework-csv
 django-rest-swagger
 pika
+django-sql-explorer
 git+https://github.com/Semprini/cbe.git
