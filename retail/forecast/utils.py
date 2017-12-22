@@ -8,6 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import connections
 
 from cbe.supplier_partner.models import Supplier
+from cbe.location.models import Province
 from retail.store.models import Store
 from retail.forecast.models import MerchWeek, MerchDate, ProductForecast, ProductSaleWeek
 from retail.product.models import ProductCategory, Product, ProductOffering, SupplierProduct, ProductStock
@@ -18,6 +19,59 @@ def yyyymmdd_to_date(datetxt):
     return datetime.date(day=int(datetxt[6:8]), month=int(datetxt[4:6]), year=int(datetxt[:4] ) )
 
 
+def import store_line(line):
+    """
+    Store_code,Store_description,Store,              Class,Store_opening_date,Area_code,Area_description,POSTCODE,Island,Store_urban_flag
+    0          1                 2                   3     4                  5         6                7        8      9
+    A3,        Ashby's Mitre 10, A3 Ashby's Mitre 10,M10,  0,                 5  ,      area name tbc,   1234,    NTH,   O
+    """    
+    row = line.split('|')
+    
+    try:
+        store = Store.objects.get(code=row[0])
+    except ObjectDoesNotExist:
+        store = Store(code=row[0])
+    store.name = row[2]
+    store.description = row[1]
+    if row[3] == "M10":
+        store.store_class = "mitre 10"
+    elif row[3] == "MEG":
+        store.store_class = "mega"
+    elif row[3] == "HAM":
+        store.store_class = "hammer"
+        
+    if row[4] != "0":
+        store.opening_date = yyyymmdd_to_date(row[4])
+    
+    try:
+        province = Province.objects.get(code=row[5])
+    except ObjectDoesNotExist:
+        province = Province(code=row[5])
+    province.name = row[6]
+    province.save()
+    
+    if store.location == None:
+        location = Location(name="Store location")
+    else:
+        location = store.location
+    location.province = province
+    location.postcode = row[7]
+    
+    if row[8] == "STH":
+        location.land_mass = "South Island"
+    elif row[8] == "NTH":
+        location.land_mass = "North Island"
+    
+    if row[9] == "O":
+        location.type = "Rural"
+    else:
+        location.type = "Urban"
+        
+    store.location.save()
+    store.location = location
+    store.save()
+    
+    
 def import_hierarchy_line(line):
     """
     DIVISION|CATEGORY|DEPARTMENT|DEPT_00001  |SUB_D00001|SUB_D00002|FINEL00001|FINEL00002
@@ -25,26 +79,26 @@ def import_hierarchy_line(line):
     """
     row = line.strip('\n').split('|')
     
-    try:
-        division = ProductCategory.objects.get(code=int(row[0].strip('"')), level='division')
-    except ObjectDoesNotExist:
-        division = ProductCategory(code=int(row[0].strip('"')), level='division')
-    division.name=row[3].strip('"')
-    division.save()
+    # try:
+        # division = ProductCategory.objects.get(name=row[0].strip('"'), level='division')
+    # except ObjectDoesNotExist:
+        # division = ProductCategory(name=row[0].strip('"'), level='division')
+    # division.name=row[0].strip('"')
+    # division.save()
     
-    try:
-        category = ProductCategory.objects.get(code=int(row[1].strip('"')), level='category')
-    except ObjectDoesNotExist:
-        category = ProductCategory(code=int(row[1].strip('"')), level='category')
-    category.parent=division
-    category.name=row[3].strip('"')
-    category.save()
+    # try:
+        # category = ProductCategory.objects.get(code=int(row[1].strip('"')), level='category')
+    # except ObjectDoesNotExist:
+        # category = ProductCategory(code=int(row[1].strip('"')), level='category')
+    # category.parent=division
+    # category.name=row[1].strip('"')
+    # category.save()
     
     try:
         department = ProductCategory.objects.get(code=int(row[2].strip('"')), level='department')
     except ObjectDoesNotExist:
         department = ProductCategory(code=int(row[2].strip('"')), level='department')
-    department.parent=category
+    #department.parent=category
     department.name=row[3].strip('"')
     department.save()
         
