@@ -24,10 +24,27 @@ def import_hierarchy_line(line):
     "RD"    |"DHW"   |"14"      |"HOUSEWARES"|"1441"    |"CLEANING"|"3462"    |"DAMP CONTROL"
     """
     row = line.strip('\n').split('|')
+    
+    try:
+        division = ProductCategory.objects.get(code=int(row[0].strip('"')), level='division')
+    except ObjectDoesNotExist:
+        division = ProductCategory(code=int(row[0].strip('"')), level='division')
+    division.name=row[3].strip('"')
+    division.save()
+    
+    try:
+        category = ProductCategory.objects.get(code=int(row[1].strip('"')), level='category')
+    except ObjectDoesNotExist:
+        category = ProductCategory(code=int(row[1].strip('"')), level='category')
+    category.parent=division
+    category.name=row[3].strip('"')
+    category.save()
+    
     try:
         department = ProductCategory.objects.get(code=int(row[2].strip('"')), level='department')
     except ObjectDoesNotExist:
         department = ProductCategory(code=int(row[2].strip('"')), level='department')
+    department.parent=category
     department.name=row[3].strip('"')
     department.save()
         

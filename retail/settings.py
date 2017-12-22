@@ -172,6 +172,7 @@ LOGOUT_URL = "accounts/logout/"
 
 EXPLORER_CONNECTIONS = { 'Default': 'default' } 
 EXPLORER_DEFAULT_CONNECTION = 'default'
+EXPLORER_CONNECTION_NAME  = 'default'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
