@@ -79,26 +79,27 @@ def import_hierarchy_line(line):
     """
     row = line.strip('\n').split('|')
     
-    # try:
-        # division = ProductCategory.objects.get(name=row[0].strip('"'), level='division')
-    # except ObjectDoesNotExist:
-        # division = ProductCategory(name=row[0].strip('"'), level='division')
-    # division.name=row[0].strip('"')
-    # division.save()
+    division_codes = {'RD':1,'HG':2,'OT':3,'BP':4,}
+    try:
+        division = ProductCategory.objects.get(name=row[0].strip('"'), level='division')
+    except ObjectDoesNotExist:
+        division = ProductCategory(name=row[0].strip('"'), level='division')
+    division.code=division_codes[row[0].strip('"')]
+    division.save()
     
-    # try:
-        # category = ProductCategory.objects.get(code=int(row[1].strip('"')), level='category')
-    # except ObjectDoesNotExist:
-        # category = ProductCategory(code=int(row[1].strip('"')), level='category')
-    # category.parent=division
-    # category.name=row[1].strip('"')
-    # category.save()
+    try:
+        category = ProductCategory.objects.get(name=row[1].strip('"'), level='category')
+    except ObjectDoesNotExist:
+        category = ProductCategory(name=row[1].strip('"'), level='category')
+        category.code=100001+ProductCategory.objects.filter(level='category').count()
+    category.parent=division
+    category.save()
     
     try:
         department = ProductCategory.objects.get(code=int(row[2].strip('"')), level='department')
     except ObjectDoesNotExist:
         department = ProductCategory(code=int(row[2].strip('"')), level='department')
-    #department.parent=category
+    department.parent=category
     department.name=row[3].strip('"')
     department.save()
         
@@ -533,7 +534,7 @@ def doproducts(product_filename):
     return products
     
 
-def doproducts2(product_filename):
+def doproducts2(product_filename, startline=0):
     web_channel, created = SalesChannel.objects.get_or_create(name="Web")
     m10_channel, created = SalesChannel.objects.get_or_create(name="Mitre 10")
     mega_channel, created = SalesChannel.objects.get_or_create(name="Mega")
@@ -544,17 +545,18 @@ def doproducts2(product_filename):
         count = 0
         for line in infile:
             try:
-                if count > 0:
+                if count > startline:
                     product = import_product_line2(line, channels)
                 count += 1
             except Exception:
-                print("Exception in user code:")
+                print("Exception in user code on line {}. Data was:".format(count))
+                print(line)
                 print("-"*60)
                 traceback.print_exc(file=sys.stdout)
                 print("-"*60)
             if count%1000==0:
-                print( "so far {} products created".format(count) )
-    print( "Created {} products".format(count) )
+                print( "so far {} products imported".format(count) )
+    print( "Imported {} products".format(count) )
 
     
 def doimport1(extract_filename="Extract.txt", product_filename="Products.csv", weeks_filename="WeeksAndDates.txt"):
