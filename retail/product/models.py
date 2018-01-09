@@ -40,6 +40,7 @@ class Product(models.Model):
     parent = models.ForeignKey('Product', null=True, blank=True, related_name='child_products')
     code = models.CharField(max_length=50, unique=True)
     brand = models.CharField(max_length=100, blank=True)
+    sub_brand = models.CharField(max_length=100, blank=True)
 
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
@@ -53,6 +54,10 @@ class Product(models.Model):
     first_sale_date = models.DateField(null=True, blank=True)
     core_abc = models.BooleanField(default=False)               # is this just kvi?
     core_range = models.BooleanField(default=False)
+    range = models.IntegerField( default=0 )
+    dangerous_classification = models.CharField(max_length=50, blank=True)
+    relative_importance_index = models.CharField(max_length=10, blank=True)
+    exclusive = models.CharField(max_length=10, blank=True)
 
     business_unit = models.ForeignKey(Organisation, null=True, blank=True)
     
@@ -134,6 +139,7 @@ class SupplierProduct(models.Model):
     cost_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     reccomended_retail_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     reccomended_markup = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
+    next_available_date = models.DateField(null=True, blank=True)
 
     quantity_break1 = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
     quantity_price1 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)

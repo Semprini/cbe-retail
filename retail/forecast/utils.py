@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import connections
 
 from cbe.supplier_partner.models import Supplier
-from cbe.location.models import Province
+from cbe.location.models import Province, Location
 from retail.store.models import Store
 from retail.forecast.models import MerchWeek, MerchDate, ProductForecast, ProductSaleWeek
 from retail.product.models import ProductCategory, Product, ProductOffering, SupplierProduct, ProductStock
@@ -19,13 +19,13 @@ def yyyymmdd_to_date(datetxt):
     return datetime.date(day=int(datetxt[6:8]), month=int(datetxt[4:6]), year=int(datetxt[:4] ) )
 
 
-def import store_line(line):
+def import_store_line(line):
     """
     Store_code,Store_description,Store,              Class,Store_opening_date,Area_code,Area_description,POSTCODE,Island,Store_urban_flag
     0          1                 2                   3     4                  5         6                7        8      9
     A3,        Ashby's Mitre 10, A3 Ashby's Mitre 10,M10,  0,                 5  ,      area name tbc,   1234,    NTH,   O
     """    
-    row = line.split('|')
+    row = line.split(',')
     
     try:
         store = Store.objects.get(code=row[0])
@@ -67,7 +67,7 @@ def import store_line(line):
     else:
         location.type = "Urban"
         
-    store.location.save()
+    location.save()
     store.location = location
     store.save()
     
@@ -162,7 +162,9 @@ def import_product_line2(line, channels):
     "Z"   |"109454"|" "   |"LINE TRIMMER STRGHT SHAFT HOMELITE"|" "   |20    |1250  |"Y"  |"4892210809070"|"RYOB"|" "   |" "   |"EACH"|2.000 |0     |0     |0     |1     |1     |1     |0     |0     |0     |0     |" "   |"G"  |149.00|.00   |" "   |1.5710|234.08|.00   |.00   |.00   |"HLT26SDNB"|149.00|" "   |" "   |0     |.00   |125   |0     |" "   |" "   |"LINE TRI"|" "   |" "   |0     |0     |0     |" "   |" "   |"N"   |" "   |" "   |" "   |" "   |"N"   |"N"   |"N"   |" "   |" "   |" "   |" "   |"N"   |"X"   |0     |" "   |0     |.00   |0     |.00   |0     |0     |0     |0     |" "   |" "   |" "   |"0"   |0     |237.59|241.10|1.5946|1.6181|.00   |.00   |"D"   |"D"   |"2012"|"D"   |"C"   |" "   |" "   |" "   |" "   |20090319|20091102|0     |.000  |"L"   |" "   |.000  |.000  |.000  |.000  |.000  |.000  |.000  |.000  |.000  |.000  |.000  |.000  |" "   |0     |"N"   |.00   |.00   |.00   |.00   |.00   |.00   |" "   |"N"   |0     |" "   |.000  |20090319       |114420 |"M60KB" |20170606|161754  |"M60CT1"|.000  |" "   |" "   |"04892210809070"|" "   |" "   |0     |0     |"N"   |.000  |" "   |" "   |20090319|" "   |" "   |" "   |0     |" "   |" "   |"N"   |" "   |" "   |" "   |"N"   |" "   |" "   |" "   |" "   |" "   |" "   |249.06|264.04|1.6715|1.7721|.00   |.00   |"D"   |"D"     |20091102|"N"   |" "   |" "
     """
     row = line.split('|')
-    
+
+    #todo ZMYBTY 92 = exclusive
+
     type = 'standard'
     idtxt = row[1].strip('"')
     if idtxt[0] == '-':
@@ -178,7 +180,7 @@ def import_product_line2(line, channels):
         print( "Ignoring non-numeric SKU: {}".format(row[0]) )
         return
 
-    
+
     try:
         department = ProductCategory.objects.get( level='department', code=int(row[5]) )
     except ObjectDoesNotExist:
@@ -195,7 +197,8 @@ def import_product_line2(line, channels):
     except ObjectDoesNotExist:
         fineline = ProductCategory.objects.create(level='fineline', code=int(row[6]), name='un-named fineline')
 
-    brand = row[11].strip('"').strip(' ')
+    sub_brand = row[11].strip('"').strip(' ')
+    brand = row[67].strip('"').strip(' ') 
     unit_of_measure = row[12].strip('"').lower()
     
     if row[4] == '" "':
@@ -208,6 +211,11 @@ def import_product_line2(line, channels):
         product, created = Product.objects.get_or_create(name=name, code=id)
         product.tax_code = row[25].strip('"')
         product.brand=brand
+        product.sub_brand=sub_brand
+        product.range = int(row[115])
+        product.dangerous_classification = row[126].strip('"')
+        product.relative_importance_index = row[116].strip('"')
+        
         product.status=row[90].strip('"')
         product.description=row[3].strip('"'),
         if row[57] == '"Y"':
@@ -240,6 +248,9 @@ def import_product_line2(line, channels):
         sp.quantity_price1 = Decimal(row[69])
         sp.quantity_break2 = Decimal(row[70])
         sp.quantity_price2 = Decimal(row[71])
+        
+        if len(row[98]) == 8:
+            sp.next_available_date = yyyymmdd_to_date(row[98])
         sp.save()
         
         # If there is a 2nd supplier then create
@@ -385,6 +396,7 @@ def import_sale_week_line(line, products, merch_weeks, stores):
     sale_week.merch_week=merch_week
     sale_week.quantity = Decimal(row[4])
     sale_week.value = Decimal(row[5])
+    sale_week cost = row 6
     sale_week.on_hand = Decimal(row[7])
     sale_week.on_order = Decimal(row[8])
     sale_week.retail_price = Decimal(row[9])
@@ -402,6 +414,16 @@ def import_sale_week_line(line, products, merch_weeks, stores):
     return [sale_week, stores]
 
 
+def dostores(filename):
+    count = 0
+    with open(filename) as infile:
+        for line in infile:
+            count += 1
+            if count > 1:
+                import_store_line(line)
+    print( "Created {} stores".format(count) )
+
+    
 def dohierarchy(filename):
     count = 0
     with open(filename) as infile:
