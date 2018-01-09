@@ -396,7 +396,7 @@ def import_sale_week_line(line, products, merch_weeks, stores):
     sale_week.merch_week=merch_week
     sale_week.quantity = Decimal(row[4])
     sale_week.value = Decimal(row[5])
-    sale_week cost = row 6
+    sale_week.cost = Decimal(row[6])
     sale_week.on_hand = Decimal(row[7])
     sale_week.on_order = Decimal(row[8])
     sale_week.retail_price = Decimal(row[9])
