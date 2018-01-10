@@ -217,6 +217,9 @@ def import_product_line2(line, channels):
         product.dangerous_classification = row[126].strip('"')
         product.relative_importance_index = row[116].strip('"')
         
+        excl_val = {' ':'', 'RE':'Retail Exclusive', 'E':'Exclusive', 'P':'Proprietary', 'BTR':'Better', 'BES':'Best', 'BTY':'BTY'}
+        product.exclusive = excl_val[row[92].strip('"')]
+        
         product.status=row[90].strip('"')
         product.description=row[3].strip('"'),
         if row[57] == '"Y"':
