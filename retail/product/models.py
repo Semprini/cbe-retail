@@ -125,7 +125,7 @@ class ProductSpecification(models.Model):
 
             
 class SupplierProduct(models.Model):
-    supplier_sku = models.CharField(max_length=200, primary_key=True)
+    supplier_sku = models.CharField(max_length=200)
     barcode = models.CharField(max_length=50, null=True, blank=True)
 
     product = models.ForeignKey(Product, related_name="supplier_products")
@@ -154,7 +154,7 @@ class SupplierProduct(models.Model):
     
     
 class ProductOffering(models.Model):
-    sku = models.CharField(max_length=50, primary_key=True)
+    sku = models.CharField(max_length=50)
     product = models.ForeignKey(Product, related_name="product_offerings")
     specification = models.ForeignKey(ProductSpecification, related_name="product_offerings", null=True, blank=True)
     barcode = models.CharField(max_length=50, null=True, blank=True)

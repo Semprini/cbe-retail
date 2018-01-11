@@ -72,7 +72,7 @@ def import_store_line(line):
     store.save()
     
     
-def import_hierarchy_line(line):
+def import_product_hierarchy_line(line):
     """
     DIVISION|CATEGORY|DEPARTMENT|DEPT_00001  |SUB_D00001|SUB_D00002|FINEL00001|FINEL00002
     "RD"    |"DHW"   |"14"      |"HOUSEWARES"|"1441"    |"CLEANING"|"3462"    |"DAMP CONTROL"
@@ -120,44 +120,44 @@ def import_hierarchy_line(line):
     fineline.save()
     
     
-def import_product_line(line, count, products):
-    """
-    Item,BUDesc,Department Desc,Sub Dept Desc,Fineline Desc,Item Description,Item Full Desc
-    170965,HG HARDWARE & GARDEN,01 HARDWARE,0112 CHAIN  WIRE & ROPE,1965 U BOLT,U BOLT 25MM ZP 10PC WARRIOR,170965 U BOLT 25MM ZP 10PC WARRIOR
-    """
-    row = line.split(',')
+# def import_product_line(line, count, products):
+    # """
+    # Item,BUDesc,Department Desc,Sub Dept Desc,Fineline Desc,Item Description,Item Full Desc
+    # 170965,HG HARDWARE & GARDEN,01 HARDWARE,0112 CHAIN  WIRE & ROPE,1965 U BOLT,U BOLT 25MM ZP 10PC WARRIOR,170965 U BOLT 25MM ZP 10PC WARRIOR
+    # """
+    # row = line.split(',')
     
-    type = 'standard'
-    idtxt = row[0]
-    if idtxt[0] == '-':
-        type = 'fractional'
-        idtxt = idtxt[1:]
-    elif idtxt[0] == '!':
-        type = 'kit'
-        idtxt = idtxt[1:]
+    # type = 'standard'
+    # idtxt = row[0]
+    # if idtxt[0] == '-':
+        # type = 'fractional'
+        # idtxt = idtxt[1:]
+    # elif idtxt[0] == '!':
+        # type = 'kit'
+        # idtxt = idtxt[1:]
         
-    try:
-        id = int(idtxt)
-        if type == 'fractional':
-            id = 100000000 + id
-        elif type == 'kit':
-            id = 200000000 + id
-    except ValueError:
-        print( "Ignoring non-numeric SKU: {}".format(row[0]) )
-        return
+    # try:
+        # id = int(idtxt)
+        # if type == 'fractional':
+            # id = 100000000 + id
+        # elif type == 'kit':
+            # id = 200000000 + id
+    # except ValueError:
+        # print( "Ignoring non-numeric SKU: {}".format(row[0]) )
+        # return
 
-    department, created = ProductCategory.objects.get_or_create(code=int(row[2][0:2]), name=row[2][3:], level='department')
-    sub_department, created = ProductCategory.objects.get_or_create(code=int(row[3][0:4]), name=row[3][5:], level='sub_department')
-    fineline, created = ProductCategory.objects.get_or_create(code=int(row[4][0:4]), name=row[4][5:],level='fineline')
+    # department, created = ProductCategory.objects.get_or_create(code=int(row[2][0:2]), name=row[2][3:], level='department')
+    # sub_department, created = ProductCategory.objects.get_or_create(code=int(row[3][0:4]), name=row[3][5:], level='sub_department')
+    # fineline, created = ProductCategory.objects.get_or_create(code=int(row[4][0:4]), name=row[4][5:],level='fineline')
         
-    try:
-        product, created = Product.objects.get_or_create(name=row[5], description=row[6].strip(), code=id, status="active")
-        products[id] = product
-        if created:
-            ProductOffering.objects.get_or_create(product=product, sku=id, type=type, department=department, sub_department=sub_department, fineline=fineline )
-            SupplierProduct.objects.get_or_create(product=product, supplier_sku=id)
-    except IntegrityError:
-        print( "Duplicate product:{}".format(row[0]) )
+    # try:
+        # product, created = Product.objects.get_or_create(name=row[5], description=row[6].strip(), code=id, status="active")
+        # products[id] = product
+        # if created:
+            # ProductOffering.objects.get_or_create(product=product, sku=id, type=type, department=department, sub_department=sub_department, fineline=fineline )
+            # SupplierProduct.objects.get_or_create(product=product, supplier_sku=id)
+    # except IntegrityError:
+        # print( "Duplicate product:{}".format(row[0]) )
     
 
 def import_product_line2(line, channels):
@@ -196,7 +196,6 @@ def import_product_line2(line, channels):
     try:
         sub_department = ProductCategory.objects.get( level='sub_department', code=int(row[89].strip('"')) )
     except ObjectDoesNotExist:
-        print(row[89], row[6])
         sub_department = ProductCategory.objects.create(level='sub_department', code=int(row[89].strip('"')), name='un-named sub-dept')
 
     try:
@@ -213,65 +212,79 @@ def import_product_line2(line, channels):
     else:
         name = row[4].strip('"')
     
-    try:
-        # Get or create product and details
-        product, created = Product.objects.get_or_create(code=id)
-        product.name = name
-        product.tax_code = row[25].strip('"')
-        product.brand=brand
-        product.sub_brand=sub_brand
-        product.range = int(row[115])
-        product.dangerous_classification = row[126].strip('"')
-        product.relative_importance_index = row[116].strip('"')
-        
-        excl_val = {' ':'', 'RE':'Retail Exclusive', 'E':'Exclusive', 'P':'Proprietary', 'BTR':'Better', 'BES':'Best', 'BTY':'BTY'}
-        product.exclusive = excl_val[row[92].strip('"')]
-        
-        product.status=row[90].strip('"')
-        product.description=row[3].strip('"')
-        if row[57] == '"Y"':
-            product.core_range = True
-        if row[58] == '"Y"':
-            product.key_value_item = True
-        if row[59] == '"Y"':
-            product.impulse_item = True
-        if row[146] != '0':
-            product.first_sale_date = yyyymmdd_to_date(row[146])
-        if row[157] == '"Y"':
-            product.core_abc = True
-        # TODO: 2nd loop to set Parents
-        product.save()
+    #try:
+    # Get or create product and details
+    product, created = Product.objects.get_or_create(code=id)
+    product.name = name
+    product.tax_code = row[25].strip('"')
+    product.brand=brand
+    product.sub_brand=sub_brand
+    product.range = int(row[115])
+    product.dangerous_classification = row[126].strip('"')
+    product.relative_importance_index = row[116].strip('"')
+    
+    excl_val = {' ':'', 'RE':'Retail Exclusive', 'E':'Exclusive', 'P':'Proprietary', 'BTR':'Better', 'BES':'Best', 'BTY':'BTY'}
+    product.exclusive = excl_val[row[92].strip('"')]
+    
+    product.status=row[90].strip('"')
+    product.description=row[3].strip('"')
+    if row[57] == '"Y"':
+        product.core_range = True
+    if row[58] == '"Y"':
+        product.key_value_item = True
+    if row[59] == '"Y"':
+        product.impulse_item = True
+    if row[146] != '0':
+        product.first_sale_date = yyyymmdd_to_date(row[146])
+    if row[157] == '"Y"':
+        product.core_abc = True
+    # TODO: 2nd loop to set Parents
+    product.save()
 
-        # Get or create offering and details
-        po, created = ProductOffering.objects.get_or_create(product=product, sku=id, type=type, department=department, sub_department=sub_department, fineline=fineline, barcode=row[8].strip('"') )
-        if row[52] != '"N"':
-            po.channels.add(channels['Web'])
+    # Get or create offering and details
+    po, created = ProductOffering.objects.get_or_create(product=product, sku=id, type=type, department=department, sub_department=sub_department, fineline=fineline, barcode=row[8].strip('"') )
+    if row[52] != '"N"':
+        po.channels.add(channels['Web'])
+    
+    # Get or supplier product and details
+    try:
+        supplier = Supplier.objects.get(code=row[9].strip('"'))
+    except ObjectDoesNotExist:
+        supplier = Supplier.objects.create(code=row[9].strip('"'),name='unnamed supplier')
+    
+    try:
+        sp = SupplierProduct.objects.get(supplier_sku=row[34].strip('"'), supplier=supplier)
+    except ObjectDoesNotExist:
+        sp = SupplierProduct.objects.create(product=product, supplier_sku=row[34].strip('"'), supplier=supplier)
+    sp.unit_of_measure=unit_of_measure
+    sp.cost_price = Decimal(row[35])
+    sp.reccomended_retail_price = Decimal(row[30])
+    sp.reccomended_markup = Decimal(row[29])
+    sp.carton_quantity = Decimal(row[13])
+    sp.quantity_break1 = Decimal(row[68])
+    sp.quantity_price1 = Decimal(row[69])
+    sp.quantity_break2 = Decimal(row[70])
+    sp.quantity_price2 = Decimal(row[71])
+    
+    if len(row[98]) == 8:
+        sp.next_available_date = yyyymmdd_to_date(row[98])
+    sp.save()
+    
+    # If there is a 2nd supplier then create
+    if row[45].strip('"').strip(' ') != "":
+        try:
+            supplier = Supplier.objects.get(code=row[45].strip('"'))
+        except ObjectDoesNotExist:
+            supplier = Supplier.objects.create(code=row[45].strip('"'),name='unnamed supplier')
         
-        # Get or supplier product and details
-        supplier, created = Supplier.objects.get_or_create(code=row[9].strip('"'),name='unnamed supplier')
-        sp, created = SupplierProduct.objects.get_or_create(product=product, supplier_sku=row[34].strip('"'), supplier=supplier)
-        sp.unit_of_measure=unit_of_measure
-        sp.cost_price = Decimal(row[35])
-        sp.reccomended_retail_price = Decimal(row[30])
-        sp.reccomended_markup = Decimal(row[29])
-        sp.carton_quantity = Decimal(row[13])
-        sp.quantity_break1 = Decimal(row[68])
-        sp.quantity_price1 = Decimal(row[69])
-        sp.quantity_break2 = Decimal(row[70])
-        sp.quantity_price2 = Decimal(row[71])
+        try:
+            sp = SupplierProduct.objects.get(supplier_sku=row[46].strip('"'), supplier=supplier)
+        except ObjectDoesNotExist:
+            sp = SupplierProduct.objects.create(product=product, supplier_sku=row[46].strip('"'), supplier=supplier, unit_of_measure=unit_of_measure)
         
-        if len(row[98]) == 8:
-            sp.next_available_date = yyyymmdd_to_date(row[98])
-        sp.save()
-        
-        # If there is a 2nd supplier then create
-        if row[45].strip('"').strip(' ') != "":
-            supplier, created = Supplier.objects.get_or_create(code=row[45].strip('"'),name='unnamed supplier')
-            sp = SupplierProduct.objects.get_or_create(product=product, supplier_sku=row[46].strip('"'), supplier=supplier, unit_of_measure=unit_of_measure)
-            
-        return product
-    except IntegrityError:
-        print( "Duplicate product:{}".format(row[1]) )
+    return product
+    #except IntegrityError:
+    #    print( "Duplicate product:{}".format(row[1]) )
     
     
 def import_week_line(line, count, merch_weeks):
@@ -317,42 +330,42 @@ def import_date_line(line):
     return merch_date
 
 
-def bulk_create(count, records):
-    ProductForecast.objects.bulk_create(records)
-    print( "Bulk create of {} rows ending in row {}".format(len(records),count))
-    return []
+# def bulk_create(count, records):
+    # ProductForecast.objects.bulk_create(records)
+    # print( "Bulk create of {} rows ending in row {}".format(len(records),count))
+    # return []
     
     
-def import_line(line, count, records, products, merch_weeks):
-    """
-    "M10"|5/10/2015 0:00:00|"082443"|0.29
-    """
-    row = line.split('|')
+# def import_line(line, count, records, products, merch_weeks):
+    # """
+    # "M10"|5/10/2015 0:00:00|"082443"|0.29
+    # """
+    # row = line.split('|')
 
-    division = row[0].strip('"')
-    datetxt = row[1]
-    item_code = int(row[2].strip('"'))
-    amount = Decimal(row[3])
+    # division = row[0].strip('"')
+    # datetxt = row[1]
+    # item_code = int(row[2].strip('"'))
+    # amount = Decimal(row[3])
     
-    try:
-        product = products[item_code]
-    except KeyError:
-        product = Product.objects.create(id=item_code, type='standard', name='unknown' )
-        products[item_code] = product
-        print( "Created unknown product:{}".format(item_code) )
+    # try:
+        # product = products[item_code]
+    # except KeyError:
+        # product = Product.objects.create(id=item_code, type='standard', name='unknown' )
+        # products[item_code] = product
+        # print( "Created unknown product:{}".format(item_code) )
         
-    try:
-        merch_week = merch_weeks[datetxt]
-    except KeyError:
-        print( "Unknown merch week:{}".format(datetxt) )
-        return records
+    # try:
+        # merch_week = merch_weeks[datetxt]
+    # except KeyError:
+        # print( "Unknown merch week:{}".format(datetxt) )
+        # return records
 
-    forecast = ProductForecast( division=division, merch_week=merch_week, product=product, amount=amount )
-    records.append(forecast)
+    # forecast = ProductForecast( division=division, merch_week=merch_week, product=product, amount=amount )
+    # records.append(forecast)
     
-    if count % 100000 == 0:
-        return bulk_create(count, records)
-    return records
+    # if count % 100000 == 0:
+        # return bulk_create(count, records)
+    # return records
 
 
 def import_sale_week_line(line, products, merch_weeks, stores):
@@ -439,13 +452,13 @@ def dostores(filename):
     print( "Created {} stores".format(count) )
 
     
-def dohierarchy(filename):
+def doproductcategories(filename):
     count = 0
     with open(filename) as infile:
         for line in infile:
             count += 1
             if count > 1:
-                import_hierarchy_line(line)
+                import_product_hierarchy_line(line)
     print( "Created {} product categories".format(count) )
 
     
@@ -532,20 +545,20 @@ def domerchdates(filename):
     return merch_dates
     
     
-def doproducts(product_filename):
-    products = {}
-    for product in Product.objects.all():
-        products[product.code] = product
+# def doproducts(product_filename):
+    # products = {}
+    # for product in Product.objects.all():
+        # products[product.code] = product
 
-    with open(product_filename) as infile:
-        count = 0
-        for line in infile:
-            count += 1
-            if count > 1:
-                import_product_line(line, count, products)
+    # with open(product_filename) as infile:
+        # count = 0
+        # for line in infile:
+            # count += 1
+            # if count > 1:
+                # import_product_line(line, count, products)
                 
-    print( "Created products" )
-    return products
+    # print( "Created products" )
+    # return products
     
 
 def doproducts2(product_filename, startline=0):
@@ -573,24 +586,24 @@ def doproducts2(product_filename, startline=0):
     print( "Imported {} products".format(count) )
 
     
-def doimport1(extract_filename="Extract.txt", product_filename="Products.csv", weeks_filename="WeeksAndDates.txt"):
-    merch_weeks = {}
-    records = []
+# def doimport1(extract_filename="Extract.txt", product_filename="Products.csv", weeks_filename="WeeksAndDates.txt"):
+    # merch_weeks = {}
+    # records = []
 
-    products = doproducts(products, product_filename)
+    # products = doproducts(products, product_filename)
 
-    with open(weeks_filename) as infile:
-        count = 0
-        for line in infile:
-            count += 1
-            import_week_line(line, count, merch_weeks)
-    print( "Created merch weeks" )
+    # with open(weeks_filename) as infile:
+        # count = 0
+        # for line in infile:
+            # count += 1
+            # import_week_line(line, count, merch_weeks)
+    # print( "Created merch weeks" )
             
-    with open(extract_filename) as infile:
-        count = 0
-        for line in infile:
-            count += 1
-            records = import_line(line, count, records, products, merch_weeks)
-        if len(records) > 0:
-            records = bulk_create(count, records)
+    # with open(extract_filename) as infile:
+        # count = 0
+        # for line in infile:
+            # count += 1
+            # records = import_line(line, count, records, products, merch_weeks)
+        # if len(records) > 0:
+            # records = bulk_create(count, records)
             

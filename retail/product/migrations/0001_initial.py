@@ -64,7 +64,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ProductOffering',
             fields=[
-                ('sku', models.CharField(max_length=50, primary_key=True, serialize=False)),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('sku', models.CharField(max_length=50, serialize=False)),
                 ('barcode', models.CharField(blank=True, max_length=50, null=True)),
                 ('valid_from', models.DateField(blank=True, null=True)),
                 ('valid_to', models.DateField(blank=True, null=True)),
@@ -115,7 +116,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SupplierProduct',
             fields=[
-                ('supplier_sku', models.CharField(max_length=200, primary_key=True, serialize=False)),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('supplier_sku', models.CharField(max_length=200, serialize=False)),
                 ('barcode', models.CharField(blank=True, max_length=50, null=True)),
                 ('unit_of_measure', models.CharField(choices=[('each', 'each'), ('kg', 'kg'), ('meter', 'meter')], default='each', max_length=200)),
                 ('carton_quantity', models.DecimalField(blank=True, decimal_places=4, max_digits=10, null=True)),
