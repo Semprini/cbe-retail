@@ -138,6 +138,10 @@ def import_product_line(line, count, products):
         
     try:
         id = int(idtxt)
+        if type == 'fractional':
+            id = 100000000 + id
+        elif type == 'fractional':
+            id = 200000000 + kit
     except ValueError:
         print( "Ignoring non-numeric SKU: {}".format(row[0]) )
         return
@@ -164,8 +168,6 @@ def import_product_line2(line, channels):
     """
     row = line.split('|')
 
-    #todo ZMYBTY 92 = exclusive
-
     type = 'standard'
     idtxt = row[1].strip('"')
     if idtxt[0] == '-':
@@ -177,6 +179,10 @@ def import_product_line2(line, channels):
 
     try:
         id = int(idtxt)
+        if type == 'fractional':
+            id = 100000000 + id
+        elif type == 'fractional':
+            id = 200000000 + kit
     except ValueError:
         print( "Ignoring non-numeric SKU: {}".format(row[0]) )
         return
@@ -209,7 +215,8 @@ def import_product_line2(line, channels):
     
     try:
         # Get or create product and details
-        product, created = Product.objects.get_or_create(name=name, code=id)
+        product, created = Product.objects.get_or_create(code=id)
+        product.name = name
         product.tax_code = row[25].strip('"')
         product.brand=brand
         product.sub_brand=sub_brand
@@ -221,7 +228,7 @@ def import_product_line2(line, channels):
         product.exclusive = excl_val[row[92].strip('"')]
         
         product.status=row[90].strip('"')
-        product.description=row[3].strip('"'),
+        product.description=row[3].strip('"')
         if row[57] == '"Y"':
             product.core_range = True
         if row[58] == '"Y"':
@@ -371,6 +378,10 @@ def import_sale_week_line(line, products, merch_weeks, stores):
 
     try:
         id = int(idtxt)
+        if type == 'fractional':
+            id = 100000000 + id
+        elif type == 'fractional':
+            id = 200000000 + kit
     except ValueError:
         print( "Ignoring non-numeric SKU: {}".format(row[1]) )
         return [None, stores]

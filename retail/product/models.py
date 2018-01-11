@@ -57,7 +57,7 @@ class Product(models.Model):
     range = models.IntegerField( default=0 )
     dangerous_classification = models.CharField(max_length=50, blank=True)
     relative_importance_index = models.CharField(max_length=10, blank=True)
-    exclusive = models.CharField(max_length=10, blank=True)
+    exclusive = models.CharField(max_length=50, blank=True)
 
     business_unit = models.ForeignKey(Organisation, null=True, blank=True)
     
