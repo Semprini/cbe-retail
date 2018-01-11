@@ -140,8 +140,8 @@ def import_product_line(line, count, products):
         id = int(idtxt)
         if type == 'fractional':
             id = 100000000 + id
-        elif type == 'fractional':
-            id = 200000000 + kit
+        elif type == 'kit':
+            id = 200000000 + id
     except ValueError:
         print( "Ignoring non-numeric SKU: {}".format(row[0]) )
         return
@@ -181,8 +181,8 @@ def import_product_line2(line, channels):
         id = int(idtxt)
         if type == 'fractional':
             id = 100000000 + id
-        elif type == 'fractional':
-            id = 200000000 + kit
+        elif type == 'kit':
+            id = 200000000 + id
     except ValueError:
         print( "Ignoring non-numeric SKU: {}".format(row[0]) )
         return
@@ -380,8 +380,8 @@ def import_sale_week_line(line, products, merch_weeks, stores):
         id = int(idtxt)
         if type == 'fractional':
             id = 100000000 + id
-        elif type == 'fractional':
-            id = 200000000 + kit
+        elif type == 'kit':
+            id = 200000000 + id
     except ValueError:
         print( "Ignoring non-numeric SKU: {}".format(row[1]) )
         return [None, stores]
