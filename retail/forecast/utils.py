@@ -395,12 +395,11 @@ def import_store_sale_week_line(line, products, merch_weeks, stores):
             id = 100000000 + id
         elif type == 'kit':
             id = 200000000 + id
+        try:
+            product = products["{}".format(id)]
+        except KeyError:
+            product = None
     except ValueError:
-        product = None
-
-    try:
-        product = products["{}".format(id)]
-    except KeyError:
         product = None
 
     try:
@@ -470,13 +469,14 @@ def import_sale_week_line(line, products, merch_weeks):
             id = 100000000 + id
         elif type == 'kit':
             id = 200000000 + id
+
+        try:
+            product = products["{}".format(id)]
+        except KeyError:
+            product = None
     except ValueError:
         product = None
 
-    try:
-        product = products["{}".format(id)]
-    except KeyError:
-        product = None
 
     try:
         merch_week = merch_weeks["{} {}".format(int(row[2]), int(row[1]))] #MerchWeek.objects.get( number=int(row[3]), year=int(row[2]) )
