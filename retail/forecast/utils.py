@@ -184,7 +184,7 @@ def import_product_line2(line, channels):
         elif type == 'kit':
             id = 200000000 + id
     except ValueError:
-        print( "Ignoring non-numeric SKU: {}".format(row[0]) )
+        print( "Ignoring non-numeric SKU: {}".format(row[1]) )
         return
 
 
@@ -368,7 +368,7 @@ def import_date_line(line):
     # return records
 
 
-def import_sale_week_line(line, products, merch_weeks, stores):
+def import_store_sale_week_line(line, products, merch_weeks, stores):
     """
     ZSWST|ZSWIT   |ZSWYR|ZSWW#|ZSWQT|ZSWS$|ZSWC$|ZSWOH |ZSWOO|ZSWRP   |ZSWAV
     Store Item     Year  Week  Quant Sales Cost  stock  onord rrp      av cost 
@@ -396,14 +396,12 @@ def import_sale_week_line(line, products, merch_weeks, stores):
         elif type == 'kit':
             id = 200000000 + id
     except ValueError:
-        print( "Ignoring non-numeric SKU: {}".format(row[1]) )
-        return [None, stores]
+        product = None
 
     try:
         product = products["{}".format(id)]
     except KeyError:
-        print( "Unknown product: {}".format(id) )
-        return [None, stores]
+        product = None
 
     try:
         merch_week = merch_weeks["{} {}".format(int(row[3]), int(row[2]))] #MerchWeek.objects.get( number=int(row[3]), year=int(row[2]) )
@@ -420,7 +418,7 @@ def import_sale_week_line(line, products, merch_weeks, stores):
     end_date = "{}-{}-6".format(row[2], row[3])
     end_date = datetime.datetime.strptime(end_date, "%Y-%W-%w").date()
     
-    sale_week = ProductSaleWeek( product=product, store=store, end_date=end_date)
+    sale_week = StoreProductSaleWeek( product=product, product_txtid=idtxt, store=store, end_date=end_date)
     sale_week.merch_week=merch_week
     sale_week.quantity = Decimal(row[4])
     sale_week.value = Decimal(row[5])
@@ -441,7 +439,78 @@ def import_sale_week_line(line, products, merch_weeks, stores):
     
     return [sale_week, stores]
 
+    
+def import_sale_week_line(line, products, merch_weeks):
+    """
+    ZSWIT   |ZSWYR|ZSWW#|      ZSWQT|ZSWS$|ZSWC$|ZSWOH |ZSWOO|         |
+    Item     Year  Week |count|Quant Sales Cost  stock  onord count soh count sales 
+    0        1     2     3     4     5     6      7     8     9         10
+    " "     |2012 |43   |     |.0000|.00  |.00  |.0000 |.0000|         |    
+    "!07454"|2012 |1    |     |.0000|.00  |.00  |2.0000|.0000|         |    
+    
+    ZSWIT   |ZSWYR|ZSWW#|STORE00001|AGG_Q00001|AGG_S00001|AGG_C00001|AGG_S00002|AGG_Q00002|STORE00002|STORE00003
+    " "     |2015 |42   |8    |.0000|.00  |.00  |.0000 |.0000|0|0
+    " "     |2015 |43   |7    |.0000|.00  |.00  |.0000 |.0000|0|0
+    
+    """
+    row = line.split('|')
 
+    type = 'standard'
+    idtxt = row[0].strip('"')
+    if idtxt[0] == '-':
+        type = 'fractional'
+        idtxt = idtxt[1:]
+    elif idtxt[0] == '!':
+        type = 'kit'
+        idtxt = idtxt[1:]
+
+    try:
+        id = int(idtxt)
+        if type == 'fractional':
+            id = 100000000 + id
+        elif type == 'kit':
+            id = 200000000 + id
+    except ValueError:
+        product = None
+
+    try:
+        product = products["{}".format(id)]
+    except KeyError:
+        product = None
+
+    try:
+        merch_week = merch_weeks["{} {}".format(int(row[2]), int(row[1]))] #MerchWeek.objects.get( number=int(row[3]), year=int(row[2]) )
+    except KeyError:
+        print( "Unknown merch week: {} {}".format(int(row[2]), row[1]) )
+        merch_week = None
+
+    end_date = "{}-{}-6".format(row[1], row[2])
+    end_date = datetime.datetime.strptime(end_date, "%Y-%W-%w").date()
+    
+    sale_week = ProductSaleWeek( product=product, product_txtid=idtxt, end_date=end_date)
+    sale_week.merch_week=merch_week
+    sale_week.store_count=int(row[3])
+    sale_week.quantity = Decimal(row[4])
+    sale_week.value = Decimal(row[5])
+    sale_week.cost = Decimal(row[6])
+    sale_week.on_hand = Decimal(row[7])
+    sale_week.on_order = Decimal(row[8])
+    
+    sale_week.store_stock_count = int(row[9])
+    sale_week.store_sales_count = int(row[10])
+    #sale_week.save()
+
+    #try:
+    #    stock_line = ProductStock.objects.get( product=product, store=store )
+    #except ObjectDoesNotExist:
+    #    stock_line = ProductStock( product=product, store=store )
+    #stock_line.amount = Decimal(row[7])
+    #stock_line.retail_price = Decimal(row[9])
+    #stock_line.save()
+    
+    return sale_week
+    
+    
 def dostores(filename):
     count = 0
     with open(filename) as infile:
@@ -466,6 +535,67 @@ def doweeklysaleslines(filename):
     sale_lines = []
     products = {}
     merch_weeks = {}
+    
+    for product in Product.objects.all():
+        products[product.code] = product
+        
+    for merch_week in MerchWeek.objects.all():
+        merch_weeks["{} {}".format(merch_week.number,merch_week.year)] = merch_week
+        
+    with open(filename) as infile:
+        count = 0
+        for line in infile:
+            count += 1
+            if count > 1:
+                sale_line = import_sale_week_line(line, products, merch_weeks)
+                if sale_line:
+                    sale_lines.append(sale_line)
+                    
+            if count%10000 == 0:
+                done = False
+                retry_count = 0
+                while not done and retry_count < 10:
+                    try:
+                        ProductSaleWeek.objects.bulk_create(sale_lines)
+                        sale_lines = []
+                        print( "Batch of 10k done. Current count:{}".format(count) )
+                        done = True
+                    except DatabaseError as err:
+                        print( "DATABASE ERROR! Closing unusable connections and retrying shortly. %s"%err )
+                        sleep(10)
+                        for conn in connections.all():
+                            conn.close_if_unusable_or_obsolete()
+                        sleep(10)
+                        retry_count+=1
+                if retry_count >= 10:
+                    raise Exception( "FATAL DATABASE ERROR!" )
+                    
+        
+        if len(sale_lines) > 0:
+            done = False
+            retry_count = 0
+            while not done and retry_count < 10:
+                try:
+                    ProductSaleWeek.objects.bulk_create(sale_lines)        
+                    done = True
+                except DatabaseError as err:
+                    print( "DATABASE ERROR! Closing unusable connections and retrying shortly. %s"%err )
+                    sleep(10)
+                    for conn in connections.all():
+                        conn.close_if_unusable_or_obsolete()
+                    sleep(10)
+                    retry_count+=1
+            if retry_count >= 10:
+                raise Exception( "FATAL DATABASE ERROR!" )
+
+
+                    
+    print( "Created {} weekly sale lines".format(count) )    
+    
+def dostoreweeklysaleslines(filename):
+    sale_lines = []
+    products = {}
+    merch_weeks = {}
     stores = {}
     
     for product in Product.objects.all():
@@ -482,7 +612,7 @@ def doweeklysaleslines(filename):
         for line in infile:
             count += 1
             if count > 1:
-                sale_line, stores = import_sale_week_line(line, products, merch_weeks, stores)
+                sale_line, stores = import_store_sale_week_line(line, products, merch_weeks, stores)
                 if sale_line:
                     sale_lines.append(sale_line)
                     

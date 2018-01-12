@@ -23,11 +23,12 @@ class MerchDate(models.Model):
     merch_week = models.ForeignKey(MerchWeek, related_name='merch_dates')
     
 
-class ProductSaleWeek(models.Model):
+class StoreProductSaleWeek(models.Model):
     end_date = models.DateField()
-    store = models.ForeignKey(Store, related_name='sales_weekly')
-    product = models.ForeignKey(Product, related_name='sales_weekly')
-    merch_week = models.ForeignKey(MerchWeek, related_name='merch_weeks', null=True, blank=True)
+    store = models.ForeignKey(Store, related_name='store_product_sales_weekly')
+    product = models.ForeignKey(Product, null=True, blank=True, related_name='store_product_sales_weekly')
+    product_txtid = models.CharField(max_length=50)
+    merch_week = models.ForeignKey(MerchWeek, related_name='store_product_sales_weekly_merch_weeks', null=True, blank=True)
     
     quantity = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
     value = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
@@ -36,6 +37,23 @@ class ProductSaleWeek(models.Model):
     on_order = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
     retail_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     average_cost = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+
+
+class ProductSaleWeek(models.Model):
+    end_date = models.DateField()
+    product = models.ForeignKey(Product, null=True, blank=True, related_name='product_sales_weekly')
+    product_txtid = models.CharField(max_length=50)
+    merch_week = models.ForeignKey(MerchWeek, related_name='product_sales_weekly_merch_weeks', null=True, blank=True)
+    
+    store_count = models.IntegerField()
+    quantity = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
+    value = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    cost = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    on_hand = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
+    on_order = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
+
+    store_stock_count = models.IntegerField()
+    store_sales_count = models.IntegerField()
     
 
 class ProductForecast(models.Model):

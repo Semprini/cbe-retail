@@ -1,3 +1,6 @@
+nohup.out
+*.log
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -50,7 +53,6 @@ coverage.xml
 *.pot
 
 # Django stuff:
-*.log
 local_settings.py
 *.sqlite3
 *.pickle
