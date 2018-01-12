@@ -483,6 +483,9 @@ def import_sale_week_line(line, products, merch_weeks):
     except KeyError:
         print( "Unknown merch week: {} {}".format(int(row[2]), row[1]) )
         merch_week = None
+    except:
+        print row
+        raise
 
     end_date = "{}-{}-6".format(row[1], row[2])
     end_date = datetime.datetime.strptime(end_date, "%Y-%W-%w").date()
