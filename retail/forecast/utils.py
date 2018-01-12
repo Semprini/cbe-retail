@@ -484,7 +484,7 @@ def import_sale_week_line(line, products, merch_weeks):
         print( "Unknown merch week: {} {}".format(int(row[2]), row[1]) )
         merch_week = None
     except:
-        print row
+        print( row )
         raise
 
     end_date = "{}-{}-6".format(row[1], row[2])
