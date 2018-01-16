@@ -3,6 +3,7 @@ from django.db import models
 from cbe.location.models import Location
 from cbe.customer.models import Customer, CustomerAccount
 from cbe.party.models import Organisation
+from cbe.accounts_receivable.models import CustomerPayment
 
 from retail.sale.models import Sale
 from retail.job_management.models import Job
@@ -122,6 +123,7 @@ class RebateBillItem(CustomerBillItem):
         return "%s:%s" %(self.bill, self.item_type )
 
 class AllocationBillItem(CustomerBillItem):
+    payment = models.ForeignKey( CustomerPayment )
     class Meta:
         ordering = ['id']
 

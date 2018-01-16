@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
     'explorer',
+    'django_extensions',
     'cbe.business_interaction',
     'cbe.location',
     'cbe.party',
@@ -196,6 +197,11 @@ STATIC_ROOT = '/usr/local/apache2/htdocs/'
 
 # LimitDepthMixin serializer setting
 DEPTH_MAX = 2
+
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}
 
 # Try to use a local settings file if available
 try:

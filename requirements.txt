@@ -11,4 +11,5 @@ djangorestframework-csv
 django-rest-swagger
 pika
 django-sql-explorer
+django-extensions
 git+https://github.com/Semprini/cbe.git
