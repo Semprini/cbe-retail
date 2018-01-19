@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('human_resources', '0004_staff_code'),
+        ('human_resources', '0001_initial'),
         ('location', '0002_auto_20171214_1248'),
         ('supplier_partner', '0002_auto_20171214_1743'),
     ]
