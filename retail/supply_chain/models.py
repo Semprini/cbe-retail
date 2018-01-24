@@ -14,31 +14,31 @@ class Asns(models.Model):
     shipment_due_date_time = models.DateTimeField(blank=True, null=True)
     final_shipment_flag = models.IntegerField(blank=True, null=True)
 
-    purchase_order = models.ForeignKey( 'PurchaseOrder' )
-    supplier = models.ForeignKey( Supplier, blank=True, null=True)
-    buyer = models.ForeignKey( Buyer, blank=True, null=True)
-    delivery_store = models.ForeignKey( Store, blank=True, null=True)
+    purchase_order = models.ForeignKey( 'PurchaseOrder', on_delete=models.CASCADE )
+    supplier = models.ForeignKey( Supplier, on_delete=models.CASCADE, blank=True, null=True)
+    buyer = models.ForeignKey( Buyer, on_delete=models.CASCADE, blank=True, null=True)
+    delivery_store = models.ForeignKey( Store, on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         unique_together = (('asn_reference', 'supplier'),)
 
 
 class PoExpectedDeliveryDate(models.Model):
-    purchase_order = models.ForeignKey( 'PurchaseOrder', blank=True, null=True )
+    purchase_order = models.ForeignKey( 'PurchaseOrder', on_delete=models.CASCADE, blank=True, null=True )
     expected_delivery_date = models.DateTimeField(blank=True, null=True)
-    supplier = models.ForeignKey( Supplier, blank=True, null=True)
+    supplier = models.ForeignKey( Supplier, on_delete=models.CASCADE, blank=True, null=True)
     message_received_date_time = models.DateTimeField(blank=True, null=True)
     source_record_table = models.CharField(max_length=31, blank=True, null=True)
     source_record_id = models.CharField(max_length=50, blank=True, null=True)
-    delivery_store = models.ForeignKey( Store, blank=True, null=True)
+    delivery_store = models.ForeignKey( Store, on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         unique_together = (('purchase_order', 'delivery_store', 'supplier'),)
 
 
 class PurchaseOrderAcknowledgementLineItems(models.Model):
-    purchase_order_acknowledgement = models.ForeignKey('PurchaseOrderAcknowledgements', models.DO_NOTHING)
-    product = models.ForeignKey(Product, blank=True, null=True)
+    purchase_order_acknowledgement = models.ForeignKey('PurchaseOrderAcknowledgements', on_delete=models.DO_NOTHING)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
     supplier_item_code = models.CharField(db_column='supplier_item_Code', max_length=15, blank=True, null=True)  # Field name made lowercase.
 
     quantity = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
@@ -55,10 +55,10 @@ class PurchaseOrderAcknowledgements(models.Model):
     delivery_date_time_requested = models.DateTimeField(blank=True, null=True)
     delivery_date_time_estimated = models.DateTimeField(blank=True, null=True)
 
-    purchase_order = models.ForeignKey( 'PurchaseOrder', blank=True, null=True )
-    supplier = models.ForeignKey( Supplier, blank=True, null=True)
-    buyer = models.ForeignKey( Buyer, blank=True, null=True)
-    delivery_store = models.ForeignKey( Store, blank=True, null=True)
+    purchase_order = models.ForeignKey( 'PurchaseOrder', on_delete=models.CASCADE, blank=True, null=True )
+    supplier = models.ForeignKey( Supplier, on_delete=models.CASCADE, blank=True, null=True)
+    buyer = models.ForeignKey( Buyer, on_delete=models.CASCADE, blank=True, null=True)
+    delivery_store = models.ForeignKey( Store, on_delete=models.CASCADE, blank=True, null=True)
 
     message_function_code = models.IntegerField(blank=True, null=True)
     message_function_description = models.CharField(max_length=50, blank=True, null=True)
@@ -70,7 +70,7 @@ class PurchaseOrderAcknowledgements(models.Model):
 
 class PurchaseOrderLineItems(models.Model):
     purchase_order = models.ForeignKey('PurchaseOrder', models.DO_NOTHING)
-    product = models.ForeignKey(Product, blank=True, null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
     supplier_item_code = models.CharField(max_length=15, blank=True, null=True)
     
     quantity = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
@@ -81,9 +81,9 @@ class PurchaseOrderLineItems(models.Model):
 
 class PurchaseOrder(models.Model):
     purchase_order_reference = models.CharField(max_length=10, blank=True, null=True)
-    supplier = models.ForeignKey( Supplier, blank=True, null=True)
-    buyer = models.ForeignKey( Buyer, blank=True, null=True)
-    delivery_store = models.ForeignKey( Store, blank=True, null=True)
+    supplier = models.ForeignKey( Supplier, on_delete=models.CASCADE, blank=True, null=True)
+    buyer = models.ForeignKey( Buyer, on_delete=models.CASCADE, blank=True, null=True)
+    delivery_store = models.ForeignKey( Store, on_delete=models.CASCADE, blank=True, null=True)
     
     purchase_order_date = models.DateTimeField(blank=True, null=True)
     despatched_date_time = models.DateTimeField(blank=True, null=True)

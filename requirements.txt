@@ -1,8 +1,8 @@
 coverage
-django==1.11
-djangorestframework==3.6.3
+django>=2
+djangorestframework>=3.7.7
 markdown>=2.6.7
-django-filter
+django-filter>=0.15.3
 django-nose
 django-crispy-forms
 django-gm2m

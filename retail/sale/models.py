@@ -15,9 +15,9 @@ from retail.job_management.models import Job
 
 
 class Purchaser(PartyRole):
-    customer = models.ForeignKey(Customer, db_index=True, null=True,blank=True)
-    account = models.ForeignKey(CustomerAccount, db_index=True, null=True,blank=True)
-    credit = models.ForeignKey(Credit, null=True,blank=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, db_index=True, null=True,blank=True)
+    account = models.ForeignKey(CustomerAccount, on_delete=models.CASCADE, db_index=True, null=True,blank=True)
+    credit = models.ForeignKey(Credit, on_delete=models.CASCADE, null=True,blank=True)
 
     class Meta:
         ordering = ['id']
@@ -42,9 +42,9 @@ class SalesChannel(models.Model):
 
 
 class Sale(models.Model):
-    channel = models.ForeignKey(SalesChannel)
-    store = models.ForeignKey(Store)
-    vendor = models.ForeignKey(Organisation)
+    channel = models.ForeignKey(SalesChannel, on_delete=models.CASCADE)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE)
+    vendor = models.ForeignKey(Organisation, on_delete=models.CASCADE)
     
     datetime = models.DateTimeField(default=datetime.datetime.now)
     status = models.CharField(max_length=200, choices=(('basket', 'basket'), ('complete', 'complete')), default='complete')
@@ -55,16 +55,16 @@ class Sale(models.Model):
     total_discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_tax = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
-    purchaser = models.ForeignKey(Purchaser, db_index=True, null=True,blank=True)
-    identification = models.ForeignKey(Identification, null=True,blank=True )
+    purchaser = models.ForeignKey(Purchaser, on_delete=models.CASCADE, db_index=True, null=True,blank=True)
+    identification = models.ForeignKey(Identification, on_delete=models.CASCADE, null=True,blank=True )
 
-    customer = models.ForeignKey(Customer, db_index=True, null=True,blank=True)
-    account = models.ForeignKey(CustomerAccount, db_index=True, null=True,blank=True)
-    job = models.ForeignKey(Job, db_index=True, null=True,blank=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, db_index=True, null=True,blank=True)
+    account = models.ForeignKey(CustomerAccount, on_delete=models.CASCADE, db_index=True, null=True,blank=True)
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, db_index=True, null=True,blank=True)
 
-    promotion = models.ForeignKey(Promotion, null=True,blank=True)
-    till = models.ForeignKey(PhysicalResource, db_index=True, null=True,blank=True)
-    staff = models.ForeignKey(Staff, db_index=True, null=True,blank=True)
+    promotion = models.ForeignKey(Promotion, on_delete=models.CASCADE, null=True,blank=True)
+    till = models.ForeignKey(PhysicalResource, on_delete=models.CASCADE, db_index=True, null=True,blank=True)
+    staff = models.ForeignKey(Staff, on_delete=models.CASCADE, db_index=True, null=True,blank=True)
 
     credit_balance_events = models.ManyToManyField(CreditBalanceEvent, blank=True)
 
@@ -76,15 +76,15 @@ class Sale(models.Model):
 
 
 class SaleItem(models.Model):
-    sale = models.ForeignKey(Sale, db_index=True, related_name='sale_items', on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, db_index=True, )
-    product_offering = models.ForeignKey(ProductOffering, db_index=True, )
+    sale = models.ForeignKey(Sale, on_delete=models.CASCADE, db_index=True, related_name='sale_items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, db_index=True, )
+    product_offering = models.ForeignKey(ProductOffering, on_delete=models.CASCADE, db_index=True, )
 
-    promotion = models.ForeignKey(Promotion, null=True,blank=True)
-    price_channel = models.ForeignKey(PriceChannel, null=True,blank=True)
-    price_calculation = models.ForeignKey(PriceCalculation, null=True,blank=True)
+    promotion = models.ForeignKey(Promotion, on_delete=models.CASCADE, null=True,blank=True)
+    price_channel = models.ForeignKey(PriceChannel, on_delete=models.CASCADE, null=True,blank=True)
+    price_calculation = models.ForeignKey(PriceCalculation, on_delete=models.CASCADE, null=True,blank=True)
 
-    product_offering_price = models.ForeignKey('pricing.ProductOfferingPrice', null=True, blank=True )
+    product_offering_price = models.ForeignKey('pricing.ProductOfferingPrice', on_delete=models.CASCADE, null=True, blank=True )
     quantity = models.DecimalField(max_digits=10, decimal_places=4)
     unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('square metre', 'square metre'), ('lineal metre', 'metre')), default='each')
 
@@ -115,8 +115,8 @@ class TenderType(models.Model):
 
 
 class Tender(models.Model):
-    sale = models.ForeignKey(Sale, db_index=True, related_name='tenders', on_delete=models.CASCADE)
-    tender_type = models.ForeignKey(TenderType)
+    sale = models.ForeignKey(Sale, on_delete=models.CASCADE, db_index=True, related_name='tenders')
+    tender_type = models.ForeignKey(TenderType, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     reference = models.CharField(max_length=200, null=True, blank=True)
 

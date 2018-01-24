@@ -16,11 +16,11 @@ class Store(PartyRole):
 
     opening_date = models.DateField(blank=True, null=True)
     
-    location = models.ForeignKey(Location, blank=True, null=True, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, blank=True, null=True)
     
-    trade_area = models.ForeignKey(GeographicArea, related_name='store_trade_areas', blank=True, null=True, on_delete=models.CASCADE)
-    retail_area = models.ForeignKey(GeographicArea, related_name='store_retail_areas', blank=True, null=True, on_delete=models.CASCADE)
-    national_area = models.ForeignKey(GeographicArea, related_name='store_national_areas', blank=True, null=True, on_delete=models.CASCADE)
+    trade_area = models.ForeignKey(GeographicArea, on_delete=models.CASCADE, related_name='store_trade_areas', blank=True, null=True)
+    retail_area = models.ForeignKey(GeographicArea, on_delete=models.CASCADE, related_name='store_retail_areas', blank=True, null=True)
+    national_area = models.ForeignKey(GeographicArea, on_delete=models.CASCADE, related_name='store_national_areas', blank=True, null=True)
     
     buildings = models.ManyToManyField(Structure, related_name='store')
     

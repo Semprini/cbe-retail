@@ -20,15 +20,15 @@ class MerchDate(models.Model):
     calendar_week_end = models.DateField()
     calendar_week_number = models.IntegerField()
 
-    merch_week = models.ForeignKey(MerchWeek, related_name='merch_dates')
+    merch_week = models.ForeignKey(MerchWeek, on_delete=models.CASCADE, related_name='merch_dates')
     
 
 class StoreProductSaleWeek(models.Model):
     end_date = models.DateField()
-    store = models.ForeignKey(Store, related_name='store_product_sales_weekly')
-    product = models.ForeignKey(Product, null=True, blank=True, related_name='store_product_sales_weekly')
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='store_product_sales_weekly')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True, related_name='store_product_sales_weekly')
     product_txtid = models.CharField(max_length=50)
-    merch_week = models.ForeignKey(MerchWeek, related_name='store_product_sales_weekly_merch_weeks', null=True, blank=True)
+    merch_week = models.ForeignKey(MerchWeek, on_delete=models.CASCADE, related_name='store_product_sales_weekly_merch_weeks', null=True, blank=True)
     
     quantity = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
     value = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
@@ -41,9 +41,9 @@ class StoreProductSaleWeek(models.Model):
 
 class ProductSaleWeek(models.Model):
     end_date = models.DateField()
-    product = models.ForeignKey(Product, null=True, blank=True, related_name='product_sales_weekly')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True, related_name='product_sales_weekly')
     product_txtid = models.CharField(max_length=50)
-    merch_week = models.ForeignKey(MerchWeek, related_name='product_sales_weekly_merch_weeks', null=True, blank=True)
+    merch_week = models.ForeignKey(MerchWeek, on_delete=models.CASCADE, related_name='product_sales_weekly_merch_weeks', null=True, blank=True)
     
     store_count = models.IntegerField()
     quantity = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
@@ -58,6 +58,6 @@ class ProductSaleWeek(models.Model):
 
 class ProductForecast(models.Model):
     division = models.CharField(max_length=100, db_index=True)
-    merch_week = models.ForeignKey(MerchWeek, related_name='product_forecasts')
-    product = models.ForeignKey(Product, related_name='product_forecasts')
+    merch_week = models.ForeignKey(MerchWeek, on_delete=models.CASCADE, related_name='product_forecasts')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_forecasts')
     amount = models.DecimalField(max_digits=10, decimal_places=2)

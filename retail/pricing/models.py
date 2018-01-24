@@ -17,7 +17,7 @@ class PriceCalculation(models.Model):
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
 
-    price_channel = models.ForeignKey(PriceChannel)
+    price_channel = models.ForeignKey(PriceChannel, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
 
@@ -35,7 +35,7 @@ class Promotion(models.Model):
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
 
-    price_channel = models.ForeignKey(PriceChannel, null=True, blank=True)
+    price_channel = models.ForeignKey(PriceChannel, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
 
@@ -52,12 +52,12 @@ class Promotion(models.Model):
 
     
 class ProductOfferingPrice(models.Model):
-    product_offering = models.ForeignKey(ProductOffering, related_name='product_offering_prices')
-    promotion = models.ForeignKey(Promotion, null=True, blank=True, related_name='product_offering_prices')
-    calculation = models.ForeignKey(PriceCalculation, null=True, blank=True, related_name='product_offering_prices')
+    product_offering = models.ForeignKey(ProductOffering, on_delete=models.CASCADE, related_name='product_offering_prices')
+    promotion = models.ForeignKey(Promotion, on_delete=models.CASCADE, null=True, blank=True, related_name='product_offering_prices')
+    calculation = models.ForeignKey(PriceCalculation, on_delete=models.CASCADE, null=True, blank=True, related_name='product_offering_prices')
     
-    account = models.ForeignKey(CustomerAccount, null=True, blank=True, related_name='product_offering_prices')
-    quote = models.ForeignKey('order.Quote', null=True, blank=True, related_name='product_offering_prices')
+    account = models.ForeignKey(CustomerAccount, on_delete=models.CASCADE, null=True, blank=True, related_name='product_offering_prices')
+    quote = models.ForeignKey('order.Quote', on_delete=models.CASCADE, null=True, blank=True, related_name='product_offering_prices')
     
     #pickslip
     #threshold
