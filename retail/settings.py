@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
     'explorer',
+    'django_extensions',
     'cbe.business_interaction',
     'cbe.location',
     'cbe.party',
@@ -94,12 +95,11 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
  )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -170,7 +170,7 @@ MQ_FRAMEWORK = {
 LOGIN_URL = "accounts/login/"
 LOGOUT_URL = "accounts/logout/"
 
-EXPLORER_CONNECTIONS = { 'Default': 'default' } 
+EXPLORER_CONNECTIONS = { 'Default': 'default' }
 EXPLORER_DEFAULT_CONNECTION = 'default'
 EXPLORER_CONNECTION_NAME  = 'default'
 
@@ -196,6 +196,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, '..', 'static')
 
 # LimitDepthMixin serializer setting
 DEPTH_MAX = 2
+
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}
 
 # Try to use a local settings file if available
 try:

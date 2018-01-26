@@ -3,13 +3,14 @@ from django.db import models
 from cbe.location.models import Location
 from cbe.customer.models import Customer, CustomerAccount
 from cbe.party.models import Organisation
+from cbe.accounts_receivable.models import CustomerPayment
 
 from retail.sale.models import Sale
 from retail.job_management.models import Job
 
 
 class CustomerBillingCycle(models.Model):
-    account = models.ForeignKey( CustomerAccount )
+    account = models.ForeignKey( CustomerAccount, on_delete=models.CASCADE )
 
     name = models.CharField(max_length=200)
 
@@ -26,11 +27,11 @@ class CustomerBillingCycle(models.Model):
     
 class CustomerBillSpecification(models.Model):
     name = models.CharField(max_length=200)
-    account = models.ForeignKey( CustomerAccount )
+    account = models.ForeignKey( CustomerAccount, on_delete=models.CASCADE )
     
-    billing_cycle = models.ForeignKey( CustomerBillingCycle )
-    location = models.ForeignKey( Location, null=True, blank=True )
-    customer = models.ForeignKey( Customer, null=True, blank=True )
+    billing_cycle = models.ForeignKey( CustomerBillingCycle, on_delete=models.CASCADE )
+    location = models.ForeignKey( Location, on_delete=models.CASCADE, null=True, blank=True )
+    customer = models.ForeignKey( Customer, on_delete=models.CASCADE, null=True, blank=True )
 
     class Meta:
         ordering = ['id']
@@ -40,9 +41,9 @@ class CustomerBillSpecification(models.Model):
     
     
 class CustomerBill(models.Model):
-    account = models.ForeignKey( CustomerAccount )
-    specification = models.ForeignKey( CustomerBillSpecification )
-    customer = models.ForeignKey( Customer )
+    account = models.ForeignKey( CustomerAccount, on_delete=models.CASCADE )
+    specification = models.ForeignKey( CustomerBillSpecification, on_delete=models.CASCADE )
+    customer = models.ForeignKey( Customer, on_delete=models.CASCADE )
 
     number = models.CharField(max_length=100)
     created = models.DateTimeField(auto_now_add=True)
@@ -68,7 +69,7 @@ class CustomerBill(models.Model):
     
     
 class CustomerBillItem(models.Model):
-    bill = models.ForeignKey( CustomerBill, related_name="%(class)ss" )
+    bill = models.ForeignKey( CustomerBill, on_delete=models.CASCADE, related_name="%(class)ss" )
     
     ITEM_TYPE_CHOICES = ( ('account', 'account'), ('job', 'job'), ('subscription', 'subscription'), ('service', 'service'), ('rebate','rebate'), ('allocation', 'allocation'), ('adjustment', 'adjustment'), ('dispute', 'dispute'), )
     item_type = models.CharField(max_length=100, choices=ITEM_TYPE_CHOICES)
@@ -93,7 +94,7 @@ class AccountBillItem(CustomerBillItem):
         return "%s:%s" %(self.bill, self.item_type )
     
 class JobBillItem(CustomerBillItem):
-    job = models.ForeignKey( Job )
+    job = models.ForeignKey( Job, on_delete=models.CASCADE )
     class Meta:
         ordering = ['id']
 
@@ -122,6 +123,7 @@ class RebateBillItem(CustomerBillItem):
         return "%s:%s" %(self.bill, self.item_type )
 
 class AllocationBillItem(CustomerBillItem):
+    payment = models.ForeignKey( CustomerPayment, on_delete=models.CASCADE )
     class Meta:
         ordering = ['id']
 
@@ -144,12 +146,12 @@ class DisputeBillItem(CustomerBillItem):
 
         
 class ServiceCharge(models.Model):
-    bill = models.ForeignKey( CustomerBill, related_name="%(class)ss" )
-    service_bill_item = models.ForeignKey( ServiceBillItem, related_name="%(class)ss", null=True, blank=True )
+    bill = models.ForeignKey( CustomerBill, on_delete=models.CASCADE, related_name="%(class)ss" )
+    service_bill_item = models.ForeignKey( ServiceBillItem, on_delete=models.CASCADE, related_name="%(class)ss", null=True, blank=True )
     
     sales = models.ManyToManyField(Sale, blank=True)
-    home_store = models.ForeignKey( Organisation, null=True, blank=True, related_name="home_service_charges" )
-    satellite_store = models.ForeignKey( Organisation, null=True, blank=True, related_name="satellite_service_charges" )
+    home_store = models.ForeignKey( Organisation, on_delete=models.CASCADE, null=True, blank=True, related_name="home_service_charges" )
+    satellite_store = models.ForeignKey( Organisation, on_delete=models.CASCADE, null=True, blank=True, related_name="satellite_service_charges" )
 
     total_margin = models.DecimalField(default = 0, max_digits=10, decimal_places=2)
     home_margin = models.DecimalField(default = 0, max_digits=10, decimal_places=2)

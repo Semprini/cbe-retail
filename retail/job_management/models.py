@@ -12,10 +12,10 @@ class Job(models.Model):
     valid_to = models.DateField(null=True, blank=True)
     
     job_number = models.CharField(max_length=200)
-    account = models.ForeignKey(CustomerAccount)
+    account = models.ForeignKey(CustomerAccount, on_delete=models.CASCADE)
     
     job_status = models.CharField(max_length=100, choices=job_status_choices)
-    credit = models.ForeignKey(Credit, null=True,blank=True)
+    credit = models.ForeignKey(Credit, on_delete=models.CASCADE, null=True,blank=True)
     
     class Meta:
         ordering = ['id']
@@ -25,8 +25,8 @@ class Job(models.Model):
 
         
 class JobPartyRole(PartyRole):
-    job = models.ForeignKey(Job, related_name="job_party_roles")
-    credit = models.ForeignKey(Credit, null=True,blank=True)
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="job_party_roles")
+    credit = models.ForeignKey(Credit, on_delete=models.CASCADE, null=True,blank=True)
     
     class Meta:
         ordering = ['id']

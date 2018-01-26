@@ -17,15 +17,15 @@ class LoyaltyScheme( models.Model ):
 class LoyaltyTransaction( models.Model ):
     created = models.DateTimeField(auto_now_add=True)
     
-    scheme = models.ForeignKey(LoyaltyScheme)
-    vendor = models.ForeignKey(Organisation)
-    identification = models.ForeignKey(Identification)
+    scheme = models.ForeignKey(LoyaltyScheme, on_delete=models.CASCADE)
+    vendor = models.ForeignKey(Organisation, on_delete=models.CASCADE)
+    identification = models.ForeignKey(Identification, on_delete=models.CASCADE)
     
-    sale = models.ForeignKey(Sale, db_index=True, related_name='loyalty_transactions', null=True,blank=True)
+    sale = models.ForeignKey(Sale, on_delete=models.CASCADE, db_index=True, related_name='loyalty_transactions', null=True,blank=True)
     sale_items = models.ManyToManyField(SaleItem, blank=True)
-    payment = models.ForeignKey(CustomerPayment, db_index=True, related_name='loyalty_transactions', null=True,blank=True)
+    payment = models.ForeignKey(CustomerPayment, on_delete=models.CASCADE, db_index=True, related_name='loyalty_transactions', null=True,blank=True)
     
-    promotion = models.ForeignKey(Promotion, null=True,blank=True)
+    promotion = models.ForeignKey(Promotion, on_delete=models.CASCADE, null=True,blank=True)
     
     loyalty_amount = models.DecimalField(max_digits=10, decimal_places=2)
 

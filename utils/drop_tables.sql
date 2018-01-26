@@ -26,6 +26,7 @@ DROP TABLE IF EXISTS forecast_merchdate;
 DROP TABLE IF EXISTS forecast_merchweek;                                
 DROP TABLE IF EXISTS forecast_productforecast;                          
 DROP TABLE IF EXISTS forecast_productsaleweek;                          
+DROP TABLE IF EXISTS forecast_storeproductsaleweek;                          
 
 DROP TABLE IF EXISTS accounts_receivable_customerpayment;               
 DROP TABLE IF EXISTS accounts_receivable_paymentchannel;                

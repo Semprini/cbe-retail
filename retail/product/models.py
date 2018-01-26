@@ -15,7 +15,7 @@ class ProductCategory(models.Model):
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
 
-    parent = models.ForeignKey('ProductCategory', null=True,blank=True)
+    parent = models.ForeignKey('ProductCategory', on_delete=models.CASCADE, null=True,blank=True)
 
     level = models.CharField(max_length=200, choices=(('division', 'division'),('category', 'category'),('department', 'department'), ('sub_department', 'sub_department'), ('fineline', 'fineline'), ))
     name = models.CharField(max_length=200)
@@ -29,15 +29,15 @@ class ProductAssociation(models.Model):
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
     
-    from_product = models.ForeignKey('Product', related_name='from_products')
-    to_product = models.ForeignKey('Product', related_name='to_products')
+    from_product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='from_products')
+    to_product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='to_products')
 
     association_type = models.CharField(max_length=200, choices=(('cross-selling', 'cross-selling'), ('other', 'other'), ), default='cross-selling')
     rank = models.IntegerField( default=0 )
 
     
 class Product(models.Model):
-    parent = models.ForeignKey('Product', null=True, blank=True, related_name='child_products')
+    parent = models.ForeignKey('Product', on_delete=models.CASCADE, null=True, blank=True, related_name='child_products')
     code = models.CharField(max_length=50, unique=True)
     brand = models.CharField(max_length=100, blank=True)
     sub_brand = models.CharField(max_length=100, blank=True)
@@ -59,7 +59,7 @@ class Product(models.Model):
     relative_importance_index = models.CharField(max_length=10, blank=True)
     exclusive = models.CharField(max_length=50, blank=True)
 
-    business_unit = models.ForeignKey(Organisation, null=True, blank=True)
+    business_unit = models.ForeignKey(Organisation, on_delete=models.CASCADE, null=True, blank=True)
     
     bundle = models.ManyToManyField('Product', blank=True)
     categories = models.ManyToManyField(ProductCategory, blank=True)
@@ -115,7 +115,7 @@ class Product(models.Model):
 
             
 class ProductSpecification(models.Model):
-    product = models.ForeignKey(Product, related_name="specifications")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="specifications")
     
     colour_name = models.CharField(max_length=50, null=True, blank=True)
     colour_value = models.CharField(max_length=50, null=True, blank=True)
@@ -128,11 +128,11 @@ class SupplierProduct(models.Model):
     supplier_sku = models.CharField(max_length=200)
     barcode = models.CharField(max_length=50, null=True, blank=True)
 
-    product = models.ForeignKey(Product, related_name="supplier_products")
-    specification = models.ForeignKey(ProductSpecification, related_name="supplier_products", null=True, blank=True)
-    supplier = models.ForeignKey(Supplier, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="supplier_products")
+    specification = models.ForeignKey(ProductSpecification, on_delete=models.CASCADE, related_name="supplier_products", null=True, blank=True)
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, null=True, blank=True)
 
-    buyer = models.ForeignKey(Buyer, null=True, blank=True)
+    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE, null=True, blank=True)
 
     unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
     carton_quantity = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
@@ -155,8 +155,8 @@ class SupplierProduct(models.Model):
     
 class ProductOffering(models.Model):
     sku = models.CharField(max_length=50)
-    product = models.ForeignKey(Product, related_name="product_offerings")
-    specification = models.ForeignKey(ProductSpecification, related_name="product_offerings", null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product_offerings")
+    specification = models.ForeignKey(ProductSpecification, on_delete=models.CASCADE, related_name="product_offerings", null=True, blank=True)
     barcode = models.CharField(max_length=50, null=True, blank=True)
 
     valid_from = models.DateField(null=True, blank=True)
@@ -168,9 +168,9 @@ class ProductOffering(models.Model):
     segments = models.ManyToManyField(MarketSegment, blank=True)
     strategies = models.ManyToManyField(MarketStrategy, blank=True)
     
-    department = models.ForeignKey(ProductCategory, related_name='department_offerings', null=True, blank=True)
-    sub_department = models.ForeignKey(ProductCategory, related_name='sub_department_offerings', null=True, blank=True)
-    fineline = models.ForeignKey(ProductCategory, related_name='fineline_offerings', null=True, blank=True)
+    department = models.ForeignKey(ProductCategory, on_delete=models.CASCADE, related_name='department_offerings', null=True, blank=True)
+    sub_department = models.ForeignKey(ProductCategory, on_delete=models.CASCADE, related_name='sub_department_offerings', null=True, blank=True)
+    fineline = models.ForeignKey(ProductCategory, on_delete=models.CASCADE, related_name='fineline_offerings', null=True, blank=True)
     
     unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
     retail_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -184,9 +184,9 @@ class ProductOffering(models.Model):
 
         
 class ProductStock(models.Model):
-    product = models.ForeignKey(Product, related_name='product_stock')
-    store = models.ForeignKey(Store)
-    location = models.ForeignKey(Location, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_stock')
+    store = models.ForeignKey(Store, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True, blank=True)
     updated_date = models.DateField(null=True, blank=True)
 
     unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
@@ -202,11 +202,11 @@ class ProductStock(models.Model):
         
 class ProductStockTake(models.Model):
     datetime = models.DateTimeField(auto_now_add=True)
-    product_stock = models.ForeignKey(ProductStock, related_name='product_stock_takes')
+    product_stock = models.ForeignKey(ProductStock, on_delete=models.CASCADE, related_name='product_stock_takes')
 
-    store = models.ForeignKey(Store)
-    location = models.ForeignKey(Location, null=True, blank=True)
-    staff = models.ForeignKey(Staff, null=True, blank=True)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True, blank=True)
+    staff = models.ForeignKey(Staff, on_delete=models.CASCADE, null=True, blank=True)
 
     unit_of_measure = models.CharField(max_length=200, choices=(('each', 'each'), ('kg', 'kg'), ('meter', 'meter')), default='each')
     amount = models.DecimalField(max_digits=8, decimal_places=4)

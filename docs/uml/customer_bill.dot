@@ -1,0 +1,1275 @@
+digraph model_graph {
+  // Dotfile by Django-Extensions graph_models
+  // Created: 2018-01-16 10:15
+  // Cli Options: -I CustomerBillingCycle,CustomerBillSpecification,CustomerBill,CustomerBillItem,AccountBillItem,JobBillItem,SubscriptionBillItem,ServiceBillItem,RebateBillItem,AllocationBillItem,AdjustmentBillItem,DisputeBillItem,ServiceCharge,Customer,CustomerAccount,Sale,Job,CustomerPayment
+
+  fontname = "Helvetica"
+  fontsize = 8
+  splines  = true
+
+  node [
+    fontname = "Helvetica"
+    fontsize = 8
+    shape = "plaintext"
+  ]
+
+  edge [
+    fontname = "Helvetica"
+    fontsize = 8
+  ]
+
+  // Labels
+  subgraph cluster_cbe_customer {
+    label=<
+          <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+          <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER">
+          <FONT FACE="Helvetica Bold" COLOR="Black" POINT-SIZE="12">
+          cbe.customer
+          </FONT>
+          </TD></TR>
+          </TABLE>
+          >
+    color=olivedrab4
+    style="rounded"
+  
+    cbe_customer_models_Customer [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      Customer<BR/>&lt;<FONT FACE="Helvetica Italic">PartyRole</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">customer_number</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">individual</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">managed_by</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">organisation</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">code</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">customer_status</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">name</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_from</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateTimeField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_to</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateTimeField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    cbe_customer_models_CustomerAccount [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      CustomerAccount
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">account_number</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">customer</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (customer_number)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">managed_by</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">account_status</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">account_type</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">created</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">name</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">pin</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">valid_from</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">valid_to</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">DateField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+
+  }
+  subgraph cluster_cbe_accounts_receivable {
+    label=<
+          <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+          <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER">
+          <FONT FACE="Helvetica Bold" COLOR="Black" POINT-SIZE="12">
+          cbe.accounts_receivable
+          </FONT>
+          </TD></TR>
+          </TABLE>
+          >
+    color=olivedrab4
+    style="rounded"
+  
+    cbe_accounts_receivable_models_CustomerPayment [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      CustomerPayment
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">account</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (account_number)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">channel</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">customer</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (customer_number)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">vendor</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">amount</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">datetime</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DateTimeField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">docket_number</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">tax</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DecimalField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+
+  }
+  subgraph cluster_retail_sale {
+    label=<
+          <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+          <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER">
+          <FONT FACE="Helvetica Bold" COLOR="Black" POINT-SIZE="12">
+          retail.sale
+          </FONT>
+          </TD></TR>
+          </TABLE>
+          >
+    color=olivedrab4
+    style="rounded"
+  
+    retail_sale_models_Sale [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      Sale
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">account</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (account_number)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">channel</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">customer</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (customer_number)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">identification</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">job</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">promotion</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">purchaser</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">staff</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">store</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">till</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">vendor</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">datetime</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DateTimeField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">docket_number</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">status</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">total_amount</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">total_amount_excl</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">total_discount</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">total_tax</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DecimalField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+
+  }
+  subgraph cluster_retail_customer_bill {
+    label=<
+          <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+          <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER">
+          <FONT FACE="Helvetica Bold" COLOR="Black" POINT-SIZE="12">
+          retail.customer_bill
+          </FONT>
+          </TD></TR>
+          </TABLE>
+          >
+    color=olivedrab4
+    style="rounded"
+  
+    retail_customer_bill_models_CustomerBillItem [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      CustomerBillItem
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">bill</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">amount</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">discounted</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">item_type</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    retail_customer_bill_models_CustomerBillingCycle [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      CustomerBillingCycle
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">account</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (account_number)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">billing_date</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">delivery_date</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">name</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">payment_due</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DateField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    retail_customer_bill_models_CustomerBillSpecification [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      CustomerBillSpecification
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">account</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (account_number)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">billing_cycle</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">customer</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (customer_number)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">location</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">name</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    retail_customer_bill_models_CustomerBill [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      CustomerBill
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">account</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (account_number)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">customer</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (customer_number)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">specification</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">adjusted</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">allocated</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">amount</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">created</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">DateTimeField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">discounted</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">disputed</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">number</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">period_from</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">period_to</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">rebated</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">status</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    retail_customer_bill_models_AccountBillItem [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      AccountBillItem<BR/>&lt;<FONT FACE="Helvetica Italic">CustomerBillItem</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ItalicBold">bill</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ItalicBold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">amount</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">discounted</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">item_type</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">CharField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    retail_customer_bill_models_JobBillItem [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      JobBillItem<BR/>&lt;<FONT FACE="Helvetica Italic">CustomerBillItem</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ItalicBold">bill</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ItalicBold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">job</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">amount</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">discounted</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">item_type</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">CharField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    retail_customer_bill_models_SubscriptionBillItem [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      SubscriptionBillItem<BR/>&lt;<FONT FACE="Helvetica Italic">CustomerBillItem</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ItalicBold">bill</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ItalicBold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">amount</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">discounted</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">item_type</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">CharField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    retail_customer_bill_models_ServiceBillItem [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      ServiceBillItem<BR/>&lt;<FONT FACE="Helvetica Italic">CustomerBillItem</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ItalicBold">bill</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ItalicBold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">amount</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">discounted</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">item_type</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">CharField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    retail_customer_bill_models_RebateBillItem [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      RebateBillItem<BR/>&lt;<FONT FACE="Helvetica Italic">CustomerBillItem</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ItalicBold">bill</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ItalicBold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">amount</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">discounted</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">item_type</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">CharField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    retail_customer_bill_models_AllocationBillItem [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      AllocationBillItem<BR/>&lt;<FONT FACE="Helvetica Italic">CustomerBillItem</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ItalicBold">bill</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ItalicBold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">payment</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">amount</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">discounted</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">item_type</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">CharField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    retail_customer_bill_models_AdjustmentBillItem [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      AdjustmentBillItem<BR/>&lt;<FONT FACE="Helvetica Italic">CustomerBillItem</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ItalicBold">bill</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ItalicBold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">amount</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">discounted</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">item_type</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">CharField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    retail_customer_bill_models_DisputeBillItem [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      DisputeBillItem<BR/>&lt;<FONT FACE="Helvetica Italic">CustomerBillItem</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ItalicBold">bill</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ItalicBold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">amount</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">discounted</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Italic">item_type</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Italic">CharField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    retail_customer_bill_models_ServiceCharge [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      ServiceCharge
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">bill</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">home_store</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">satellite_store</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">service_bill_item</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">home_margin</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">satellite_margin</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DecimalField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">total_margin</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">DecimalField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+
+  }
+  subgraph cluster_retail_job_management {
+    label=<
+          <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+          <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER">
+          <FONT FACE="Helvetica Bold" COLOR="Black" POINT-SIZE="12">
+          retail.job_management
+          </FONT>
+          </TD></TR>
+          </TABLE>
+          >
+    color=olivedrab4
+    style="rounded"
+  
+    retail_job_management_models_Job [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      Job
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">account</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (account_number)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">credit</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">created</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">job_number</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">job_status</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">valid_from</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">valid_to</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">DateField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+
+  }
+
+
+  // Relations
+
+  cbe_customer_models_Customer -> _
+  [label=""] ;
+
+  cbe_customer_models_Customer -> _
+  [label=""] ;
+
+  cbe_customer_models_Customer -> _
+  [label=""] ;
+
+  cbe_customer_models_Customer -> _
+  [label=""] ;
+
+  cbe_customer_models_Customer -> _
+  [label=""] ;
+
+  cbe_customer_models_Customer -> _
+  [label=""] ;
+
+  cbe_customer_models_CustomerAccount -> cbe_customer_models_Customer
+  [label="customer (customer_accounts)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  cbe_customer_models_CustomerAccount -> _
+  [label=""] ;
+
+  cbe_customer_models_CustomerAccount -> _
+  [label=""] ;
+
+
+  cbe_accounts_receivable_models_CustomerPayment -> _
+  [label=""] ;
+
+  cbe_accounts_receivable_models_CustomerPayment -> _
+  [label=""] ;
+
+  cbe_accounts_receivable_models_CustomerPayment -> cbe_customer_models_Customer
+  [label="customer (customerpayment)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  cbe_accounts_receivable_models_CustomerPayment -> cbe_customer_models_CustomerAccount
+  [label="account (customerpayment)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+
+  retail_sale_models_Sale -> _
+  [label=""] ;
+
+  retail_sale_models_Sale -> _
+  [label=""] ;
+
+  retail_sale_models_Sale -> _
+  [label=""] ;
+
+  retail_sale_models_Sale -> _
+  [label=""] ;
+
+  retail_sale_models_Sale -> _
+  [label=""] ;
+
+  retail_sale_models_Sale -> cbe_customer_models_Customer
+  [label="customer (sale)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  retail_sale_models_Sale -> cbe_customer_models_CustomerAccount
+  [label="account (sale)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  retail_sale_models_Sale -> retail_job_management_models_Job
+  [label="job (sale)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  retail_sale_models_Sale -> _
+  [label=""] ;
+
+  retail_sale_models_Sale -> _
+  [label=""] ;
+
+  retail_sale_models_Sale -> _
+  [label=""] ;
+
+  retail_sale_models_Sale -> _
+  [label=""] ;
+
+
+  retail_customer_bill_models_CustomerBillItem -> retail_customer_bill_models_CustomerBill
+  [label="bill (%(class)ss)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_CustomerBillingCycle -> cbe_customer_models_CustomerAccount
+  [label="account (customerbillingcycle)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_CustomerBillSpecification -> cbe_customer_models_CustomerAccount
+  [label="account (customerbillspecification)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_CustomerBillSpecification -> retail_customer_bill_models_CustomerBillingCycle
+  [label="billing_cycle (customerbillspecification)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_CustomerBillSpecification -> _
+  [label=""] ;
+
+  retail_customer_bill_models_CustomerBillSpecification -> cbe_customer_models_Customer
+  [label="customer (customerbillspecification)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_CustomerBill -> cbe_customer_models_CustomerAccount
+  [label="account (customerbill)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_CustomerBill -> retail_customer_bill_models_CustomerBillSpecification
+  [label="specification (customerbill)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_CustomerBill -> cbe_customer_models_Customer
+  [label="customer (customerbill)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_AccountBillItem -> retail_sale_models_Sale
+  [label="sale_events (accountbillitem)"] [arrowhead=dot arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_AccountBillItem -> retail_customer_bill_models_CustomerBillItem
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  retail_customer_bill_models_JobBillItem -> retail_job_management_models_Job
+  [label="job (jobbillitem)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_JobBillItem -> retail_sale_models_Sale
+  [label="sale_events (jobbillitem)"] [arrowhead=dot arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_JobBillItem -> retail_customer_bill_models_CustomerBillItem
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  retail_customer_bill_models_SubscriptionBillItem -> retail_sale_models_Sale
+  [label="sale_events (subscriptionbillitem)"] [arrowhead=dot arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_SubscriptionBillItem -> retail_customer_bill_models_CustomerBillItem
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  retail_customer_bill_models_ServiceBillItem -> retail_sale_models_Sale
+  [label="sale_events (servicebillitem)"] [arrowhead=dot arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_ServiceBillItem -> retail_customer_bill_models_CustomerBillItem
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  retail_customer_bill_models_RebateBillItem -> retail_sale_models_Sale
+  [label="sale_events (rebatebillitem)"] [arrowhead=dot arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_RebateBillItem -> retail_customer_bill_models_CustomerBillItem
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  retail_customer_bill_models_AllocationBillItem -> cbe_accounts_receivable_models_CustomerPayment
+  [label="payment (allocationbillitem)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_AllocationBillItem -> retail_sale_models_Sale
+  [label="sale_events (allocationbillitem)"] [arrowhead=dot arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_AllocationBillItem -> retail_customer_bill_models_CustomerBillItem
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  retail_customer_bill_models_AdjustmentBillItem -> retail_sale_models_Sale
+  [label="sale_events (adjustmentbillitem)"] [arrowhead=dot arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_AdjustmentBillItem -> retail_customer_bill_models_CustomerBillItem
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  retail_customer_bill_models_DisputeBillItem -> retail_sale_models_Sale
+  [label="sale_events (disputebillitem)"] [arrowhead=dot arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_DisputeBillItem -> retail_customer_bill_models_CustomerBillItem
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  retail_customer_bill_models_ServiceCharge -> retail_customer_bill_models_CustomerBill
+  [label="bill (servicecharges)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_ServiceCharge -> retail_customer_bill_models_ServiceBillItem
+  [label="service_bill_item (servicecharges)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  retail_customer_bill_models_ServiceCharge -> _
+  [label=""] ;
+
+  retail_customer_bill_models_ServiceCharge -> _
+  [label=""] ;
+
+  retail_customer_bill_models_ServiceCharge -> retail_sale_models_Sale
+  [label="sales (servicecharge)"] [arrowhead=dot arrowtail=dot, dir=both];
+
+
+  retail_job_management_models_Job -> cbe_customer_models_CustomerAccount
+  [label="account (job)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  retail_job_management_models_Job -> _
+  [label=""] ;
+
+
+}
+

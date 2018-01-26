@@ -1,0 +1,788 @@
+digraph model_graph {
+  // Dotfile by Django-Extensions graph_models
+  // Created: 2018-01-15 13:02
+  // Cli Options: -I Place,Country,City,Province,GeographicAddress,UrbanPropertyAddress,UrbanPropertySubAddress,RuralPropertyAddress,RuralPropertySubAddress,PoBoxAddress,Location
+
+  fontname = "Helvetica"
+  fontsize = 8
+  splines  = true
+
+  node [
+    fontname = "Helvetica"
+    fontsize = 8
+    shape = "plaintext"
+  ]
+
+  edge [
+    fontname = "Helvetica"
+    fontsize = 8
+  ]
+
+  // Labels
+  subgraph cluster_cbe_location {
+    label=<
+          <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+          <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER">
+          <FONT FACE="Helvetica Bold" COLOR="Black" POINT-SIZE="12">
+          cbe.location
+          </FONT>
+          </TD></TR>
+          </TABLE>
+          >
+    color=olivedrab4
+    style="rounded"
+  
+    cbe_location_models_GeographicAddress [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      GeographicAddress<BR/>&lt;<FONT FACE="Helvetica Italic">Place</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">city</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">country</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">province</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">land_mass</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_from</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_to</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    cbe_location_models_Place [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      Place
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">valid_from</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">valid_to</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">DateField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    cbe_location_models_Country [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      Country<BR/>&lt;<FONT FACE="Helvetica Italic">Place</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">code</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">iso2_code</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">iso_numeric</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">IntegerField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">name</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_from</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_to</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    cbe_location_models_City [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      City<BR/>&lt;<FONT FACE="Helvetica Italic">Place</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">code</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">country</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">name</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_from</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_to</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    cbe_location_models_Province [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      Province<BR/>&lt;<FONT FACE="Helvetica Italic">Place</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">code</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica ">name</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_from</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_to</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    cbe_location_models_UrbanPropertyAddress [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      UrbanPropertyAddress<BR/>&lt;<FONT FACE="Helvetica Italic">GeographicAddress</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">city</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">country</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">province</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">land_mass</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">locality</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">postcode</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">street_name</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">street_number_first</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">IntegerField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">street_number_first_suffix</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">street_number_last</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">IntegerField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">street_number_last_suffix</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">street_suffix</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">street_type</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_from</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_to</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    cbe_location_models_UrbanPropertySubAddress [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      UrbanPropertySubAddress<BR/>&lt;<FONT FACE="Helvetica Italic">GeographicAddress</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">building</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">city</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">country</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">province</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">urban_property_address</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">land_mass</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">level_number</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">level_type</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">private_street_name</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">sub_unit_number</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">sub_unit_type</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_from</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_to</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    cbe_location_models_RuralPropertyAddress [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      RuralPropertyAddress<BR/>&lt;<FONT FACE="Helvetica Italic">GeographicAddress</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">city</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">country</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">province</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">land_mass</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">locality</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">postcode</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">street_name</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_from</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_to</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    cbe_location_models_RuralPropertySubAddress [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      RuralPropertySubAddress<BR/>&lt;<FONT FACE="Helvetica Italic">GeographicAddress</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">building</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">city</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">country</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">province</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">rural_property_address</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">land_mass</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">private_street_name</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">sub_unit_number</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">sub_unit_type</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_from</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_to</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    cbe_location_models_PoBoxAddress [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      PoBoxAddress<BR/>&lt;<FONT FACE="Helvetica Italic">GeographicAddress</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">city</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">country</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">province</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">box_number</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">land_mass</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">locality</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_from</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_to</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+  
+    cbe_location_models_Location [label=<
+      <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
+      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4">
+      <FONT FACE="Helvetica Bold" COLOR="white">
+      Location<BR/>&lt;<FONT FACE="Helvetica Italic">GeographicAddress</FONT>&gt;
+      </FONT></TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT FACE="Helvetica Bold">id</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT FACE="Helvetica Bold">AutoField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">city</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">country</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">province</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ItalicBold">ForeignKey (code)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">rural_property_address</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">urban_property_address</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Bold">ForeignKey (id)</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">land_mass</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">name</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">postcode</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">type</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica ">CharField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_from</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      <TR><TD ALIGN="LEFT" BORDER="0">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">valid_to</FONT>
+      </TD><TD ALIGN="LEFT">
+      <FONT COLOR="#7B7B7B" FACE="Helvetica Italic">DateField</FONT>
+      </TD></TR>
+    
+      </TABLE>
+      >]
+
+  }
+
+
+  // Relations
+
+  cbe_location_models_GeographicAddress -> cbe_location_models_Country
+  [label="country (geographicaddress)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  cbe_location_models_GeographicAddress -> cbe_location_models_City
+  [label="city (geographicaddress)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  cbe_location_models_GeographicAddress -> cbe_location_models_Province
+  [label="province (geographicaddress)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  cbe_location_models_GeographicAddress -> cbe_location_models_Place
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  cbe_location_models_Country -> cbe_location_models_Place
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  cbe_location_models_City -> cbe_location_models_Country
+  [label="country (city)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  cbe_location_models_City -> cbe_location_models_Place
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  cbe_location_models_Province -> cbe_location_models_Place
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  cbe_location_models_UrbanPropertyAddress -> cbe_location_models_GeographicAddress
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  cbe_location_models_UrbanPropertySubAddress -> cbe_location_models_UrbanPropertyAddress
+  [label="urban_property_address (urbanpropertysubaddress)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  cbe_location_models_UrbanPropertySubAddress -> _
+  [label=""] ;
+
+  cbe_location_models_UrbanPropertySubAddress -> cbe_location_models_GeographicAddress
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  cbe_location_models_RuralPropertyAddress -> cbe_location_models_GeographicAddress
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  cbe_location_models_RuralPropertySubAddress -> cbe_location_models_RuralPropertyAddress
+  [label="rural_property_address (ruralpropertysubaddress)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  cbe_location_models_RuralPropertySubAddress -> _
+  [label=""] ;
+
+  cbe_location_models_RuralPropertySubAddress -> cbe_location_models_GeographicAddress
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  cbe_location_models_PoBoxAddress -> cbe_location_models_GeographicAddress
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  cbe_location_models_Location -> cbe_location_models_RuralPropertyAddress
+  [label="rural_property_address (location)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  cbe_location_models_Location -> cbe_location_models_UrbanPropertyAddress
+  [label="urban_property_address (location)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  cbe_location_models_Location -> cbe_location_models_GeographicAddress
+  [label="abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+
+}
+

@@ -1,6 +1,6 @@
 from urllib.parse import urlparse
 
-from django.core.urlresolvers import resolve
+from django.urls import resolve
 from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import serializers
@@ -195,6 +195,7 @@ class SynchronisationsSerializer(serializers.HyperlinkedModelSerializer):
                     
 class SynchronisationsEndSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
+    sync = SynchronisationsSerializer(many=False)
 
     class Meta:
         model = SynchronisationsEnd
