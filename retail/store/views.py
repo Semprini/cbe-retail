@@ -11,6 +11,8 @@ from retail.store.serializers import StoreSerializer
 class StoreViewSet(viewsets.ModelViewSet):
     queryset = Store.objects.all()
     serializer_class = StoreSerializer
+    filter_fields = ('code',)
+    lookup_field = 'enterprise_id'
 
 
     

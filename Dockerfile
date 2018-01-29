@@ -39,14 +39,13 @@ RUN apk add git
 #RUN pip install -U pip
 
 # Copy all our files into the image.
-RUN git clone https://github.com/Semprini/cbe-retail.git /code
-WORKDIR /code
+RUN git clone https://github.com/Semprini/cbe-retail.git /cbe-retail
+WORKDIR /cbe-retail
 RUN pip install -Ur requirements.txt
 
 # Collect our static media
 RUN python manage.py collectstatic --noinput
 
 # Specify the command to run when the image is run.
-RUN ["chmod", "+x", "/code/manage_run.sh"]
-#RUN ["chmod", "+x", "/code/manage.py"]
-CMD ["/code/manage_run.sh"]
+RUN ["chmod", "+x", "/cbe-retail/manage_run.sh"]
+CMD ["/cbe-retail/manage_run.sh"]

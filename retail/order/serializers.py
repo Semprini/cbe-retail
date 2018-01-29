@@ -7,10 +7,12 @@ from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField
 from retail.order.models import Order, OrderItem, Quote, Estimate
+from retail.store.models import Store
 
 
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
+    store = serializers.HyperlinkedRelatedField(view_name='store-detail', lookup_field='enterprise_id', queryset=Store.objects.all())
 
     class Meta:
         model = Order
@@ -22,6 +24,7 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
                   
 class QuoteSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
+    store = serializers.HyperlinkedRelatedField(view_name='store-detail', lookup_field='enterprise_id', queryset=Store.objects.all())
 
     class Meta:
         model = Quote

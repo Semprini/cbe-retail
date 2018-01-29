@@ -16,13 +16,17 @@ from retail.store.models import Store
 
 class StoreSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
+    url = serializers.HyperlinkedIdentityField(
+        view_name='store-detail',
+        lookup_field='enterprise_id'
+    )
     identifiers = IdentificationSerializer(many=True,)
     buildings = StructureSerializer(many=True,)
-    location = LocationSerializer(many=False,)
-    organisation = OrganisationSerializer(many=False,)
+    location = LocationSerializer(required=False, allow_null=True)
+    organisation = OrganisationSerializer()
     
     class Meta:
         model = Store
         fields = ('type', 'url', 'name', 'enterprise_id', 'code', 'store_type', 'store_class', 'opening_date', 'identifiers', 'location', 'organisation', 'buildings' )
-
+        view_name = 'store-detail'
 

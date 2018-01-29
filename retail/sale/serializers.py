@@ -11,6 +11,7 @@ from cbe.party.serializers import PartyRoleAssociationFromBasicSerializer, Party
 from cbe.party.models import Individual, Organisation, PartyRoleAssociation
 from cbe.credit.serializers import CreditBalanceEventSerializer
 
+from retail.store.models import Store
 from retail.sale.models import SalesChannel, Sale, SaleItem, TenderType, Tender, Purchaser
 from retail.product.serializers import ProductOfferingSerializer, ProductSerializer
 
@@ -54,7 +55,7 @@ class SaleSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     sale_items = SaleItemSerializer( many=True )
     tenders = TenderSerializer( many=True, read_only=False )
     credit_balance_events = CreditBalanceEventSerializer( many=True )
-    #url = serializers.HyperlinkedIdentityField(view_name='sale-detail', read_only=True)
+    store = serializers.HyperlinkedRelatedField(view_name='store-detail', lookup_field='enterprise_id', queryset=Store.objects.all())
     
     class Meta:
         model = Sale

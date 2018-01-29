@@ -8,6 +8,7 @@ from rest_framework import serializers
 from cbe.utils.serializers import LimitDepthMixin
 from cbe.utils.serializer_fields import TypeField
 from retail.product.models import Product, ProductOffering, ProductCategory, ProductStock, ProductStockTake, ProductAssociation, SupplierProduct, ProductSpecification
+from retail.store.models import Store
 
 
 class ProductAssociationSerializer(serializers.HyperlinkedModelSerializer):
@@ -42,6 +43,7 @@ class ProductOfferingSerializer(LimitDepthMixin, serializers.HyperlinkedModelSer
                   
 class ProductStockSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
+    store = serializers.HyperlinkedRelatedField(view_name='store-detail', lookup_field='enterprise_id', queryset=Store.objects.all())
 
     class Meta:
         model = ProductStock
@@ -50,6 +52,7 @@ class ProductStockSerializer(serializers.HyperlinkedModelSerializer):
     
 class ProductStockTakeSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
+    store = serializers.HyperlinkedRelatedField(view_name='store-detail', lookup_field='enterprise_id', queryset=Store.objects.all())
 
     class Meta:
         model = ProductStockTake
