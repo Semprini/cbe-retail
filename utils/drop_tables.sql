@@ -236,5 +236,7 @@ DROP TABLE IF EXISTS trouble_problem_underlying_problems;
 DROP TABLE IF EXISTS trouble_resourcealarm;                             
 DROP TABLE IF EXISTS trouble_trackingrecord;                            
 DROP TABLE IF EXISTS trouble_troubleticket;                             
-DROP TABLE IF EXISTS trouble_troubleticketitem;                         
+DROP TABLE IF EXISTS trouble_troubleticketitem;       
+DROP TABLE IF EXISTS location_geographicarea;                  
+DROP TABLE IF EXISTS store_store_buildings;                      
 SET FOREIGN_KEY_CHECKS = 1;

@@ -78,7 +78,7 @@ INSTALLED_APPS = (
     'retail.forecast',
 )
 
-# python manage.py makemigrations store market product pricing sale order loyalty customer_bill job_management supply_chain forecast
+# python manage.py makemigrations customer_bill forecast job_management loyalty market order pricing product sale store supply_chain 
 
 SITE_ID = 1
 
