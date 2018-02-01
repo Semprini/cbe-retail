@@ -21,6 +21,7 @@ MQ_FRAMEWORK = {\n\
     'HTTP_REST_CONTEXT': {\n\
         'SERVER_NAME': '${MQRESTSERVER}',\n\
         'SERVER_PORT': ${MQRESTPORT},\n\
+        'SERVER_PROTOCOL': ${MQRESTPROTOCOL},\n\
     }\n\
 }\n" > /code/retail/local_settings.py
 

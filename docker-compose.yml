@@ -28,6 +28,7 @@ services:
             MQPASSWORD: super
             MQRESTSERVER: 'cbe.sphinx.co.nz'
             MQRESTPORT: 443
+            MQRESTPROTOCOL: 'https'
             SUNAME: super
             SUEMAIL: super@super.com
             SUPASS: super
