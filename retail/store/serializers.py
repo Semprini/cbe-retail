@@ -8,9 +8,10 @@ from rest_framework import serializers
 from cbe.utils.serializer_fields import TypeField
 from cbe.human_resources.serializers import IdentificationSerializer
 from cbe.physical_object.serializers import StructureSerializer
-from cbe.location.serializers import LocationSerializer
+from cbe.location.serializers import LocationSerializer, GeographicAreaSerializer
 from cbe.party.serializers import OrganisationSerializer
 
+from cbe.party.models import Organisation
 from retail.store.models import Store
 
 
@@ -23,7 +24,11 @@ class StoreSerializer(serializers.HyperlinkedModelSerializer):
     identifiers = IdentificationSerializer(many=True,)
     buildings = StructureSerializer(many=True,)
     location = LocationSerializer(required=False, allow_null=True)
-    organisation = OrganisationSerializer()
+    #organisation = OrganisationSerializer()
+    organisation = serializers.HyperlinkedRelatedField(view_name='organisation-detail', lookup_field='enterprise_id', queryset=Organisation.objects.all())
+    trade_area = GeographicAreaSerializer(required=False, allow_null=True)
+    retail_area = GeographicAreaSerializer(required=False, allow_null=True)
+    national_area = GeographicAreaSerializer(required=False, allow_null=True)
     
     class Meta:
         model = Store
