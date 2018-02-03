@@ -150,8 +150,8 @@ class ServiceCharge(models.Model):
     service_bill_item = models.ForeignKey( ServiceBillItem, on_delete=models.CASCADE, related_name="%(class)ss", null=True, blank=True )
     
     sales = models.ManyToManyField(Sale, blank=True)
-    home_store = models.ForeignKey( Organisation, on_delete=models.CASCADE, null=True, blank=True, related_name="home_service_charges" )
-    satellite_store = models.ForeignKey( Organisation, on_delete=models.CASCADE, null=True, blank=True, related_name="satellite_service_charges" )
+    home_store = models.ForeignKey(Organisation, on_delete=models.CASCADE, null=True, blank=True, related_name="home_service_charges" )
+    satellite_store = models.ForeignKey(Organisation, on_delete=models.CASCADE, null=True, blank=True, related_name="satellite_service_charges" )
 
     total_margin = models.DecimalField(default = 0, max_digits=10, decimal_places=2)
     home_margin = models.DecimalField(default = 0, max_digits=10, decimal_places=2)

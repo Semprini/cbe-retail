@@ -7,8 +7,10 @@ from rest_framework import serializers
 
 from cbe.party.serializers import OrganisationSerializer
 from cbe.utils.serializer_fields import TypeField, ExtendedModelSerializerField
-from retail.loyalty.models import LoyaltyTransaction, LoyaltyScheme
 from cbe.human_resources.serializers import IdentificationSerializer
+
+from cbe.party.models import Organisation
+from retail.loyalty.models import LoyaltyTransaction, LoyaltyScheme
                  
                   
 class LoyaltySchemeSerializer(serializers.HyperlinkedModelSerializer):
@@ -23,6 +25,7 @@ class LoyaltyTransactionSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
     scheme = ExtendedModelSerializerField(LoyaltySchemeSerializer(), many=False)
     identification = ExtendedModelSerializerField(IdentificationSerializer(), many=False)
+    vendor = serializers.HyperlinkedRelatedField(view_name='organisation-detail', lookup_field='enterprise_id', queryset=Organisation.objects.all())
 
     class Meta:
         model = LoyaltyTransaction

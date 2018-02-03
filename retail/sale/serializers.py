@@ -56,6 +56,7 @@ class SaleSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     tenders = TenderSerializer( many=True, read_only=False )
     credit_balance_events = CreditBalanceEventSerializer( many=True )
     store = serializers.HyperlinkedRelatedField(view_name='store-detail', lookup_field='enterprise_id', queryset=Store.objects.all())
+    vendor = serializers.HyperlinkedRelatedField(view_name='organisation-detail', lookup_field='enterprise_id', queryset=Organisation.objects.all())
     
     class Meta:
         model = Sale

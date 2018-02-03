@@ -7,6 +7,7 @@ from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField
 from cbe.customer.serializers import CustomerAccountSerializer
+from cbe.party.models import Organisation
 
 from retail.customer_bill.models import CustomerBillingCycle, CustomerBillSpecification, CustomerBill, ServiceCharge
 from retail.customer_bill.models import AccountBillItem, JobBillItem, SubscriptionBillItem, ServiceBillItem, RebateBillItem, AllocationBillItem, AdjustmentBillItem, DisputeBillItem
@@ -126,6 +127,8 @@ class DisputeBillItemSerializer(serializers.HyperlinkedModelSerializer):
         
 class ServiceChargeSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
+    home_store = serializers.HyperlinkedRelatedField(view_name='organisation-detail', lookup_field='enterprise_id', queryset=Organisation.objects.all())
+    satellite_store = serializers.HyperlinkedRelatedField(view_name='organisation-detail', lookup_field='enterprise_id', queryset=Organisation.objects.all())
 
     class Meta:
         model = ServiceCharge
