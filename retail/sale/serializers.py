@@ -29,18 +29,24 @@ class TenderSerializer(LimitDepthMixin, GenericHyperlinkedSerializer):
     #type = TypeField()
     #TODO: Waiting on pull request from django-rest
     #url = serializers.HyperlinkedIdentityField(view_name='tender-detail', read_only=False, queryset=Tender.objects.all())
+    sale = serializers.HyperlinkedIdentityField(view_name='sale-detail', read_only=False)
+    #sale = serializers.HyperlinkedIdentityField(view_name='sale-detail', queryset=Sale.objects.all(), required=False, allow_null=True, read_only=False)
+
     tender_type = ExtendedModelSerializerField(TenderTypeSerializer())
     
     class Meta:
         model = Tender
         fields = ('type', 'url', 'sale', 'tender_type', 'amount', 'reference', )
 
+    def to_internal_value(self, data):
+        print( "VALIDATE2:{}".format(data) )
+        return super(self.__class__, self).to_internal_value(data)
+
     def create(self, validated_data):
         print( "CREATE2:{}".format(validated_data) )
         return Tender.objects.create(**validated_data)
         
-            
-            
+
 class SaleItemSerializer(LimitDepthMixin, GenericHyperlinkedSerializer):
     #type = TypeField()
     #TODO: Waiting on pull request from django-rest
@@ -68,13 +74,17 @@ class SaleSerializer(LimitDepthMixin, GenericHyperlinkedSerializer):
                   'total_amount', 'total_amount_excl', 'total_discount', 'total_tax',
                   'customer', 'account', 'job', 'purchaser', 'identification', 'promotion','till', 'staff', 
                   'tenders', 'credit_balance_events', 'sale_items',)
+       
+    def to_internal_value(self, data):
+        print( "VALIDATE:{}".format(data) )
+        return super(self.__class__, self).to_internal_value(data)
         
     def create(self, validated_data):
         print( "CREATE2:{}".format(validated_data) )
         tenders_data = validated_data.pop('tenders')
         credit_balance_events_data = validated_data.pop('credit_balance_events')
         sale_items_data = validated_data.pop('sale_items')
-        sale = Sale.objects.create(**validated_data)
+        sale = Sale(**validated_data)
         
         for tender_data in tenders_data:
             # Are we updating or creating the nested object?
@@ -86,8 +96,9 @@ class SaleSerializer(LimitDepthMixin, GenericHyperlinkedSerializer):
                     setattr( object, key, value )  
             else:
                 Tender.objects.create(sale=sale, **tender_data)
-                
+
         # TODO: sale.pre_signal_xtra_related['credit_event'] = (credit_event,'sale')
+        sale.save()
         return sale             
 
     def update(self, instance, validated_data):
