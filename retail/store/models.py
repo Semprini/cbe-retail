@@ -6,7 +6,7 @@ from cbe.party.models import Organisation, PartyRole
 from cbe.physical_object.models import Structure
 
 class Store(PartyRole):
-    enterprise_id = models.IntegerField(null=True)
+    enterprise_id = models.IntegerField(unique=True)
     code = models.CharField(max_length=200, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     identifiers = GenericRelation('human_resources.Identification', object_id_field="party_role_object_id", content_type_field='party_role_content_type', related_query_name='store')    
