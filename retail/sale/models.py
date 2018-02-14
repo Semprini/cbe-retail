@@ -1,5 +1,4 @@
-import datetime
-
+from django.utils.timezone import now
 from django.db import models
 
 from cbe.party.models import Organisation, PartyRole
@@ -46,7 +45,7 @@ class Sale(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
     vendor = models.ForeignKey(Organisation, on_delete=models.CASCADE)
     
-    datetime = models.DateTimeField(default=datetime.datetime.now)
+    datetime = models.DateTimeField(default=now)
     status = models.CharField(max_length=200, choices=(('basket', 'basket'), ('complete', 'complete')), default='complete')
     docket_number = models.CharField(max_length=50, null=True,blank=True )
 

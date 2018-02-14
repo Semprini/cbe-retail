@@ -1,8 +1,0 @@
-version: '2'
-services:
-    cbe_microservice_loyalty:
-        build: market_to_customers/calculate_loyalty_transaction/
-        environment:
-            QUEUE_HOST: cbeq
-            QUEUE_USER: super
-            QUEUE_PASS: super

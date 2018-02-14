@@ -1,4 +1,4 @@
-import datetime
+from django.utils.timezone import now
 from django.db import models
 
 from cbe.party.models import Organisation
@@ -15,7 +15,7 @@ class Order(models.Model):
     channel = models.ForeignKey(SalesChannel, on_delete=models.CASCADE)
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
     seller = models.ForeignKey(Organisation, on_delete=models.CASCADE)
-    datetime = models.DateTimeField(default=datetime.datetime.now)
+    datetime = models.DateTimeField(default=now)
     order_type = models.CharField(max_length=200, choices=(('order', 'order'), ('quote', 'quote'), ('estimate', 'estimate')), default='order')
 
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)

@@ -1,3 +1,0 @@
-requests
-pika
-git+https://github.com/Semprini/cbe.git
