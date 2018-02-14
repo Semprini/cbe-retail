@@ -84,7 +84,7 @@ class CalculateLoyaltyTransaction(QueueTriggerPattern):
         return data
 
         
-    def worker(self, message_json):
+    def worker(self, message_json, properties):
         if message_json['type'] == "Sale":
             data = self.create_loyalty_data_from_sale(message_json)
         elif message_json['type'] == "CustomerPayment":

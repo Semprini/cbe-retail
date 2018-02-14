@@ -34,7 +34,7 @@ class DeliverLoyaltyTransaction(QueueTriggerPattern):
         self.dest_pass = ''
         
         
-    def worker(self, message_json):
+    def worker(self, message_json, properties):
         # Call CBE to get more info
         vendor = self.request(message_json['vendor'], self.api_user, self.api_pass, "error sending loyalty accrual. Could not get vendor info")
     

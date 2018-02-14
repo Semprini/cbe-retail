@@ -58,7 +58,7 @@ def test_xero():
     
 class DeliverToXero(QueueTriggerPattern):
 
-    def worker(self, message_json):
+    def worker(self, message_json, properties):
         account = message_json['account'].split('/')[-2]
 
         # TODO: Ignore-non account holder sales

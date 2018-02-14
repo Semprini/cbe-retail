@@ -28,7 +28,7 @@ class CalculateShareableMargin(QueueTriggerPattern):
         return self.api_host + "/api/customer_bill/service_charge/"
         
         
-    def worker(self, message_json):
+    def worker(self, message_json, properties):
         total = float(0)
         try:
             sales = message_json['accountbillitems'][0]['sale_events']
