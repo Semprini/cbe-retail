@@ -9,6 +9,7 @@ from retail.product.serializers import ProductSerializer, ProductOfferingSeriali
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    filter_fields = ('tax_code','impulse_item', 'key_value_item', 'core_abc', 'core_range', 'range', 'dangerous_classification', 'relative_importance_index', 'exclusive')
 
     
 class ProductOfferingViewSet(viewsets.ModelViewSet):

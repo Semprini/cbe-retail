@@ -9,6 +9,7 @@ from cbe.human_resources.models import Staff
 from retail.store.models import Store
 from retail.market.models import MarketSegment, MarketStrategy
 
+PRODUCT_EXCLUSIVE_CHOICES=( ('RE','Retail Exclusive'), ('E','Exclusive'), ('P','Proprietary'), ('BTR','Better'), ('BES','Best'), ('BTY','BTY') )
 
 class ProductCategory(models.Model):
     code = models.IntegerField()
@@ -57,7 +58,7 @@ class Product(models.Model):
     range = models.IntegerField( default=0 )
     dangerous_classification = models.CharField(max_length=50, blank=True)
     relative_importance_index = models.CharField(max_length=10, blank=True)
-    exclusive = models.CharField(max_length=50, blank=True)
+    exclusive = models.CharField(max_length=50, blank=True, choices=PRODUCT_EXCLUSIVE_CHOICES)
 
     business_unit = models.ForeignKey(Organisation, on_delete=models.CASCADE, null=True, blank=True)
     
