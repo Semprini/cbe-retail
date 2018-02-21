@@ -45,7 +45,7 @@ class Product(models.Model):
 
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
-    status = models.CharField(max_length=200, choices=(('active', 'active'), ('inactive', 'inactive'), ), default='active')
+    status = models.CharField(max_length=50, choices=(('active', 'active'), ('inactive', 'inactive'), ('deleted', 'deleted'), ('exiting', 'exiting'), ('pending', 'pending'), ('suspended', 'suspended') ), default='active')
 
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)

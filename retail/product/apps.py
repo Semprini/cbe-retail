@@ -16,4 +16,4 @@ class ProductConfig(AppConfig):
         post_save.connect(  cbe.signals.notify_extra_args(   serializer=ProductSerializer, 
                                                                 exchange_prefix=exchange_prefix + ".Product",
                                                                 exchange_header_list=exchange_header_list)(cbe.signals.notify_save_instance), 
-                            sender=Product, weak=False)    
+                            sender=Product, weak=False)
