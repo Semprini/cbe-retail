@@ -7,13 +7,25 @@ class ProductConfig(AppConfig):
 
     def ready(self):
         import cbe.signals
-        from retail.product.models import Product
-        from retail.product.serializers import ProductSerializer
+        from retail.product.models import Product, ProductOffering, SupplierProduct
+        from retail.product.serializers import ProductSerializer, ProductOfferingSerializer, SupplierProductSerializer
 
         exchange_prefix = settings.MQ_FRAMEWORK['EXCHANGE_PREFIX'] + self.name
-        exchange_header_list = ('status',)
         
+        product_exchange_header_list = ('status',)
         post_save.connect(  cbe.signals.notify_extra_args(   serializer=ProductSerializer, 
                                                                 exchange_prefix=exchange_prefix + ".Product",
-                                                                exchange_header_list=exchange_header_list)(cbe.signals.notify_save_instance), 
+                                                                exchange_header_list=product_exchange_header_list)(cbe.signals.notify_save_instance), 
                             sender=Product, weak=False)
+
+        offering_exchange_header_list = ('department', 'sub_department', 'fineline',)
+        post_save.connect(  cbe.signals.notify_extra_args(   serializer=ProductOfferingSerializer, 
+                                                                exchange_prefix=exchange_prefix + ".ProductOffering",
+                                                                exchange_header_list=offering_exchange_header_list)(cbe.signals.notify_save_instance), 
+                            sender=ProductOffering, weak=False)
+
+        sp_exchange_header_list = ()
+        post_save.connect(  cbe.signals.notify_extra_args(   serializer=SupplierProductSerializer, 
+                                                                exchange_prefix=exchange_prefix + ".SupplierProduct",
+                                                                exchange_header_list=sp_exchange_header_list)(cbe.signals.notify_save_instance), 
+                            sender=SupplierProduct, weak=False)
