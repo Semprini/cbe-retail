@@ -65,20 +65,21 @@ INSTALLED_APPS = (
     'cbe.information_technology',
     'cbe.accounts_receivable',
     'cbe.project',
-    'retail.store',
-    'retail.market',
-    'retail.product',
-    'retail.pricing',
-    'retail.sale',
-    'retail.order',
-    'retail.loyalty',
     'retail.customer_bill',
-    'retail.job_management',
-    'retail.supply_chain',
     'retail.forecast',
+    'retail.job_management',
+    'retail.loyalty',
+    'retail.market',
+    'retail.order',
+    'retail.pricing',
+    'retail.product',
+    'retail.sale',
+    'retail.store',
+    'retail.supply_chain',
 )
 
 # python manage.py makemigrations customer_bill forecast job_management loyalty market order pricing product sale store supply_chain 
+# python manage.py dumpdata --format json contenttypes store party location physical_object resource human_resources >dmp.json
 
 SITE_ID = 1
 

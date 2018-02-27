@@ -38,8 +38,8 @@ class ProductAssociation(models.Model):
 
     
 class Product(models.Model):
+    code = models.CharField(primary_key=True, max_length=50, unique=True)
     parent = models.ForeignKey('Product', on_delete=models.CASCADE, null=True, blank=True, related_name='child_products')
-    code = models.CharField(max_length=50, unique=True)
     brand = models.CharField(max_length=100, blank=True)
     sub_brand = models.CharField(max_length=100, blank=True)
 
@@ -70,7 +70,7 @@ class Product(models.Model):
                                            related_name='associated_to+')
 
     class Meta:
-        ordering = ['id']
+        ordering = ['code']
     
     def __str__(self):
         return self.name
@@ -155,7 +155,7 @@ class SupplierProduct(models.Model):
     
     
 class ProductOffering(models.Model):
-    sku = models.CharField(max_length=50)
+    sku = models.CharField(primary_key=True, max_length=50, unique=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product_offerings")
     specification = models.ForeignKey(ProductSpecification, on_delete=models.CASCADE, related_name="product_offerings", null=True, blank=True)
     barcode = models.CharField(max_length=50, null=True, blank=True)
