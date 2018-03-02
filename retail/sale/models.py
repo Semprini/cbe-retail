@@ -41,13 +41,15 @@ class SalesChannel(models.Model):
 
 
 class Sale(models.Model):
+    id = models.IntegerField(primary_key=True)
+
     channel = models.ForeignKey(SalesChannel, on_delete=models.CASCADE)
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
     vendor = models.ForeignKey(Organisation, on_delete=models.CASCADE)
-    
+
     datetime = models.DateTimeField(default=now)
     status = models.CharField(max_length=200, choices=(('basket', 'basket'), ('complete', 'complete')), default='complete')
-    docket_number = models.CharField(max_length=50, null=True,blank=True )
+    docket_number = models.IntegerField()
 
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount_excl = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -61,7 +63,7 @@ class Sale(models.Model):
     account = models.ForeignKey(CustomerAccount, on_delete=models.CASCADE, db_index=True, null=True,blank=True)
     job = models.ForeignKey(Job, on_delete=models.CASCADE, db_index=True, null=True,blank=True)
 
-    promotion = models.ForeignKey(Promotion, on_delete=models.CASCADE, null=True,blank=True)
+    promotion = models.ForeignKey(Promotion, on_delete=models.CASCADE, null=True, blank=True)
     till = models.ForeignKey(PhysicalResource, on_delete=models.CASCADE, db_index=True, null=True,blank=True)
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE, db_index=True, null=True,blank=True)
 
@@ -71,7 +73,15 @@ class Sale(models.Model):
         ordering = ['-datetime']
         
     def __str__(self):
-        return "%s|%s|%d"%(self.store,self.datetime,self.total_amount)
+        return "%s|%s|%d"%(self.store,self.datetime,self.docket_number)
+        
+    def save(self, *args, **kwargs):
+        if self.id == None:
+            self.id = int('{:04d}{:04d}{:02d}{:02d}{}'.format(self.store.enterprise_id, self.datetime.year, self.datetime.month, self.datetime.day, self.docket_number))
+        if self.vendor == None and self.store.organisation != None:
+            self.vendor = self.store.organisation
+            
+        super(Sale, self).save(*args, **kwargs)
 
 
 class SaleItem(models.Model):

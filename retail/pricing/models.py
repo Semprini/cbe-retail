@@ -32,6 +32,7 @@ class PriceCalculation(models.Model):
     
     
 class Promotion(models.Model):
+    code = models.CharField(primary_key=True, max_length=50)
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
 
@@ -55,14 +56,14 @@ class ProductOfferingPrice(models.Model):
     product_offering = models.ForeignKey(ProductOffering, on_delete=models.CASCADE, related_name='product_offering_prices')
     promotion = models.ForeignKey(Promotion, on_delete=models.CASCADE, null=True, blank=True, related_name='product_offering_prices')
     calculation = models.ForeignKey(PriceCalculation, on_delete=models.CASCADE, null=True, blank=True, related_name='product_offering_prices')
-    
+
     account = models.ForeignKey(CustomerAccount, on_delete=models.CASCADE, null=True, blank=True, related_name='product_offering_prices')
     quote = models.ForeignKey('order.Quote', on_delete=models.CASCADE, null=True, blank=True, related_name='product_offering_prices')
-    
+
     #pickslip
     #threshold
     #UOM
-    
+
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
     name = models.CharField(max_length=200)

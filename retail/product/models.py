@@ -53,7 +53,7 @@ class Product(models.Model):
     impulse_item = models.BooleanField(default=False)
     key_value_item = models.BooleanField(default=False)
     first_sale_date = models.DateField(null=True, blank=True)
-    core_abc = models.BooleanField(default=False)               # is this just kvi?
+    core_abc = models.BooleanField(default=False) 
     core_range = models.BooleanField(default=False)
     range = models.IntegerField( default=0 )
     dangerous_classification = models.CharField(max_length=50, blank=True)
@@ -61,7 +61,7 @@ class Product(models.Model):
     exclusive = models.CharField(max_length=50, blank=True, choices=PRODUCT_EXCLUSIVE_CHOICES)
 
     business_unit = models.ForeignKey(Organisation, on_delete=models.CASCADE, null=True, blank=True)
-    
+
     bundle = models.ManyToManyField('Product', blank=True)
     categories = models.ManyToManyField(ProductCategory, blank=True)
 
