@@ -5,8 +5,8 @@ from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import serializers
 
-from cbe.utils.serializers import LimitDepthMixin
-from cbe.utils.serializer_fields import TypeField
+from drf_nest.serializers import LimitDepthMixin
+from drf_nest.serializer_fields import TypeField
 from retail.product.models import Product, ProductOffering, ProductCategory, ProductStock, ProductStockTake, ProductAssociation, SupplierProduct, ProductSpecification
 from retail.store.models import Store
 

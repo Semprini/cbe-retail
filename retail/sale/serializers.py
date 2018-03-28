@@ -5,9 +5,9 @@ from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import serializers
 
-from cbe.utils.serializers import GenericHyperlinkedSerializer, LimitDepthMixin
+from drf_nest.serializers import ExtendedHyperlinkedSerialiser, LimitDepthMixin
+from drf_nest.serializer_fields import TypeField, GenericRelatedField, ExtendedModelSerialiserField
 
-from cbe.utils.serializer_fields import TypeField, GenericRelatedField, ExtendedModelSerializerField
 from cbe.party.serializers import PartyRoleAssociationFromBasicSerializer, PartyRoleAssociationToBasicSerializer, IndividualSerializer, OrganisationSerializer
 from cbe.party.models import Individual, Organisation, PartyRoleAssociation
 from cbe.credit.serializers import CreditBalanceEventSerializer
@@ -19,7 +19,7 @@ from retail.product.serializers import ProductOfferingSerializer, ProductSeriali
 from retail.pricing.serializers import ProductOfferingPriceSerializer
 
 
-class TenderTypeSerializer(LimitDepthMixin, GenericHyperlinkedSerializer):
+class TenderTypeSerializer(LimitDepthMixin, ExtendedHyperlinkedSerialiser):
     #type = TypeField()
 
     class Meta:
@@ -27,14 +27,14 @@ class TenderTypeSerializer(LimitDepthMixin, GenericHyperlinkedSerializer):
         fields = ('type', 'url', 'name', 'description', )
 
 
-class TenderSerializer(LimitDepthMixin, GenericHyperlinkedSerializer):
+class TenderSerializer(LimitDepthMixin, ExtendedHyperlinkedSerialiser):
     #type = TypeField()
     #TODO: Waiting on pull request from django-rest
     #url = serializers.HyperlinkedIdentityField(view_name='tender-detail', read_only=False, queryset=Tender.objects.all())
     sale = serializers.HyperlinkedIdentityField(view_name='sale-detail', read_only=False)
     #sale = serializers.HyperlinkedIdentityField(view_name='sale-detail', queryset=Sale.objects.all(), required=False, allow_null=True, read_only=False)
 
-    tender_type = ExtendedModelSerializerField(TenderTypeSerializer())
+    tender_type = ExtendedModelSerialiserField(TenderTypeSerializer())
     
     class Meta:
         model = Tender
@@ -49,11 +49,11 @@ class TenderSerializer(LimitDepthMixin, GenericHyperlinkedSerializer):
         return Tender.objects.create(**validated_data)
         
 
-class SaleItemSerializer(LimitDepthMixin, GenericHyperlinkedSerializer):
+class SaleItemSerializer(LimitDepthMixin, ExtendedHyperlinkedSerialiser):
     #type = TypeField()
     #TODO: Waiting on pull request from django-rest
     #url = serializers.HyperlinkedIdentityField(view_name='saleitem-detail', read_only=False, queryset=SaleItem.objects.all())
-    product = ExtendedModelSerializerField(ProductSerializer())
+    product = ExtendedModelSerialiserField(ProductSerializer())
     product_offering_price = ProductOfferingPriceSerializer()
     
     class Meta:
@@ -63,7 +63,7 @@ class SaleItemSerializer(LimitDepthMixin, GenericHyperlinkedSerializer):
                     'discount','promotion','cost_price' )
 
                   
-class SaleSerializer(LimitDepthMixin, GenericHyperlinkedSerializer):
+class SaleSerializer(LimitDepthMixin, ExtendedHyperlinkedSerialiser):
     #type = TypeField()
     sale_items = SaleItemSerializer( many=True )
     tenders = TenderSerializer( many=True, read_only=False )
@@ -138,7 +138,7 @@ class SaleSerializer(LimitDepthMixin, GenericHyperlinkedSerializer):
         return instance             
         
 
-class SalesChannelSerializer(LimitDepthMixin, GenericHyperlinkedSerializer):
+class SalesChannelSerializer(LimitDepthMixin, ExtendedHyperlinkedSerialiser):
     #type = TypeField()
 
     class Meta:
@@ -146,7 +146,7 @@ class SalesChannelSerializer(LimitDepthMixin, GenericHyperlinkedSerializer):
         fields = ('type', 'url', 'name',)
                   
                   
-class PurchaserSerializer(LimitDepthMixin, GenericHyperlinkedSerializer):
+class PurchaserSerializer(LimitDepthMixin, ExtendedHyperlinkedSerialiser):
     party = GenericRelatedField( many=False, 
         serializer_dict={ 
             Individual: IndividualSerializer(),

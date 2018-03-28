@@ -25,7 +25,7 @@ class SaleAPITests(APITestCase):
         self.individual = Individual.objects.create(given_names="John", family_names="Doe")
         self.customer = Customer.objects.create(party=self.individual, customer_number="1", customer_status="new")
 
-        self.sale = Sale.objects.create( channel=self.channel, store=self.store, vendor=self.organisation, customer=self.customer )
+        self.sale = Sale.objects.create( channel=self.channel, store=self.store, vendor=self.organisation, customer=self.customer, docket_number=1 )
 
     def test_get_sale(self):
         """
@@ -37,7 +37,7 @@ class SaleAPITests(APITestCase):
         
     def test_create_sale(self):
         """
-        Ensure we can create a new Customer object.
+        Ensure we can create a new sale object.
         """
         url = '/api/sale/sale/'
         data = {
@@ -46,6 +46,7 @@ class SaleAPITests(APITestCase):
             "vendor":"http://127.0.0.1:8000/api/party/organisation/1/",
             "datetime":"2018-02-04T00:40:44.313123Z",
             "total_amount":"0.00",
+            "docket_number":2,
             "total_amount_excl":"0.00",
             "total_discount":"0.00",
             "total_tax":"0.00",

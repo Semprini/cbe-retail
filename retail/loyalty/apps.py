@@ -6,14 +6,14 @@ class LoyaltyConfig(AppConfig):
     name = 'retail.loyalty'
 
     def ready(self):
-        import cbe.signals
+        import drf_nest.signals
         from retail.loyalty.models import LoyaltyTransaction
         from retail.loyalty.serializers import LoyaltyTransactionSerializer
 
         exchange_prefix = settings.MQ_FRAMEWORK['EXCHANGE_PREFIX'] + self.name
         exchange_header_list = ('scheme',)
         
-        post_save.connect(  cbe.signals.notify_extra_args(   serializer=LoyaltyTransactionSerializer, 
+        post_save.connect(  drf_nest.signals.notify_extra_args(   serializer=LoyaltyTransactionSerializer, 
                                                                 exchange_prefix=exchange_prefix + ".LoyaltyTransaction",
-                                                                exchange_header_list=exchange_header_list)(cbe.signals.notify_save_instance), 
+                                                                exchange_header_list=exchange_header_list)(drf_nest.signals.notify_save_instance), 
                             sender=LoyaltyTransaction, weak=False)    

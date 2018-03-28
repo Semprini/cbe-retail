@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import serializers
 
-from cbe.utils.serializer_fields import TypeField
+from drf_nest.serializer_fields import TypeField
 from retail.supply_chain.models import Asns, PoExpectedDeliveryDate, PurchaseOrderAcknowledgementLineItems, PurchaseOrderAcknowledgements, PurchaseOrderLineItems, PurchaseOrder, SchemaVersion, Sscc, SsccAuditCorrectionActions, SsccAuditCorrectionProductItems, SsccAuditCorrectionReversal, SsccAuditCorrections, SsccAuditProductItems, SsccAudits, SsccDelivery, SsccGoodsReceipt, SsccMandatoryAuditControl, SsccProductItems, Synchronisations, SynchronisationsEnd, UnrecognisedSscc
 
 

@@ -9,14 +9,14 @@ class CustomerBillConfig(AppConfig):
         super(self.__class__, self).__init__(app_name, app_module)
     
     def ready(self):
-        import cbe.signals
+        import drf_nest.signals
         from retail.customer_bill.models import CustomerBill
         from retail.customer_bill.serializers import CustomerBillSerializer
 
         exchange_prefix = settings.MQ_FRAMEWORK['EXCHANGE_PREFIX'] + self.name
         exchange_header_list = ('status',)
         
-        post_save.connect(  cbe.signals.notify_extra_args(   serializer=CustomerBillSerializer, 
+        post_save.connect(  drf_nest.signals.notify_extra_args(   serializer=CustomerBillSerializer, 
                                                                 exchange_prefix=exchange_prefix + ".CustomerBill",
-                                                                exchange_header_list=exchange_header_list)(cbe.signals.notify_save_instance), 
+                                                                exchange_header_list=exchange_header_list)(drf_nest.signals.notify_save_instance), 
                             sender=CustomerBill, weak=False)

@@ -150,8 +150,8 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         #'rest_framework_csv.renderers.CSVRenderer',
-        'cbe.utils.api.BrowsableAPIRendererWithoutForms',
-        'cbe.utils.api.PaginatedCSVRenderer',
+        'drf_nest.api.BrowsableAPIRendererWithoutForms',
+        'drf_nest.api.PaginatedCSVRenderer',
     ),
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',

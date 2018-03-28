@@ -46,7 +46,7 @@ class Promotion(models.Model):
     stores = models.ManyToManyField(Store, blank=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ['code']
         
     def __str__(self):
         return self.name

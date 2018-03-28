@@ -6,7 +6,7 @@ from django.contrib import admin
 
 from rest_framework.schemas import get_schema_view
 
-from cbe.routers import AppRouter
+from drf_nest.routers import AppRouter
 from cbe.urls import apps as cbeapps
 from cbe.urls import appurlpatterns as cbeappurlpatterns
 import cbe.views as CBEViews
