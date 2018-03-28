@@ -12,4 +12,5 @@ django-rest-swagger
 pika
 git+https://github.com/groveco/django-sql-explorer
 django-extensions
+git+https://github.com/Semprini/drf-nest.git
 git+https://github.com/Semprini/cbe.git
